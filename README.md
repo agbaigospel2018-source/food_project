@@ -1,0 +1,2 @@
+**Belleful Express
+This is a project designed to bring vendors closer to their customers being students; helping them to make choices lined to their means, aiding seamless flow of food vending activities.
