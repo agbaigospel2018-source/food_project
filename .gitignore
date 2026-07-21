@@ -1,11 +1,27 @@
 venv/
 env/
 .env
-# media/
-# staticfiles/
 
-#python
+.venv/
+
+# Python cache
 __pycache__/
 *.py[cod]
-*.pyo
+*.pyc
+*$py.class
+
+
+# Database
+*.db
+*.sqlite3
+
+# Static files
+/staticfiles/
+/media/
+
+# Window files
+## Thumbs.db
+## .DS_Store
+
+>>>>>>> a1303f1b531181723ca90a659eee804b9b7b3c6e
 *.log
