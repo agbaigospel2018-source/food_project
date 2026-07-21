@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import CartItem, Category, MenuItem, MenuItemOptionGroup, MenuItemReview
+from .models import Category, MenuItem, MenuItemOptionGroup, MenuItemReview
 
 
 class CategoryForm(forms.ModelForm):
