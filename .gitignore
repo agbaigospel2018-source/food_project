@@ -3,3 +3,9 @@ env/
 .env
 # media/
 # staticfiles/
+
+#python
+__pycache__/
+*.py[cod]
+*.pyo
+*.log
