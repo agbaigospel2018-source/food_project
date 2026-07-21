@@ -50,33 +50,6 @@ class MenuItemOptionGroupForm(forms.ModelForm):
         fields = ["name", "choice_type", "is_required", "min_choices", "max_choices", "sort_order"]
 
 
-class AddToCartForm(forms.Form):
-    quantity = forms.IntegerField(min_value=1, max_value=99, initial=1)
-    note = forms.CharField(max_length=255, required=False)
-    options = forms.MultipleChoiceField(required=False, widget=forms.CheckboxSelectMultiple)
-
-    def __init__(self, *args, menu_item=None, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.menu_item = menu_item
-        if menu_item is None:
-            self.fields["options"].choices = []
-            return
-        choices = []
-        for group in menu_item.option_groups.prefetch_related("options"):
-            for option in group.options.filter(is_available=True):
-                label = f"{group.name}: {option.name}"
-                if option.price_delta:
-                    label = f"{label} (+{option.price_delta})"
-                choices.append((str(option.id), label))
-        self.fields["options"].choices = choices
-
-
-class CartItemUpdateForm(forms.ModelForm):
-    class Meta:
-        model = CartItem
-        fields = ["quantity", "note"]
-
-
 class ReviewForm(forms.ModelForm):
     class Meta:
         model = MenuItemReview

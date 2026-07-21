@@ -8,8 +8,8 @@ from django.http import JsonResponse
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 from django.views.generic import CreateView, DeleteView, ListView, UpdateView
-from .forms import AddToCartForm, CartItemUpdateForm, CategoryForm, MenuItemForm, ReviewForm
-from .models import Cart, CartItem, Category, MenuItem, MenuItemReview
+from .forms import CategoryForm, MenuItemForm, ReviewForm
+from .models import Category, MenuItem, MenuItemReview
 from .utils import get_managed_vendor_or_403, get_vendor_model
 
 # Create your views here.
@@ -17,7 +17,7 @@ from .utils import get_managed_vendor_or_403, get_vendor_model
 class MenuItemListView(ListView):
     model = MenuItem
     template_name = "menu/menu_item_list.html"
-    context_object_name = "items"
+    context_object_name = "items" 
     paginate_by = 24
 
     def get_queryset(self):
@@ -49,92 +49,6 @@ class MenuItemListView(ListView):
         context["vendor"] = self.vendor
         context["categories"] = Category.objects.filter(vendor=self.vendor, is_active=True) if self.vendor else Category.objects.filter(is_active=True)
         return context
-
-
-def item_detail(request, vendor_pk, slug):
-    item = get_object_or_404(
-        MenuItem.objects.public().select_related("vendor", "category").prefetch_related("option_groups__options", "reviews__student"),
-        vendor_id=vendor_pk,
-        slug=slug,
-    )
-    review = None
-    if request.user.is_authenticated:
-        review = MenuItemReview.objects.filter(item=item, student=request.user).first()
-    return render(
-        request,
-        "menu/menu_item_detail.html",
-        {
-            "item": item,
-            "add_to_cart_form": AddToCartForm(menu_item=item),
-            "review_form": ReviewForm(instance=review),
-            "reviews": item.reviews.filter(is_approved=True).select_related("student"),
-        },
-    )
-
-
-@require_POST
-def add_to_cart(request, item_pk):
-    item = get_object_or_404(MenuItem.objects.select_related("vendor"), pk=item_pk)
-    form = AddToCartForm(request.POST, menu_item=item)
-    if not form.is_valid():
-        return _cart_error_response(request, form.errors.as_json(), item)
-    cart = Cart.for_request(request)
-    try:
-        cart.add_item(
-            item,
-            quantity=form.cleaned_data["quantity"],
-            option_ids=form.cleaned_data["options"],
-            note=form.cleaned_data["note"],
-        )
-    except ValidationError as exc:
-        return _cart_error_response(request, "; ".join(exc.messages), item)
-    messages.success(request, f"{item.name} added to cart.")
-    if request.headers.get("x-requested-with") == "XMLHttpRequest":
-        return JsonResponse({"ok": True, "cart_count": cart.total_quantity, "cart_total": str(cart.subtotal)})
-    return redirect("menu:cart_detail")
-
-
-def _cart_error_response(request, error, item):
-    if request.headers.get("x-requested-with") == "XMLHttpRequest":
-        return JsonResponse({"ok": False, "error": error}, status=400)
-    messages.error(request, error)
-    return redirect(item.get_absolute_url())
-
-
-def cart_detail(request):
-    cart = Cart.for_request(request)
-    items = cart.items.select_related("menu_item", "vendor").prefetch_related("selected_options")
-    return render(request, "menu/cart_detail.html", {"cart": cart, "cart_items": items})
-
-
-@require_POST
-def update_cart_item(request, item_pk):
-    cart = Cart.for_request(request)
-    cart_item = get_object_or_404(CartItem, pk=item_pk, cart=cart)
-    form = CartItemUpdateForm(request.POST, instance=cart_item)
-    if form.is_valid():
-        form.save()
-        messages.success(request, "Cart updated.")
-    else:
-        messages.error(request, "Could not update that cart item.")
-    return redirect("menu:cart_detail")
-
-
-@require_POST
-def remove_cart_item(request, item_pk):
-    cart = Cart.for_request(request)
-    get_object_or_404(CartItem, pk=item_pk, cart=cart).delete()
-    messages.success(request, "Item removed from cart.")
-    return redirect("menu:cart_detail")
-
-
-@require_POST
-def clear_cart(request):
-    cart = Cart.for_request(request)
-    cart.items.all().delete()
-    messages.success(request, "Cart cleared.")
-    return redirect("menu:cart_detail")
-
 
 @login_required
 @require_POST

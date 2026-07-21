@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Cart, CartItem, Category, MenuItem, MenuItemOption, MenuItemOptionGroup, MenuItemReview
+from .models import Category, MenuItem, MenuItemOption, MenuItemOptionGroup, MenuItemReview
 
 # Register your models here.
 
@@ -45,14 +45,4 @@ class MenuItemReviewAdmin(admin.ModelAdmin):
     search_fields = ("item__name", "student__username", "comment")
 
 
-class CartItemInline(admin.TabularInline):
-    model = CartItem
-    extra = 0
-    readonly_fields = ("line_total",)
 
-
-@admin.register(Cart)
-class CartAdmin(admin.ModelAdmin):
-    list_display = ("id", "user", "session_key", "status", "total_quantity", "subtotal", "updated_at")
-    list_filter = ("status", "updated_at")
-    inlines = [CartItemInline]
