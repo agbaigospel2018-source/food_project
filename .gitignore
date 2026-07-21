@@ -1,5 +1,25 @@
 venv/
 env/
 .env
-# media/
-# staticfiles/
+.venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyc
+*$py.class
+
+
+# Database
+*.db
+*.sqlite3
+
+# Static files
+/staticfiles/
+/media/
+
+# Window files
+## Thumbs.db
+## .DS_Store
+
+*.log
