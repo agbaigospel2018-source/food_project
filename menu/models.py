@@ -185,129 +185,129 @@ class MenuItemOption(models.Model):
         return self.name
 
 
-# class Cart(models.Model):
-#     ACTIVE = "active"
-#     ORDERED = "ordered"
-#     ABANDONED = "abandoned"
-#     STATUS_CHOICES = ((ACTIVE, "Active"), (ORDERED, "Ordered"), (ABANDONED, "Abandoned"))
+class Cart(models.Model):
+    ACTIVE = "active"
+    ORDERED = "ordered"
+    ABANDONED = "abandoned"
+    STATUS_CHOICES = ((ACTIVE, "Active"), (ORDERED, "Ordered"), (ABANDONED, "Abandoned"))
 
-#     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True, related_name="menu_carts")
-#     session_key = models.CharField(max_length=40, blank=True, db_index=True)
-#     status = models.CharField(max_length=12, choices=STATUS_CHOICES, default=ACTIVE)
-#     created_at = models.DateTimeField(auto_now_add=True)
-#     updated_at = models.DateTimeField(auto_now=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True, related_name="menu_carts")
+    session_key = models.CharField(max_length=40, blank=True, db_index=True)
+    status = models.CharField(max_length=12, choices=STATUS_CHOICES, default=ACTIVE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
-#     class Meta:
-#         indexes = [models.Index(fields=["user", "status"]), models.Index(fields=["session_key", "status"])]
+    class Meta:
+        indexes = [models.Index(fields=["user", "status"]), models.Index(fields=["session_key", "status"])]
 
-#     def __str__(self):
-#         owner = self.user or self.session_key or "anonymous"
-#         return f"Cart {self.pk} - {owner}"
+    def __str__(self):
+        owner = self.user or self.session_key or "anonymous"
+        return f"Cart {self.pk} - {owner}"
 
-#     @classmethod
-#     def for_request(cls, request):
-#         if request.user.is_authenticated:
-#             cart = cls.objects.filter(user=request.user, status=cls.ACTIVE).first()
-#             if cart:
-#                 return cart
-#             cart = cls.objects.create(user=request.user, status=cls.ACTIVE, session_key=request.session.session_key or "")
-#             return cart
-#         if not request.session.session_key:
-#             request.session.create()
-#         cart = cls.objects.filter(session_key=request.session.session_key, status=cls.ACTIVE, user=None).first()
-#         if cart:
-#             return cart
-#         cart = cls.objects.create(session_key=request.session.session_key, status=cls.ACTIVE, user=None)
-#         return cart
+    @classmethod
+    def for_request(cls, request):
+        if request.user.is_authenticated:
+            cart = cls.objects.filter(user=request.user, status=cls.ACTIVE).first()
+            if cart:
+                return cart
+            cart = cls.objects.create(user=request.user, status=cls.ACTIVE, session_key=request.session.session_key or "")
+            return cart
+        if not request.session.session_key:
+            request.session.create()
+        cart = cls.objects.filter(session_key=request.session.session_key, status=cls.ACTIVE, user=None).first()
+        if cart:
+            return cart
+        cart = cls.objects.create(session_key=request.session.session_key, status=cls.ACTIVE, user=None)
+        return cart
 
-#     @property
-#     def total_quantity(self):
-#         return sum(item.quantity for item in self.items.select_related("menu_item"))
+    @property
+    def total_quantity(self):
+        return sum(item.quantity for item in self.items.select_related("menu_item"))
 
-#     @property
-#     def subtotal(self):
-#         return sum((item.line_total for item in self.items.prefetch_related("selected_options")), Decimal("0.00"))
+    @property
+    def subtotal(self):
+        return sum((item.line_total for item in self.items.prefetch_related("selected_options")), Decimal("0.00"))
 
-#     def add_item(self, menu_item, quantity=1, option_ids=None, note=""):
-#         if not menu_item.is_available_now:
-#             raise ValidationError(f"{menu_item.name} is currently {menu_item.availability_label.lower()}.")
-#         if menu_item.stock_quantity is not None and quantity > menu_item.stock_quantity:
-#             raise ValidationError(f"Only {menu_item.stock_quantity} {menu_item.name} left.")
+    def add_item(self, menu_item, quantity=1, option_ids=None, note=""):
+        if not menu_item.is_available_now:
+            raise ValidationError(f"{menu_item.name} is currently {menu_item.availability_label.lower()}.")
+        if menu_item.stock_quantity is not None and quantity > menu_item.stock_quantity:
+            raise ValidationError(f"Only {menu_item.stock_quantity} {menu_item.name} left.")
 
-#         option_ids = [int(option_id) for option_id in (option_ids or [])]
-#         selected_options = list(
-#             MenuItemOption.objects.select_related("group", "group__item")
-#             .filter(id__in=option_ids, group__item=menu_item, is_available=True)
-#         )
-#         if len(selected_options) != len(set(option_ids)):
-#             raise ValidationError("One or more selected options are invalid or unavailable.")
-#         self._validate_options(menu_item, selected_options)
+        option_ids = [int(option_id) for option_id in (option_ids or [])]
+        selected_options = list(
+            MenuItemOption.objects.select_related("group", "group__item")
+            .filter(id__in=option_ids, group__item=menu_item, is_available=True)
+        )
+        if len(selected_options) != len(set(option_ids)):
+            raise ValidationError("One or more selected options are invalid or unavailable.")
+        self._validate_options(menu_item, selected_options)
 
-#         with transaction.atomic():
-#             candidate_items = self.items.filter(menu_item=menu_item, note=note).prefetch_related("selected_options")
-#             selected_ids = set(option_ids)
-#             for cart_item in candidate_items:
-#                 if set(cart_item.selected_options.values_list("id", flat=True)) == selected_ids:
-#                     if menu_item.stock_quantity is not None and cart_item.quantity + quantity > menu_item.stock_quantity:
-#                         raise ValidationError(f"Only {menu_item.stock_quantity} {menu_item.name} left.")
-#                     cart_item.quantity += quantity
-#                     cart_item.full_clean()
-#                     cart_item.save(update_fields=["quantity", "updated_at"])
-#                     return cart_item
+        with transaction.atomic():
+            candidate_items = self.items.filter(menu_item=menu_item, note=note).prefetch_related("selected_options")
+            selected_ids = set(option_ids)
+            for cart_item in candidate_items:
+                if set(cart_item.selected_options.values_list("id", flat=True)) == selected_ids:
+                    if menu_item.stock_quantity is not None and cart_item.quantity + quantity > menu_item.stock_quantity:
+                        raise ValidationError(f"Only {menu_item.stock_quantity} {menu_item.name} left.")
+                    cart_item.quantity += quantity
+                    cart_item.full_clean()
+                    cart_item.save(update_fields=["quantity", "updated_at"])
+                    return cart_item
 
-#             cart_item = self.items.create(
-#                 menu_item=menu_item,
-#                 vendor=menu_item.vendor,
-#                 quantity=quantity,
-#                 unit_price=menu_item.current_price,
-#                 note=note,
-#             )
-#             cart_item.selected_options.set(selected_options)
-#             return cart_item
+            cart_item = self.items.create(
+                menu_item=menu_item,
+                vendor=menu_item.vendor,
+                quantity=quantity,
+                unit_price=menu_item.current_price,
+                note=note,
+            )
+            cart_item.selected_options.set(selected_options)
+            return cart_item
 
-#     def _validate_options(self, menu_item, selected_options):
-#         selected_by_group = {}
-#         for option in selected_options:
-#             selected_by_group.setdefault(option.group_id, []).append(option)
+    def _validate_options(self, menu_item, selected_options):
+        selected_by_group = {}
+        for option in selected_options:
+            selected_by_group.setdefault(option.group_id, []).append(option)
 
-#         for group in menu_item.option_groups.prefetch_related("options"):
-#             count = len(selected_by_group.get(group.id, []))
-#             if group.is_required and count < group.min_choices:
-#                 raise ValidationError(f"Choose at least {group.min_choices} option(s) for {group.name}.")
-#             if count > group.max_choices:
-#                 raise ValidationError(f"Choose no more than {group.max_choices} option(s) for {group.name}.")
+        for group in menu_item.option_groups.prefetch_related("options"):
+            count = len(selected_by_group.get(group.id, []))
+            if group.is_required and count < group.min_choices:
+                raise ValidationError(f"Choose at least {group.min_choices} option(s) for {group.name}.")
+            if count > group.max_choices:
+                raise ValidationError(f"Choose no more than {group.max_choices} option(s) for {group.name}.")
 
 
-# class CartItem(models.Model):
-#     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name="items")
-#     menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE, related_name="cart_items")
-#     vendor = models.ForeignKey(vendor_model_label(), on_delete=models.CASCADE, related_name="cart_items")
-#     selected_options = models.ManyToManyField(MenuItemOption, blank=True, related_name="cart_items")
-#     quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1), MaxValueValidator(99)])
-#     unit_price = models.DecimalField(max_digits=10, decimal_places=2)
-#     note = models.CharField(max_length=255, blank=True)
-#     created_at = models.DateTimeField(auto_now_add=True)
-#     updated_at = models.DateTimeField(auto_now=True)
+class CartItem(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name="items")
+    menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE, related_name="cart_items")
+    vendor = models.ForeignKey(vendor_model_label(), on_delete=models.CASCADE, related_name="cart_items")
+    selected_options = models.ManyToManyField(MenuItemOption, blank=True, related_name="cart_items")
+    quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1), MaxValueValidator(99)])
+    unit_price = models.DecimalField(max_digits=10, decimal_places=2)
+    note = models.CharField(max_length=255, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
-#     class Meta:
-#         ordering = ["created_at"]
+    class Meta:
+        ordering = ["created_at"]
 
-#     def __str__(self):
-#         return f"{self.quantity} x {self.menu_item.name}"
+    def __str__(self):
+        return f"{self.quantity} x {self.menu_item.name}"
 
-#     def clean(self):
-#         if self.menu_item.vendor_id != self.vendor_id:
-#             raise ValidationError({"vendor": "Cart item vendor must match the menu item vendor."})
-#         if self.quantity < 1:
-#             raise ValidationError({"quantity": "Quantity must be at least 1."})
+    def clean(self):
+        if self.menu_item.vendor_id != self.vendor_id:
+            raise ValidationError({"vendor": "Cart item vendor must match the menu item vendor."})
+        if self.quantity < 1:
+            raise ValidationError({"quantity": "Quantity must be at least 1."})
 
-#     @property
-#     def options_total(self):
-#         return sum((option.price_delta for option in self.selected_options.all()), Decimal("0.00"))
+    @property
+    def options_total(self):
+        return sum((option.price_delta for option in self.selected_options.all()), Decimal("0.00"))
 
-#     @property
-#     def line_total(self):
-#         return (self.unit_price + self.options_total) * self.quantity
+    @property
+    def line_total(self):
+        return (self.unit_price + self.options_total) * self.quantity
 
 
 class MenuItemReview(models.Model):

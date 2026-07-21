@@ -72,68 +72,68 @@ def item_detail(request, vendor_pk, slug):
     )
 
 
-# @require_POST
-# def add_to_cart(request, item_pk):
-#     item = get_object_or_404(MenuItem.objects.select_related("vendor"), pk=item_pk)
-#     form = AddToCartForm(request.POST, menu_item=item)
-#     if not form.is_valid():
-#         return _cart_error_response(request, form.errors.as_json(), item)
-#     cart = Cart.for_request(request)
-#     try:
-#         cart.add_item(
-#             item,
-#             quantity=form.cleaned_data["quantity"],
-#             option_ids=form.cleaned_data["options"],
-#             note=form.cleaned_data["note"],
-#         )
-#     except ValidationError as exc:
-#         return _cart_error_response(request, "; ".join(exc.messages), item)
-#     messages.success(request, f"{item.name} added to cart.")
-#     if request.headers.get("x-requested-with") == "XMLHttpRequest":
-#         return JsonResponse({"ok": True, "cart_count": cart.total_quantity, "cart_total": str(cart.subtotal)})
-#     return redirect("menu:cart_detail")
+@require_POST
+def add_to_cart(request, item_pk):
+    item = get_object_or_404(MenuItem.objects.select_related("vendor"), pk=item_pk)
+    form = AddToCartForm(request.POST, menu_item=item)
+    if not form.is_valid():
+        return _cart_error_response(request, form.errors.as_json(), item)
+    cart = Cart.for_request(request)
+    try:
+        cart.add_item(
+            item,
+            quantity=form.cleaned_data["quantity"],
+            option_ids=form.cleaned_data["options"],
+            note=form.cleaned_data["note"],
+        )
+    except ValidationError as exc:
+        return _cart_error_response(request, "; ".join(exc.messages), item)
+    messages.success(request, f"{item.name} added to cart.")
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        return JsonResponse({"ok": True, "cart_count": cart.total_quantity, "cart_total": str(cart.subtotal)})
+    return redirect("menu:cart_detail")
 
 
-# def _cart_error_response(request, error, item):
-#     if request.headers.get("x-requested-with") == "XMLHttpRequest":
-#         return JsonResponse({"ok": False, "error": error}, status=400)
-#     messages.error(request, error)
-#     return redirect(item.get_absolute_url())
+def _cart_error_response(request, error, item):
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        return JsonResponse({"ok": False, "error": error}, status=400)
+    messages.error(request, error)
+    return redirect(item.get_absolute_url())
 
 
-# def cart_detail(request):
-#     cart = Cart.for_request(request)
-#     items = cart.items.select_related("menu_item", "vendor").prefetch_related("selected_options")
-#     return render(request, "menu/cart_detail.html", {"cart": cart, "cart_items": items})
+def cart_detail(request):
+    cart = Cart.for_request(request)
+    items = cart.items.select_related("menu_item", "vendor").prefetch_related("selected_options")
+    return render(request, "menu/cart_detail.html", {"cart": cart, "cart_items": items})
 
 
-# @require_POST
-# def update_cart_item(request, item_pk):
-#     cart = Cart.for_request(request)
-#     cart_item = get_object_or_404(CartItem, pk=item_pk, cart=cart)
-#     form = CartItemUpdateForm(request.POST, instance=cart_item)
-#     if form.is_valid():
-#         form.save()
-#         messages.success(request, "Cart updated.")
-#     else:
-#         messages.error(request, "Could not update that cart item.")
-#     return redirect("menu:cart_detail")
+@require_POST
+def update_cart_item(request, item_pk):
+    cart = Cart.for_request(request)
+    cart_item = get_object_or_404(CartItem, pk=item_pk, cart=cart)
+    form = CartItemUpdateForm(request.POST, instance=cart_item)
+    if form.is_valid():
+        form.save()
+        messages.success(request, "Cart updated.")
+    else:
+        messages.error(request, "Could not update that cart item.")
+    return redirect("menu:cart_detail")
 
 
-# @require_POST
-# def remove_cart_item(request, item_pk):
-#     cart = Cart.for_request(request)
-#     get_object_or_404(CartItem, pk=item_pk, cart=cart).delete()
-#     messages.success(request, "Item removed from cart.")
-#     return redirect("menu:cart_detail")
+@require_POST
+def remove_cart_item(request, item_pk):
+    cart = Cart.for_request(request)
+    get_object_or_404(CartItem, pk=item_pk, cart=cart).delete()
+    messages.success(request, "Item removed from cart.")
+    return redirect("menu:cart_detail")
 
 
-# @require_POST
-# def clear_cart(request):
-#     cart = Cart.for_request(request)
-#     cart.items.all().delete()
-#     messages.success(request, "Cart cleared.")
-#     return redirect("menu:cart_detail")
+@require_POST
+def clear_cart(request):
+    cart = Cart.for_request(request)
+    cart.items.all().delete()
+    messages.success(request, "Cart cleared.")
+    return redirect("menu:cart_detail")
 
 
 @login_required
