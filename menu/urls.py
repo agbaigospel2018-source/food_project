@@ -2,5 +2,20 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    
+    path("", views.MenuItemListView.as_view(), name="item_list"),
+    path("cart/", views.cart_detail, name="cart_detail"),
+    path("cart/add/<int:item_pk>/", views.add_to_cart, name="add_to_cart"),
+    path("cart/items/<int:item_pk>/update/", views.update_cart_item, name="update_cart_item"),
+    path("cart/items/<int:item_pk>/remove/", views.remove_cart_item, name="remove_cart_item"),
+    path("cart/clear/", views.clear_cart, name="clear_cart"),
+    path("availability/", views.availability_feed, name="availability_feed"),
+    path("vendors/<int:vendor_pk>/", views.MenuItemListView.as_view(), name="vendor_menu"),
+    path("vendors/<int:vendor_pk>/<slug:slug>/", views.item_detail, name="item_detail"),
+    path("items/<int:item_pk>/review/", views.upsert_review, name="upsert_review"),
+    path("manage/vendors/<int:vendor_pk>/items/", views.VendorMenuItemListView.as_view(), name="vendor_items"),
+    path("manage/vendors/<int:vendor_pk>/items/new/", views.VendorMenuItemCreateView.as_view(), name="vendor_item_create"),
+    path("manage/vendors/<int:vendor_pk>/items/<int:pk>/edit/", views.VendorMenuItemUpdateView.as_view(), name="vendor_item_update"),
+    path("manage/vendors/<int:vendor_pk>/items/<int:pk>/delete/", views.VendorMenuItemDeleteView.as_view(), name="vendor_item_delete"),
+    path("manage/vendors/<int:vendor_pk>/items/<int:pk>/toggle/", views.toggle_item_availability, name="vendor_item_toggle"),
+    path("manage/vendors/<int:vendor_pk>/categories/new/", views.VendorCategoryCreateView.as_view(), name="vendor_category_create"),
 ]
