@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+
+{% block title %}
+Order Successful
+{% endblock %}
+
+{% block content %}
+
+<section class="min-h-screen bg-gray-50 py-12">
+
+    <div class="mx-auto max-w-3xl px-4">
+
+        <div class="rounded-3xl bg-white shadow-lg overflow-hidden">
+
+            <!-- Success Header -->
+            <div class="bg-green-600 px-8 py-10 text-center text-white">
+
+                <div class="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-white">
+
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         class="h-12 w-12 text-green-600"
+                         fill="none"
+                         viewBox="0 0 24 24"
+                         stroke="currentColor"
+                         stroke-width="2">
+
+                        <path stroke-linecap="round"
+                              stroke-linejoin="round"
+                              d="M5 13l4 4L19 7"/>
+
+                    </svg>
+
+                </div>
+
+                <h1 class="text-3xl font-bold">
+                    Order Placed Successfully!
+                </h1>
+
+                <p class="mt-3 text-green-100">
+                    Your order has been received by the vendor.
+                </p>
+
+            </div>
+
+            <!-- Order Information -->
+            <div class="p-8">
+
+                <div class="grid gap-6 md:grid-cols-2">
+
+                    <div>
+
+                        <h3 class="text-sm uppercase tracking-wide text-gray-500">
+                            Order ID
+                        </h3>
+
+                        <p class="mt-1 font-semibold text-gray-900">
+                            #{{ order.short_id }}
+                        </p>
+
+                    </div>
+
+                    <div>
+
+                        <h3 class="text-sm uppercase tracking-wide text-gray-500">
+                            Status
+                        </h3>
+
+                        <span class="mt-1 inline-flex rounded-full bg-yellow-100 px-3 py-1 text-sm font-medium text-yellow-800">
+                            {{ order.get_status_display }}
+                        </span>
+
+                    </div>
+
+                    <div>
+
+                        <h3 class="text-sm uppercase tracking-wide text-gray-500">
+                            Vendor
+                        </h3>
+
+                        <p class="mt-1 font-semibold text-gray-900">
+                            {{ order.vendor.business_name }}
+                        </p>
+
+                    </div>
+
+                    <div>
+
+                        <h3 class="text-sm uppercase tracking-wide text-gray-500">
+                            Pickup Time
+                        </h3>
+
+                        <p class="mt-1 font-semibold text-gray-900">
+                            {{ order.pickup_time|time:"g:i A" }}
+                        </p>
+
+                    </div>
+
+                    <div>
+
+                        <h3 class="text-sm uppercase tracking-wide text-gray-500">
+                            Total Amount
+                        </h3>
+
+                        <p class="mt-1 text-2xl font-bold text-orange-600">
+                            ₦{{ order.total_amount }}
+                        </p>
+
+                    </div>
+
+                    <div>
+
+                        <h3 class="text-sm uppercase tracking-wide text-gray-500">
+                            Ordered On
+                        </h3>
+
+                        <p class="mt-1 font-semibold text-gray-900">
+                            {{ order.created_at|date:"F j, Y • g:i A" }}
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <!-- Next Steps -->
+                <div class="mt-10 rounded-2xl bg-orange-50 border border-orange-200 p-6">
+
+                    <h2 class="text-lg font-semibold text-orange-700">
+                        What's Next?
+                    </h2>
+
+                    <ul class="mt-4 space-y-3 text-gray-700">
+
+                        <li>
+                            ✅ The vendor has received your order.
+                        </li>
+
+                        <li>
+                            🍽️ Your food will be prepared shortly.
+                        </li>
+
+                        <li>
+                            🔔 You'll be notified when your order is ready for pickup.
+                        </li>
+
+                        <li>
+                            📍 Please arrive around your selected pickup time.
+                        </li>
+
+                    </ul>
+
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="mt-10 flex flex-col gap-4 sm:flex-row">
+
+                    <a href="{% url 'orders:order_detail' order.id %}"
+                       class="flex-1 rounded-xl bg-orange-500 px-6 py-4 text-center font-semibold text-white transition hover:bg-orange-600">
+
+                        View Order Details
+
+                    </a>
+
+                    <a href="{% url 'orders:order_history' %}"
+                       class="flex-1 rounded-xl border border-gray-300 bg-white px-6 py-4 text-center font-semibold text-gray-700 transition hover:bg-gray-100">
+
+                        My Orders
+
+                    </a>
+
+                    <a href="{% url 'vendors:vendor_list' %}"
+                       class="flex-1 rounded-xl border border-green-600 bg-green-600 px-6 py-4 text-center font-semibold text-white transition hover:bg-green-700">
+
+                        Continue Ordering
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

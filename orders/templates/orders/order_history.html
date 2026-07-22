@@ -1,0 +1,229 @@
+{% extends "base.html" %}
+
+{% block title %}
+My Orders
+{% endblock %}
+
+{% block content %}
+
+<section class="min-h-screen bg-gray-50 py-10">
+
+    <div class="mx-auto max-w-6xl px-4">
+
+        <!-- Page Heading -->
+
+        <div class="mb-8">
+
+            <h1 class="text-3xl font-bold text-gray-900">
+                My Orders
+            </h1>
+
+            <p class="mt-2 text-gray-500">
+                Track and manage your previous food orders.
+            </p>
+
+        </div>
+
+        {% if orders %}
+
+            <div class="space-y-6">
+
+                {% for order in orders %}
+
+                <div class="rounded-2xl bg-white shadow-md p-6 transition hover:shadow-lg">
+
+                    <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+
+                        <!-- Left Side -->
+
+                        <div>
+
+                            <h2 class="text-xl font-semibold">
+
+                                #{{ order.short_id }}
+
+                            </h2>
+
+                            <p class="mt-1 text-gray-600">
+
+                                {{ order.vendor.business_name }}
+
+                            </p>
+
+                            <p class="mt-2 text-sm text-gray-500">
+
+                                Ordered on
+
+                                {{ order.created_at|date:"F j, Y • g:i A" }}
+
+                            </p>
+
+                        </div>
+
+                        <!-- Middle -->
+
+                        <div>
+
+                            <p class="text-sm text-gray-500">
+
+                                Pickup Time
+
+                            </p>
+
+                            <p class="font-semibold">
+
+                                {{ order.pickup_time|time:"g:i A" }}
+
+                            </p>
+
+                        </div>
+
+                        <div>
+
+                            <p class="text-sm text-gray-500">
+
+                                Items
+
+                            </p>
+
+                            <p class="font-semibold">
+
+                                {{ order.items.count }}
+
+                            </p>
+
+                        </div>
+
+                        <div>
+
+                            <p class="text-sm text-gray-500">
+
+                                Total
+
+                            </p>
+
+                            <p class="text-xl font-bold text-orange-600">
+
+                                ₦{{ order.total_amount }}
+
+                            </p>
+
+                        </div>
+
+                        <!-- Status -->
+
+                        <div>
+
+                            {% if order.status == "pending" %}
+
+                                <span class="rounded-full bg-yellow-100 px-4 py-2 text-sm font-semibold text-yellow-700">
+
+                                    Pending
+
+                                </span>
+
+                            {% elif order.status == "accepted" %}
+
+                                <span class="rounded-full bg-blue-100 px-4 py-2 text-sm font-semibold text-blue-700">
+
+                                    Accepted
+
+                                </span>
+
+                            {% elif order.status == "preparing" %}
+
+                                <span class="rounded-full bg-purple-100 px-4 py-2 text-sm font-semibold text-purple-700">
+
+                                    Preparing
+
+                                </span>
+
+                            {% elif order.status == "ready" %}
+
+                                <span class="rounded-full bg-green-100 px-4 py-2 text-sm font-semibold text-green-700">
+
+                                    Ready
+
+                                </span>
+
+                            {% elif order.status == "completed" %}
+
+                                <span class="rounded-full bg-gray-200 px-4 py-2 text-sm font-semibold text-gray-700">
+
+                                    Completed
+
+                                </span>
+
+                            {% else %}
+
+                                <span class="rounded-full bg-red-100 px-4 py-2 text-sm font-semibold text-red-700">
+
+                                    Cancelled
+
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+                        <!-- Button -->
+
+                        <div>
+
+                            <a
+                                href="{% url 'orders:order_detail' order.id %}"
+                                class="rounded-xl bg-orange-500 px-5 py-3 font-semibold text-white transition hover:bg-orange-600">
+
+                                View Details
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="rounded-2xl bg-white p-16 text-center shadow">
+
+                <div class="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-orange-100">
+
+                    🍽️
+
+                </div>
+
+                <h2 class="text-2xl font-bold">
+
+                    No Orders Yet
+
+                </h2>
+
+                <p class="mt-3 text-gray-500">
+
+                    You haven't placed any food orders yet.
+
+                </p>
+
+                <a
+                    href="{% url 'vendors:vendor_list' %}"
+                    class="mt-8 inline-block rounded-xl bg-orange-500 px-8 py-4 font-semibold text-white transition hover:bg-orange-600">
+
+                    Browse Vendors
+
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+{% endblock %}

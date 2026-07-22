@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+
+{% block title %}
+Checkout
+{% endblock %}
+
+{% block content %}
+
+<section class="min-h-screen bg-gray-50 py-10">
+
+    <div class="mx-auto max-w-7xl px-4">
+
+        <!-- Heading -->
+        <div class="mb-8">
+
+            <h1 class="text-3xl font-bold text-gray-900">
+                Checkout
+            </h1>
+
+            <p class="mt-2 text-gray-500">
+                Review your order before placing it.
+            </p>
+
+        </div>
+
+        <div class="mb-6 rounded-xl bg-orange-50 p-4 border border-orange-100">
+
+            <h3 class="text-lg font-semibold text-gray-900">
+                {{ vendor.business_name }}
+            </h3>
+
+            <p class="text-sm text-gray-600">
+                {{ vendor.location }}
+            </p>
+
+            <p class="mt-2 text-sm">
+                <span class="font-medium">Pickup:</span>
+                {{ vendor.opening_time|time:"g:i A" }}
+                -
+                {{ vendor.closing_time|time:"g:i A" }}
+            </p>
+
+        </div>
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            <div class="grid gap-8 lg:grid-cols-3">
+
+                <!-- Left Column -->
+                <div class="space-y-6 lg:col-span-2">
+
+                    <!-- Pickup Information -->
+                    <div class="rounded-2xl bg-white p-6 shadow">
+
+                        <h2 class="mb-4 text-xl font-semibold">
+                            Pickup Information
+                        </h2>
+
+                        <label for="pickup_time" class="mb-2 block font-medium">
+                            Select Pickup Time
+                        </label>
+
+                        <select id="pickup_time" name="pickup_time" required
+                            class="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-200">
+
+                            <option value="">
+                                Choose a pickup time
+                            </option>
+
+                            {% for slot in pickup_slots %}
+
+                            <option value="{{ slot.value }}">
+                                {{ slot.label }}
+                            </option>
+
+                            {% empty %}
+
+                            <option disabled>
+                                No pickup slots available
+                            </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                        <p class="mt-3 text-sm text-gray-500">
+                            Available pickup times are based on the vendor's operating hours.
+                        </p>
+
+                    </div>
+
+                    <!-- Order Summary -->
+                    <div class="rounded-2xl bg-white p-6 shadow">
+
+                        <h2 class="mb-6 text-xl font-semibold">
+                            Order Summary
+                        </h2>
+
+                        {% for item in cart.items.all %}
+
+                        <div class="flex items-center justify-between border-b py-4">
+
+                            <div>
+
+                                <h3 class="font-semibold">
+                                    {{ item.menu_item.name }}
+                                </h3>
+
+                                <p class="text-sm text-gray-500">
+                                    Quantity: {{ item.quantity }}
+                                </p>
+
+                                {% if item.note %}
+                                <p class="text-xs italic text-gray-400 mt-1">
+                                    Note: {{ item.note }}
+                                </p>
+                                {% endif %}
+
+                            </div>
+
+                            <div class="font-semibold text-orange-600">
+                                ₦{{ item.line_total }}
+                            </div>
+
+                        </div>
+
+                        {% empty %}
+
+                        <p class="text-gray-500">
+                            Your cart is empty.
+                        </p>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+                <!-- Right Column -->
+                <div>
+
+                    <div class="sticky top-24 rounded-2xl bg-white p-6 shadow">
+
+                        <h2 class="mb-6 text-xl font-bold">
+                            Payment Summary
+                        </h2>
+
+                        <div class="space-y-4">
+
+                            <div class="flex justify-between">
+
+                                <span>Total Items</span>
+
+                                <span>{{ cart.total_items }}</span>
+
+                            </div>
+
+                            <div class="flex justify-between">
+
+                                <span>Subtotal</span>
+
+                                <span>₦{{ cart.total_amount }}</span>
+
+                            </div>
+
+                            <div class="flex justify-between">
+
+                                <span>Service Fee</span>
+
+                                <span>₦0.00</span>
+
+                            </div>
+
+                            <hr>
+
+                            <div class="flex justify-between text-lg font-bold">
+
+                                <span>Total</span>
+
+                                <span class="text-orange-600">
+                                    ₦{{ cart.total_amount }}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                        <button type="submit"
+                            class="mt-6 w-full rounded-xl bg-orange-500 py-4 font-semibold text-white transition hover:bg-orange-600">
+
+                            Place Order
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</section>
+
+{% endblock %}
