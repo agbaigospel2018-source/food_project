@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load menu_extras %}
+
+{% block content %}
+<article class="menu-detail" data-menu-item="{{ item.id }}">
+    {% if item.image %}
+        <img src="{{ item.image.url }}" alt="{{ item.name }}">
+    {% endif %}
+    <h1>{{ item.name }}</h1>
+    <p>{{ item.description }}</p>
+    <p>{{ item.current_price|currency }} - {{ item.prep_time_minutes }} min</p>
+    <p class="availability">{{ item.availability_label }}</p>
+
+    <form method="post" action="{% url 'cart:add_to_cart' item.pk %}">
+        {% csrf_token %}
+        <label for="quantity">Quantity</label>
+        <input id="quantity" type="number" name="quantity" value="1" min="1">
+        <button type="submit" {% if not item.is_available_now %}disabled{% endif %}>Add to cart</button>
+    </form>
+</article>
+
+<section>
+    <h2>Reviews</h2>
+    
+    {% if user.is_authenticated %}
+        <form method="post" action="{% url 'menu:upsert_review' item.pk %}">
+            {% csrf_token %}
+            {{ review_form.as_p }}
+            <button type="submit">Save review</button>
+        </form>
+    {% endif %}
+
+    {% for review in reviews %}
+        <article>
+            <h3>{{ review.rating }} / 5{% if review.title %} - {{ review.title }}{% endif %}</h3>
+            <p>{{ review.comment }}</p>
+            <small>{{ review.student }} - {{ review.created_at|date:"M j, Y" }}</small>
+        </article>
+    {% empty %}
+    <p>No reviews yet.</p>
+    {% endfor %}
+</section>
+
+<script>
+    async function refreshItemAvailability() {
+        const response = await fetch("{% url 'menu:availability_feed' %}?item={{ item.id }}");
+        if (!response.ok) return;
+        const data = await response.json();
+        const item = data.items[0];
+        if (!item) return;
+        document.querySelector(".availability").textContent = item.label;
+        document.querySelector("button[type='submit']").disabled = !item.available;
+    }
+    setInterval(refreshItemAvailability, 15000);
+</script>
+{% endblock %}

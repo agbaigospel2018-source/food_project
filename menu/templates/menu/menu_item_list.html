@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load menu_extras %}
+
+{% block content %}
+<section class="menu-page">
+    <header>
+        <h1>{% if vendor %}{{ vendor.business_name }} menu{% else %}Campus menu{% endif %}</h1>
+        
+        <form method="get">
+            <input type="search" name="q" value="{{ request.GET.q }}" placeholder="Search food or vendor">
+            <select name="category">
+            <option value="">All categories</option>
+            {% for category in categories %}
+                <option value="{{ category.slug }}" {% if request.GET.category == category.slug %}selected{% endif %}>{{ category.name }}</option>
+            {% endfor %}
+            </select>
+            <label><input type="checkbox" name="available" value="1" {% if request.GET.available == "1" %}checked{% endif %}> Available now</label>
+            <label><input type="checkbox" name="is_halal" value="1" {% if request.GET.is_halal == "1" %}checked{% endif %}> Halal</label>
+            <label><input type="checkbox" name="is_vegetarian" value="1" {% if request.GET.is_vegetarian == "1" %}checked{% endif %}> Vegetarian</label>
+            <button type="submit">Filter</button>
+        </form>
+    </header>
+
+    <div class="menu-grid">
+        {% for item in items %}
+            <article class="menu-card" data-menu-item="{{ item.id }}">
+                {% if item.image %}
+                    <img src="{{ item.image.url }}" alt="{{ item.name }}">
+                {% endif %}
+
+                <h2><a href="{{ item.get_absolute_url }}">{{ item.name }}</a></h2>
+
+                <p>{{ item.description|truncatewords:18 }}</p>
+                <p>{{ item.current_price|currency }}{% if item.review_count %} - {{ item.average_rating }} / 5{% endif %}</p>
+                <p class="availability">{{ item.availability_label }}</p>
+
+                <form method="post" action="{% url 'cart:add_to_cart' item.pk %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="quantity" value="1">
+                    <button type="submit" {% if not item.is_available_now %}disabled{% endif %}>Add to cart</button>
+                </form>
+
+            </article>
+        {% empty %}
+            <p>No menu items found.</p>
+        {% endfor %}
+    </div>
+</section>
+
+<script>
+  async function refreshAvailability() {
+    const cards = [...document.querySelectorAll("[data-menu-item]")];
+    if (!cards.length) return;
+    const query = cards.map(card => `item=${card.dataset.menuItem}`).join("&");
+    const response = await fetch(`{% url 'menu:availability_feed' %}?${query}`);
+    if (!response.ok) return;
+    const data = await response.json();
+    for (const item of data.items) {
+      const card = document.querySelector(`[data-menu-item="${item.id}"]`);
+      if (!card) continue;
+      card.querySelector(".availability").textContent = item.label;
+      const button = card.querySelector("button[type='submit']");
+      if (button) button.disabled = !item.available;
+    }
+  }
+  setInterval(refreshAvailability, 20000);
+</script>
+{% endblock %}

@@ -1,23 +1,22 @@
-from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 from django.views.generic import CreateView, DeleteView, ListView, UpdateView
+
 from .forms import CategoryForm, MenuItemForm, ReviewForm
 from .models import Category, MenuItem, MenuItemReview
 from .utils import get_managed_vendor_or_403, get_vendor_model
 
-# Create your views here.
 
 class MenuItemListView(ListView):
     model = MenuItem
     template_name = "menu/menu_item_list.html"
-    context_object_name = "items" 
+    context_object_name = "items"
     paginate_by = 24
 
     def get_queryset(self):
@@ -27,28 +26,66 @@ class MenuItemListView(ListView):
             .prefetch_related("option_groups__options")
         )
         self.vendor = None
+
         vendor_pk = self.kwargs.get("vendor_pk") or self.request.GET.get("vendor")
         if vendor_pk:
             self.vendor = get_object_or_404(get_vendor_model(), pk=vendor_pk)
             queryset = queryset.filter(vendor=self.vendor)
+
         category = self.request.GET.get("category")
         if category:
             queryset = queryset.filter(category__slug=category)
+
         query = self.request.GET.get("q")
         if query:
-            queryset = queryset.filter(Q(name__icontains=query) | Q(description__icontains=query) | Q(vendor__name__icontains=query))
+            queryset = queryset.filter(
+                Q(name__icontains=query)
+                | Q(description__icontains=query)
+                | Q(vendor__business_name__icontains=query)
+            )
+
         for flag in ("is_vegetarian", "is_vegan", "is_halal", "is_spicy"):
             if self.request.GET.get(flag) == "1":
                 queryset = queryset.filter(**{flag: True})
+
         if self.request.GET.get("available") == "1":
-            queryset = [item for item in queryset if item.is_available_now]
+            item_ids = [item.id for item in queryset if item.is_available_now]
+            queryset = queryset.filter(id__in=item_ids)
+
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["vendor"] = self.vendor
-        context["categories"] = Category.objects.filter(vendor=self.vendor, is_active=True) if self.vendor else Category.objects.filter(is_active=True)
+        if self.vendor:
+            context["categories"] = Category.objects.filter(vendor=self.vendor, is_active=True)
+        else:
+            context["categories"] = Category.objects.filter(is_active=True)
         return context
+
+
+def item_detail(request, vendor_pk, slug):
+    item = get_object_or_404(
+        MenuItem.objects.public()
+        .select_related("vendor", "category")
+        .prefetch_related("option_groups__options", "reviews__student"),
+        vendor_id=vendor_pk,
+        slug=slug, 
+    )
+    review = None
+    if request.user.is_authenticated:
+        review = MenuItemReview.objects.filter(item=item, student=request.user).first()
+
+    return render(
+        request,
+        "menu/menu_item_detail.html",
+        {
+            "item": item,
+            "review_form": ReviewForm(instance=review),
+            "reviews": item.reviews.filter(is_approved=True).select_related("student"),
+        },
+    )
+
 
 @login_required
 @require_POST
@@ -72,6 +109,7 @@ def availability_feed(request):
     queryset = MenuItem.objects.public().select_related("vendor")
     if item_ids:
         queryset = queryset.filter(id__in=item_ids)
+
     payload = [
         {
             "id": item.id,
