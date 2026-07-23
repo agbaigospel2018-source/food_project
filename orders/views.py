@@ -4,7 +4,6 @@ from django.core.exceptions import ValidationError
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from datetime import datetime
-from datetime import datetime
 from cart.services import get_or_create_cart
 
 from vendors.models import Vendor
