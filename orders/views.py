@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404, redirect, render
-
+from datetime import datetime
 from cart.services import get_or_create_cart
 
 from .models import Order
@@ -129,7 +129,7 @@ def order_history_view(request):
     
 @login_required
 @login_required
-def order_detail_view(request, order_id):
+def vendor_orders_view(request, order_id):
     """
     Display the details of a single order belonging to the logged-in student.
     """

@@ -1,0 +1,55 @@
+/* Global Styles */
+
+body {
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Links */
+a {
+    transition: all 0.3s ease;
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: #ea580c;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+}
+
+.btn-primary:hover {
+    background-color: #c2410c;
+}
+
+/* Card Styling */
+.card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* Flash Messages */
+.alert-success {
+    background-color: #dcfce7;
+    color: #166534;
+    padding: 12px;
+    border-radius: 8px;
+}
+
+.alert-error {
+    background-color: #fee2e2;
+    color: #991b1b;
+    padding: 12px;
+    border-radius: 8px;
+}
+
+/* Footer */
+.footer-link:hover {
+    color: #fb923c;
+}
