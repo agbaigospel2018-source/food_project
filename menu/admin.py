@@ -18,7 +18,7 @@ class MenuItemOptionGroupInline(admin.StackedInline):
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ("name", "vendor", "is_active", "sort_order")
     list_filter = ("is_active", "vendor")
-    search_fields = ("name", "vendor__name")
+    search_fields = ("name", "vendor__business_name")
     prepopulated_fields = {"slug": ("name",)}
 
 
@@ -26,7 +26,7 @@ class CategoryAdmin(admin.ModelAdmin):
 class MenuItemAdmin(admin.ModelAdmin):
     list_display = ("name", "vendor", "category", "current_price", "is_active", "is_available", "stock_quantity", "average_rating")
     list_filter = ("is_active", "is_available", "is_featured", "is_vegetarian", "is_vegan", "is_halal", "vendor", "category")
-    search_fields = ("name", "description", "vendor__name")
+    search_fields = ("name", "description", "vendor__business_name")
     prepopulated_fields = {"slug": ("name",)}
     readonly_fields = ("average_rating", "review_count")
     inlines = [MenuItemOptionGroupInline]

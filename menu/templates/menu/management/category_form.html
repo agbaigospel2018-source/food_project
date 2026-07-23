@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section>
+    <h1>Add category</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Save</button>
+        <a href="{% url 'menu:vendor_items' vendor.pk %}">Cancel</a>
+    </form>
+</section>
+{% endblock %}

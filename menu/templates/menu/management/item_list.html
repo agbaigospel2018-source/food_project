@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load menu_extras %}
+
+{% block content %}
+<section>
+    <header>
+    <h1>Manage {{ vendor.business_name }} menu</h1>
+        <a href="{% url 'menu:vendor_item_create' vendor.pk %}">Add item</a>
+        <a href="{% url 'menu:vendor_category_create' vendor.pk %}">Add category</a>
+    </header>
+
+    <table>
+        <thead>
+            <tr>
+            <th>Item</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Status</th>
+            <th>Stock</th>
+            <th>Actions</th>
+            </tr>
+        </thead>
+        
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.category|default:"Uncategorized" }}</td>
+                <td>{{ item.current_price|currency }}</td>
+                <td>{{ item.availability_label }}</td>
+                <td>{{ item.stock_quantity|default:"Unlimited" }}</td>
+                <td>
+                <a href="{% url 'menu:vendor_item_update' vendor.pk item.pk %}">Edit</a>
+                <form method="post" action="{% url 'menu:vendor_item_toggle' vendor.pk item.pk %}" style="display:inline">
+                    {% csrf_token %}
+                    <button type="submit">{% if item.is_available %}Mark unavailable{% else %}Mark available{% endif %}</button>
+                </form>
+                <a href="{% url 'menu:vendor_item_delete' vendor.pk item.pk %}">Delete</a>
+                </td>
+            </tr>
+
+            {% empty %}
+            <tr><td colspan="6">No menu items yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}
