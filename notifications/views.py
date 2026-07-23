@@ -57,3 +57,13 @@ def delete_notification(request, notification_id):
     )
     notification.delete()
     return JsonResponse({'status': 'ok'})
+    
+def delete_all_notifications(request):
+    """Delete all notifications for the logged-in user."""
+    deleted = Notification.objects.filter(
+        recipient=request.user,
+    ).delete()
+    return JsonResponse({
+        'status': 'ok',
+        'deleted': deleted
+    })

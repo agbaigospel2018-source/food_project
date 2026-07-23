@@ -1,12 +1,16 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_POST
 from datetime import datetime
-from datetime import datetime
+
 from cart.services import get_or_create_cart
 
-from .models import Order
+from vendors.models import Vendor
+
+from .models import Order, OrderStatus
 from .services import (
     create_order_from_cart,
     generate_pickup_slots,
@@ -129,8 +133,7 @@ def order_history_view(request):
     )
     
 @login_required
-@login_required
-def vendor_orders_view(request, order_id):
+def order_detail_view(request, order_id):
     """
     Display the details of a single order belonging to the logged-in student.
     """
@@ -183,4 +186,77 @@ def cancel_order_view(request, order_id):
 
     return redirect(
         "orders:order_history",
+    )
+
+
+@login_required
+def vendor_orders_view(request):
+    """
+    Display all incoming orders for the logged-in vendor.
+    """
+
+    vendor = get_object_or_404(
+        Vendor,
+        owner=request.user,
+    )
+
+    orders = (
+        Order.objects
+        .filter(vendor=vendor)
+        .select_related("student")
+        .prefetch_related("items__menu_item")
+        .order_by("-created_at")
+    )
+
+    context = {
+        "vendor": vendor,
+        "orders": orders,
+    }
+
+    return render(
+        request,
+        "orders/vendor_orders.html",
+        context,
+    )
+
+
+@login_required
+@require_POST
+def update_order_status_view(request, order_id):
+    """
+    Allow a vendor to update the status of an order.
+    """
+
+    vendor = get_object_or_404(
+        Vendor,
+        owner=request.user,
+    )
+
+    order = get_object_or_404(
+        Order,
+        id=order_id,
+        vendor=vendor,
+    )
+
+    new_status = request.POST.get("status")
+
+    if new_status not in dict(OrderStatus.choices):
+        messages.error(
+            request,
+            "Invalid order status."
+        )
+        return redirect(
+            "orders:vendor_orders",
+        )
+
+    order.status = new_status
+    order.save(update_fields=["status"])
+
+    messages.success(
+        request,
+        f"Order status updated to {order.get_status_display()}."
+    )
+
+    return redirect(
+        "orders:vendor_orders",
     )
