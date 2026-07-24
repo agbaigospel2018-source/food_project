@@ -92,7 +92,7 @@ def logout_view(request):
         'Logged out successfully.'
     )
 
-    return redirect('login')
+    return redirect('home')
 
 # -----------Profile View
 @login_required
