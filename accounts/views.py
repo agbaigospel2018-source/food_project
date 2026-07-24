@@ -60,9 +60,16 @@ def login_view(request):
             )
 
             return redirect('profile')
+        else:
+            messages.success(
+                request,
+                "Account does't exist. Create new account to login"
+            )
 
     else:
         form = AuthenticationForm()
+            
+      
 
     context = {
         'form': form
