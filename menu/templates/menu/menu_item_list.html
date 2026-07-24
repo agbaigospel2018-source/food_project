@@ -1,12 +1,140 @@
 {% extends "core/base.html" %}
 {% load menu_extras %}
-
+ 
 {% block content %}
+<style>
+  :root {
+    --menu-primary: #EA5B0C;
+    --menu-primary-dark: #C94A09;
+    --menu-primary-light: #FDEBDD;
+    --menu-dark: #0F172A;
+    --menu-bg: #F8FAFC;
+    --menu-card: #FFFFFF;
+    --menu-border: #E5E7EB;
+    --menu-text: #0F172A;
+    --menu-muted: #64748B;
+    --menu-success: #16A34A;
+    --menu-success-bg: #E8F8EE;
+    --menu-danger: #DC2626;
+    --menu-danger-bg: #FDEDED;
+    --menu-radius: 12px;
+    --menu-shadow: 0 1px 3px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.06);
+    --menu-shadow-hover: 0 8px 20px rgba(15, 23, 42, 0.10);
+  }
+ 
+  .menu-page {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 3.5rem;
+    color: var(--menu-text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  .menu-page h1 { font-size: 1.9rem; font-weight: 700; margin: 0 0 1.25rem; color: var(--menu-dark); }
+  .menu-page header { margin-bottom: 2rem; }
+ 
+  .availability {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--menu-danger);
+    background: var(--menu-danger-bg);
+  }
+  .availability.is-available { color: var(--menu-success); background: var(--menu-success-bg); }
+ 
+  .menu-filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    padding: 1rem;
+    background: var(--menu-card);
+    border: 1px solid var(--menu-border);
+    border-radius: var(--menu-radius);
+    box-shadow: var(--menu-shadow);
+  }
+  .menu-filter-bar input[type="search"] {
+    flex: 1 1 220px;
+    padding: 0.6rem 0.9rem;
+    border: 1px solid var(--menu-border);
+    border-radius: 999px;
+    font-size: 0.9rem;
+  }
+  .menu-filter-bar select { padding: 0.55rem 0.9rem; border: 1px solid var(--menu-border); border-radius: 999px; font-size: 0.9rem; background: #fff; }
+  .menu-filter-bar input[type="search"]:focus,
+  .menu-filter-bar select:focus {
+    outline: none;
+    border-color: var(--menu-primary);
+    box-shadow: 0 0 0 3px var(--menu-primary-light);
+  }
+  .menu-filter-bar label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.85rem;
+    color: var(--menu-muted);
+    padding: 0.4rem 0.8rem;
+    border: 1px solid var(--menu-border);
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .menu-filter-bar label:has(input:checked) {
+    border-color: var(--menu-primary);
+    color: var(--menu-primary);
+    background: var(--menu-primary-light);
+  }
+  .menu-filter-bar button {
+    padding: 0.6rem 1.4rem;
+    border: none;
+    border-radius: 999px;
+    background: var(--menu-primary);
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .menu-filter-bar button:hover { background: var(--menu-primary-dark); }
+ 
+  .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.5rem; }
+ 
+  .menu-card {
+    background: var(--menu-card);
+    border: 1px solid var(--menu-border);
+    border-radius: var(--menu-radius);
+    box-shadow: var(--menu-shadow);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow .15s ease, transform .15s ease;
+  }
+  .menu-card:hover { box-shadow: var(--menu-shadow-hover); transform: translateY(-2px); }
+  .menu-card img { width: 100%; height: 160px; object-fit: cover; background: var(--menu-bg); }
+  .menu-card h2 { padding: 0.9rem 1rem 0; font-size: 1.05rem; margin: 0; }
+  .menu-card h2 a { color: var(--menu-dark); text-decoration: none; }
+  .menu-card h2 a:hover { color: var(--menu-primary); }
+  .menu-card p { padding: 0 1rem; margin: 0.4rem 0; font-size: 0.88rem; color: var(--menu-muted); }
+  .menu-card p.availability { margin: 0.5rem 1rem; }
+  .menu-card form { padding: 0 1rem 1rem; margin-top: auto; }
+  .menu-card form button {
+    width: 100%;
+    padding: 0.6rem;
+    border: none;
+    border-radius: 999px;
+    background: var(--menu-primary);
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .menu-card form button:hover { background: var(--menu-primary-dark); }
+  .menu-card form button:disabled { background: #E5E7EB; color: #9CA3AF; cursor: not-allowed; }
+</style>
+ 
 <section class="menu-page">
     <header>
         <h1>{% if vendor %}{{ vendor.business_name }} menu{% else %}Campus menu{% endif %}</h1>
-        
-        <form method="get">
+ 
+        <form method="get" class="menu-filter-bar">
             <input type="search" name="q" value="{{ request.GET.q }}" placeholder="Search food or vendor">
             <select name="category">
             <option value="">All categories</option>
@@ -20,33 +148,33 @@
             <button type="submit">Filter</button>
         </form>
     </header>
-
+ 
     <div class="menu-grid">
         {% for item in items %}
             <article class="menu-card" data-menu-item="{{ item.id }}">
                 {% if item.image %}
                     <img src="{{ item.image.url }}" alt="{{ item.name }}">
                 {% endif %}
-
+ 
                 <h2><a href="{{ item.get_absolute_url }}">{{ item.name }}</a></h2>
-
+ 
                 <p>{{ item.description|truncatewords:18 }}</p>
                 <p>{{ item.current_price|currency }}{% if item.review_count %} - {{ item.average_rating }} / 5{% endif %}</p>
-                <p class="availability">{{ item.availability_label }}</p>
-
+                <p class="availability {% if item.is_available_now %}is-available{% endif %}">{{ item.availability_label }}</p>
+ 
                 <form method="post" action="{% url 'cart:add_to_cart' item.pk %}">
                     {% csrf_token %}
                     <input type="hidden" name="quantity" value="1">
                     <button type="submit" {% if not item.is_available_now %}disabled{% endif %}>Add to cart</button>
                 </form>
-
+ 
             </article>
         {% empty %}
             <p>No menu items found.</p>
         {% endfor %}
     </div>
 </section>
-
+ 
 <script>
   async function refreshAvailability() {
     const cards = [...document.querySelectorAll("[data-menu-item]")];
@@ -58,7 +186,9 @@
     for (const item of data.items) {
       const card = document.querySelector(`[data-menu-item="${item.id}"]`);
       if (!card) continue;
-      card.querySelector(".availability").textContent = item.label;
+      const availabilityEl = card.querySelector(".availability");
+      availabilityEl.textContent = item.label;
+      availabilityEl.classList.toggle("is-available", item.available);
       const button = card.querySelector("button[type='submit']");
       if (button) button.disabled = !item.available;
     }

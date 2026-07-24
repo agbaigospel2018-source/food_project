@@ -1,7 +1,119 @@
 {% extends "core/base.html" %}
 {% load menu_extras %}
-
+ 
 {% block content %}
+<style>
+  :root {
+    --menu-primary: #EA5B0C;
+    --menu-primary-dark: #C94A09;
+    --menu-primary-light: #FDEBDD;
+    --menu-dark: #0F172A;
+    --menu-bg: #F8FAFC;
+    --menu-card: #FFFFFF;
+    --menu-border: #E5E7EB;
+    --menu-text: #0F172A;
+    --menu-muted: #64748B;
+    --menu-success: #16A34A;
+    --menu-success-bg: #E8F8EE;
+    --menu-danger: #DC2626;
+    --menu-danger-bg: #FDEDED;
+    --menu-radius: 12px;
+    --menu-shadow: 0 1px 3px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.06);
+  }
+ 
+  .menu-detail-wrap {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 3.5rem;
+    color: var(--menu-text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  .menu-detail-wrap h1 { font-size: 1.9rem; font-weight: 700; margin: 0 0 0.5rem; color: var(--menu-dark); }
+ 
+  .availability {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--menu-danger);
+    background: var(--menu-danger-bg);
+  }
+  .availability.is-available { color: var(--menu-success); background: var(--menu-success-bg); }
+ 
+  .menu-detail {
+    background: var(--menu-card);
+    border: 1px solid var(--menu-border);
+    border-radius: var(--menu-radius);
+    box-shadow: var(--menu-shadow);
+    padding: 2rem;
+    display: grid;
+    gap: 1rem;
+  }
+  .menu-detail img { width: 100%; max-height: 340px; object-fit: cover; border-radius: var(--menu-radius); }
+  .menu-detail form { display: flex; align-items: center; gap: 0.75rem; margin-top: 0.5rem; }
+  .menu-detail form label { font-weight: 600; font-size: 0.85rem; color: var(--menu-muted); }
+  .menu-detail form input[type="number"] { width: 70px; padding: 0.5rem; border: 1px solid var(--menu-border); border-radius: 8px; }
+  .menu-detail form button {
+    padding: 0.65rem 1.75rem;
+    border: none;
+    border-radius: 999px;
+    background: var(--menu-primary);
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .menu-detail form button:hover { background: var(--menu-primary-dark); }
+  .menu-detail form button:disabled { background: #E5E7EB; color: #9CA3AF; cursor: not-allowed; }
+ 
+  .menu-reviews { margin-top: 2rem; }
+  .menu-reviews h2 { font-size: 1.3rem; margin-bottom: 1rem; color: var(--menu-dark); }
+  .menu-reviews form {
+    background: var(--menu-card);
+    border: 1px solid var(--menu-border);
+    border-radius: var(--menu-radius);
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+  .menu-reviews form p { margin: 0 0 0.85rem; }
+  .menu-reviews form label { display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.3rem; color: var(--menu-muted); }
+  .menu-reviews form input,
+  .menu-reviews form textarea {
+    width: 100%;
+    padding: 0.55rem 0.75rem;
+    border: 1px solid var(--menu-border);
+    border-radius: 8px;
+    font-size: 0.9rem;
+  }
+  .menu-reviews form input:focus,
+  .menu-reviews form textarea:focus {
+    outline: none;
+    border-color: var(--menu-primary);
+    box-shadow: 0 0 0 3px var(--menu-primary-light);
+  }
+  .menu-reviews form button {
+    border: none;
+    background: var(--menu-primary);
+    color: #fff;
+    padding: 0.6rem 1.5rem;
+    border-radius: 999px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .menu-reviews form button:hover { background: var(--menu-primary-dark); }
+  .menu-reviews article {
+    background: var(--menu-card);
+    border: 1px solid var(--menu-border);
+    border-radius: var(--menu-radius);
+    padding: 1rem 1.25rem;
+    margin-bottom: 0.85rem;
+  }
+  .menu-reviews article h3 { margin: 0 0 0.35rem; font-size: 0.95rem; color: var(--menu-dark); }
+  .menu-reviews article p { margin: 0 0 0.5rem; color: var(--menu-text); }
+  .menu-reviews article small { color: var(--menu-muted); }
+</style>
+ 
+<div class="menu-detail-wrap">
 <article class="menu-detail" data-menu-item="{{ item.id }}">
     {% if item.image %}
         <img src="{{ item.image.url }}" alt="{{ item.name }}">
@@ -9,8 +121,8 @@
     <h1>{{ item.name }}</h1>
     <p>{{ item.description }}</p>
     <p>{{ item.current_price|currency }} - {{ item.prep_time_minutes }} min</p>
-    <p class="availability">{{ item.availability_label }}</p>
-
+    <p class="availability {% if item.is_available_now %}is-available{% endif %}">{{ item.availability_label }}</p>
+ 
     <form method="post" action="{% url 'cart:add_to_cart' item.pk %}">
         {% csrf_token %}
         <label for="quantity">Quantity</label>
@@ -18,10 +130,10 @@
         <button type="submit" {% if not item.is_available_now %}disabled{% endif %}>Add to cart</button>
     </form>
 </article>
-
-<section>
+ 
+<section class="menu-reviews">
     <h2>Reviews</h2>
-    
+ 
     {% if user.is_authenticated %}
         <form method="post" action="{% url 'menu:upsert_review' item.pk %}">
             {% csrf_token %}
@@ -29,7 +141,7 @@
             <button type="submit">Save review</button>
         </form>
     {% endif %}
-
+ 
     {% for review in reviews %}
         <article>
             <h3>{{ review.rating }} / 5{% if review.title %} - {{ review.title }}{% endif %}</h3>
@@ -40,7 +152,8 @@
     <p>No reviews yet.</p>
     {% endfor %}
 </section>
-
+</div>
+ 
 <script>
     async function refreshItemAvailability() {
         const response = await fetch("{% url 'menu:availability_feed' %}?item={{ item.id }}");
@@ -48,7 +161,9 @@
         const data = await response.json();
         const item = data.items[0];
         if (!item) return;
-        document.querySelector(".availability").textContent = item.label;
+        const availabilityEl = document.querySelector(".availability");
+        availabilityEl.textContent = item.label;
+        availabilityEl.classList.toggle("is-available", item.available);
         document.querySelector("button[type='submit']").disabled = !item.available;
     }
     setInterval(refreshItemAvailability, 15000);

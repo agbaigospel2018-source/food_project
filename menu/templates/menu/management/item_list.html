@@ -1,14 +1,118 @@
 {% extends "core/base.html" %}
 {% load menu_extras %}
-
+ 
 {% block content %}
-<section>
+<style>
+  :root {
+    --menu-primary: #EA5B0C;
+    --menu-primary-dark: #C94A09;
+    --menu-dark: #0F172A;
+    --menu-bg: #F8FAFC;
+    --menu-card: #FFFFFF;
+    --menu-border: #E5E7EB;
+    --menu-text: #0F172A;
+    --menu-muted: #64748B;
+    --menu-success: #16A34A;
+    --menu-success-bg: #E8F8EE;
+    --menu-danger: #DC2626;
+    --menu-danger-bg: #FDEDED;
+    --menu-radius: 12px;
+    --menu-shadow: 0 1px 3px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.06);
+  }
+ 
+  .menu-manage {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 3.5rem;
+    color: var(--menu-text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  .menu-manage h1 { font-size: 1.9rem; font-weight: 700; margin: 0 0 1.25rem; color: var(--menu-dark); }
+  .menu-manage header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1.5rem; }
+  .menu-manage header .actions { display: flex; gap: 0.6rem; }
+ 
+  .availability {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--menu-danger);
+    background: var(--menu-danger-bg);
+  }
+  .availability.is-available { color: var(--menu-success); background: var(--menu-success-bg); }
+ 
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.6rem 1.25rem;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .btn-primary { background: var(--menu-primary); color: #fff; }
+  .btn-primary:hover { background: var(--menu-primary-dark); }
+  .btn-outline { background: transparent; border-color: var(--menu-border); color: var(--menu-text); }
+  .btn-outline:hover { border-color: var(--menu-primary); color: var(--menu-primary); }
+  .btn-danger { background: #fff; border-color: var(--menu-danger); color: var(--menu-danger); }
+  .btn-danger:hover { background: var(--menu-danger); color: #fff; }
+  .btn-sm { padding: 0.35rem 0.85rem; font-size: 0.8rem; }
+ 
+  .menu-manage table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--menu-card);
+    border: 1px solid var(--menu-border);
+    border-radius: var(--menu-radius);
+    overflow: hidden;
+    box-shadow: var(--menu-shadow);
+  }
+  .menu-manage thead { background: var(--menu-dark); }
+  .menu-manage thead th {
+    text-align: left;
+    padding: 0.85rem 1rem;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #fff;
+    font-weight: 600;
+  }
+  .menu-manage tbody tr { border-top: 1px solid var(--menu-border); }
+  .menu-manage tbody tr:hover { background: var(--menu-bg); }
+  .menu-manage tbody td { padding: 0.85rem 1rem; font-size: 0.9rem; vertical-align: middle; }
+  .menu-manage tbody td.status .availability { margin: 0; }
+  .menu-manage tbody td .row-actions { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+  .menu-manage tbody td .row-actions form { display: inline-flex; }
+ 
+  @media (max-width: 640px) {
+    .menu-manage table, .menu-manage thead, .menu-manage tbody, .menu-manage tr, .menu-manage td { display: block; }
+    .menu-manage thead { display: none; }
+    .menu-manage tbody tr { margin-bottom: 1rem; border-radius: var(--menu-radius); border: 1px solid var(--menu-border); }
+    .menu-manage tbody td { border-top: none; padding: 0.5rem 1rem; }
+    .menu-manage tbody td::before {
+      content: attr(data-label);
+      display: block;
+      font-size: 0.72rem;
+      color: var(--menu-muted);
+      text-transform: uppercase;
+      margin-bottom: 0.15rem;
+    }
+  }
+</style>
+ 
+<section class="menu-manage">
     <header>
-    <h1>Manage {{ vendor.business_name }} menu</h1>
-        <a href="{% url 'menu:vendor_item_create' vendor.pk %}">Add item</a>
-        <a href="{% url 'menu:vendor_category_create' vendor.pk %}">Add category</a>
+        <h1>Manage {{ vendor.business_name }} menu</h1>
+        <div class="actions">
+            <a href="{% url 'menu:vendor_item_create' vendor.pk %}" class="btn btn-primary">Add item</a>
+            <a href="{% url 'menu:vendor_category_create' vendor.pk %}" class="btn btn-outline">Add category</a>
+        </div>
     </header>
-
+ 
     <table>
         <thead>
             <tr>
@@ -20,25 +124,29 @@
             <th>Actions</th>
             </tr>
         </thead>
-        
+ 
         <tbody>
             {% for item in items %}
             <tr>
-                <td>{{ item.name }}</td>
-                <td>{{ item.category|default:"Uncategorized" }}</td>
-                <td>{{ item.current_price|currency }}</td>
-                <td>{{ item.availability_label }}</td>
-                <td>{{ item.stock_quantity|default:"Unlimited" }}</td>
-                <td>
-                <a href="{% url 'menu:vendor_item_update' vendor.pk item.pk %}">Edit</a>
-                <form method="post" action="{% url 'menu:vendor_item_toggle' vendor.pk item.pk %}" style="display:inline">
-                    {% csrf_token %}
-                    <button type="submit">{% if item.is_available %}Mark unavailable{% else %}Mark available{% endif %}</button>
-                </form>
-                <a href="{% url 'menu:vendor_item_delete' vendor.pk item.pk %}">Delete</a>
+                <td data-label="Item">{{ item.name }}</td>
+                <td data-label="Category">{{ item.category|default:"Uncategorized" }}</td>
+                <td data-label="Price">{{ item.current_price|currency }}</td>
+                <td data-label="Status" class="status">
+                    <span class="availability {% if item.is_available_now %}is-available{% endif %}">{{ item.availability_label }}</span>
+                </td>
+                <td data-label="Stock">{{ item.stock_quantity|default:"Unlimited" }}</td>
+                <td data-label="Actions">
+                    <div class="row-actions">
+                        <a href="{% url 'menu:vendor_item_update' vendor.pk item.pk %}" class="btn btn-sm btn-outline">Edit</a>
+                        <form method="post" action="{% url 'menu:vendor_item_toggle' vendor.pk item.pk %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-outline">{% if item.is_available %}Mark unavailable{% else %}Mark available{% endif %}</button>
+                        </form>
+                        <a href="{% url 'menu:vendor_item_delete' vendor.pk item.pk %}" class="btn btn-sm btn-danger">Delete</a>
+                    </div>
                 </td>
             </tr>
-
+ 
             {% empty %}
             <tr><td colspan="6">No menu items yet.</td></tr>
             {% endfor %}

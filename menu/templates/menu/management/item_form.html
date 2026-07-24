@@ -1,14 +1,88 @@
 {% extends "core/base.html" %}
-
+ 
 {% block content %}
-<section>
+<style>
+  :root {
+    --menu-primary: #EA5B0C;
+    --menu-primary-dark: #C94A09;
+    --menu-primary-light: #FDEBDD;
+    --menu-dark: #0F172A;
+    --menu-card: #FFFFFF;
+    --menu-border: #E5E7EB;
+    --menu-text: #0F172A;
+    --menu-muted: #64748B;
+    --menu-danger: #DC2626;
+    --menu-radius: 12px;
+    --menu-shadow: 0 1px 3px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.06);
+  }
+ 
+  .menu-form {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 3.5rem;
+    color: var(--menu-text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  .menu-form h1 { font-size: 1.9rem; font-weight: 700; margin: 0 0 1.25rem; color: var(--menu-dark); }
+ 
+  .menu-form form {
+    background: var(--menu-card);
+    border: 1px solid var(--menu-border);
+    border-radius: var(--menu-radius);
+    box-shadow: var(--menu-shadow);
+    padding: 2rem;
+  }
+  .menu-form form p { margin: 0 0 1.1rem; }
+  .menu-form form label { display: block; font-weight: 600; font-size: 0.85rem; color: var(--menu-muted); margin-bottom: 0.35rem; }
+  .menu-form form input:not([type="checkbox"]):not([type="submit"]):not([type="file"]),
+  .menu-form form select,
+  .menu-form form textarea {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid var(--menu-border);
+    border-radius: 8px;
+    font-size: 0.9rem;
+  }
+  .menu-form form input[type="file"] { font-size: 0.85rem; }
+  .menu-form form input:focus,
+  .menu-form form select:focus,
+  .menu-form form textarea:focus {
+    outline: none;
+    border-color: var(--menu-primary);
+    box-shadow: 0 0 0 3px var(--menu-primary-light);
+  }
+  .menu-form form ul.errorlist { list-style: none; margin: 0.25rem 0 0; padding: 0; color: var(--menu-danger); font-size: 0.8rem; }
+ 
+  .form-actions { display: flex; align-items: center; gap: 1rem; margin-top: 0.5rem; }
+ 
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.6rem 1.25rem;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .btn-primary { background: var(--menu-primary); color: #fff; }
+  .btn-primary:hover { background: var(--menu-primary-dark); }
+  .btn-outline { background: transparent; border-color: var(--menu-border); color: var(--menu-text); }
+  .btn-outline:hover { border-color: var(--menu-primary); color: var(--menu-primary); }
+</style>
+ 
+<section class="menu-form">
     <h1>{% if object %}Edit{% else %}Add{% endif %} menu item</h1>
-    
+ 
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Save</button>
-        <a href="{% url 'menu:vendor_items' vendor.pk %}">Cancel</a>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a href="{% url 'menu:vendor_items' vendor.pk %}" class="btn btn-outline">Cancel</a>
+        </div>
     </form>
 </section>
 {% endblock %}

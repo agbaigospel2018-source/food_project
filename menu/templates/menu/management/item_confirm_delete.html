@@ -1,13 +1,64 @@
 {% extends "core/base.html" %}
-
+ 
 {% block content %}
-<section>
+<style>
+  :root {
+    --menu-dark: #0F172A;
+    --menu-card: #FFFFFF;
+    --menu-border: #E5E7EB;
+    --menu-text: #0F172A;
+    --menu-danger: #DC2626;
+    --menu-danger-bg: #FDEDED;
+    --menu-radius: 12px;
+    --menu-shadow: 0 1px 3px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.06);
+  }
+ 
+  .menu-form {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 3.5rem;
+    color: var(--menu-text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  .menu-form h1 { font-size: 1.9rem; font-weight: 700; margin: 0 0 1.25rem; color: var(--menu-danger); }
+ 
+  .menu-form form {
+    background: var(--menu-card);
+    border: 1px solid var(--menu-danger-bg);
+    border-radius: var(--menu-radius);
+    box-shadow: var(--menu-shadow);
+    padding: 2rem;
+  }
+ 
+  .form-actions { display: flex; align-items: center; gap: 1rem; margin-top: 0.5rem; }
+ 
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.6rem 1.25rem;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .btn-danger { background: var(--menu-danger); color: #fff; }
+  .btn-danger:hover { background: #B91C1C; }
+  .btn-outline { background: transparent; border-color: var(--menu-border); color: var(--menu-text); }
+  .btn-outline:hover { border-color: var(--menu-danger); color: var(--menu-danger); }
+</style>
+ 
+<section class="menu-form">
     <h1>Delete {{ object.name }}?</h1>
-    
+ 
     <form method="post">
         {% csrf_token %}
-        <button type="submit">Delete</button>
-        <a href="{% url 'menu:vendor_items' vendor.pk %}">Cancel</a>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-danger">Delete</button>
+            <a href="{% url 'menu:vendor_items' vendor.pk %}" class="btn btn-outline">Cancel</a>
+        </div>
     </form>
 </section>
 {% endblock %}
