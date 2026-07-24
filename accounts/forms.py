@@ -17,6 +17,7 @@ class RegisterForm(UserCreationForm):
             'role',
             'password1',
             'password2',
+            'profile_image',
         )
 
     def __init__(self, *args, **kwargs):
@@ -37,4 +38,15 @@ class ProfileUpdateForm(forms.ModelForm):
             'username',
             'email',
             'phone_number',
+            'profile_image',
         )
+    
+    def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+    
+            for field in self.fields.values():
+                field.widget.attrs.update({
+                    'class': 'w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-500'
+                })
+                
+

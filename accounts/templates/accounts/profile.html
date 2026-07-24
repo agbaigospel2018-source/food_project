@@ -1,0 +1,242 @@
+```html
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50">
+
+    <!-- Hero Section -->
+    <div class="bg-gradient-to-r from-orange-500 via-orange-600 to-orange-700 h-64 relative">
+
+        <div class="absolute inset-0 bg-black/10"></div>
+
+        <div class="max-w-7xl mx-auto px-6 h-full flex items-end pb-8 relative z-10">
+
+            <div class="flex items-center gap-6">
+
+                <!-- Avatar -->
+                <div class="w-32 h-32 rounded-full bg-white shadow-xl flex items-center justify-center border-4 border-white overflow-hidden">
+
+                    {% if user.profile_image %}
+                        <img src="{{ user.profile_image.url }}"
+                             alt="Profile "
+                             class="w-32 h-32 rounded-full object-cover">
+                    {% else %}
+                        <div class="w-32 h-32 rounded-full bg-orange-500 flex items-center justify-center text-white text-4xl">
+                            {{ user.username|first|upper }}
+                        </div>
+                    {% endif %}
+
+                
+                <!-- Avatar -->
+                <div class="w-32 h-32 rounded-full bg-white shadow-xl flex items-center justify-center border-4 border-white overflow-hidden">
+
+                    {% if user.profile_image %}
+                        <a href="{% url 'edit_profile' %}">
+                            <img src="{{ user.profile_image.url }}"
+                                 alt="Profile "
+                                 class="w-32 h-32 rounded-full object-cover cursor-pointer hover:opacity-80">
+                        </a>
+                    {% else %}
+                        <a href="{% url 'edit_profile' %}" class="w-32 h-32 rounded-full bg-orange-500 flex items-center justify-center text-white text-4xl">
+                            {{ user.username|slice:":1"|upper }}
+                        </a>
+                    {% endif %}
+
+                </div>
+
+
+                </div>
+
+                <div class="text-white">
+                    <h1 class="text-4xl font-bold">
+                        {{ user.get_full_name|default:user.username }}
+                    </h1>
+
+                    <p class="text-orange-100 mt-2">
+                        {{ user.email }}
+                    </p>
+
+                    <span class="inline-flex mt-3 px-4 py-1 rounded-full bg-white/20 backdrop-blur-sm text-sm font-semibold">
+                        {{ user.role|title }}
+                    </span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-6 py-10">
+
+        <div class="grid lg:grid-cols-3 gap-8">
+
+            <!-- Left Sidebar -->
+            <div class="space-y-6">
+
+                <!-- Account Details -->
+                <div class="bg-white rounded-2xl shadow-sm p-6">
+
+                    <h2 class="text-lg font-bold text-gray-800 mb-4">
+                        Account Information
+                    </h2>
+
+                    <div class="space-y-4">
+
+                        <div>
+                            <p class="text-sm text-gray-500">Username</p>
+                            <p class="font-medium">{{ user.username }}</p>
+                        </div>
+
+                        <div>
+                            <p class="text-sm text-gray-500">Email</p>
+                            <p class="font-medium">{{ user.email }}</p>
+                        </div>
+
+                        <div>
+                            <p class="text-sm text-gray-500">Phone Number</p>
+                            <p class="font-medium">
+                                {{ user.phone_number|default:"Not Provided" }}
+                            </p>
+                        </div>
+
+                        <div>
+                            <p class="text-sm text-gray-500">Role</p>
+                            <p class="font-medium">
+                                {{ user.role|title }}
+                            </p>
+                        </div>
+
+                        <div>
+                            <p class="text-sm text-gray-500">Member Since</p>
+                            <p class="font-medium">
+                                {{ user.date_joined|date:"F d, Y" }}
+                            </p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="bg-white rounded-2xl shadow-sm p-6">
+
+                    <h2 class="text-lg font-bold mb-4">
+                        Quick Actions
+                    </h2>
+
+                    <div class="space-y-3">
+
+                        <a href="{% url 'edit_profile' %}"
+                            class="block text-center bg-orange-500 text-white py-3 rounded-xl hover:bg-orange-600 transition">
+                            Edit Profile
+                        </a>
+
+                        <a href="{% url 'change_password' %}"
+                           class="block text-center border border-gray-300 py-3 rounded-xl hover:bg-gray-50 transition">
+                            Change Password
+                        </a>
+
+                        <a href="{% url 'logout' %}"
+                           class="block text-center border border-red-200 text-red-600 py-3 rounded-xl hover:bg-red-50 transition">
+                            Logout
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Main Dashboard -->
+            <div class="lg:col-span-2 space-y-8">
+
+                <!-- Stats -->
+                <div class="grid md:grid-cols-3 gap-6">
+
+                    <div class="bg-white rounded-2xl p-6 shadow-sm">
+                        <h3 class="text-gray-500 text-sm">
+                            Total Orders
+                        </h3>
+                        <p class="text-3xl font-bold mt-2">
+                            {{ total_orders|default:"0" }}
+                        </p>
+                    </div>
+
+                    <div class="bg-white rounded-2xl p-6 shadow-sm">
+                        <h3 class="text-gray-500 text-sm">
+                            Active Listings
+                        </h3>
+                        <p class="text-3xl font-bold mt-2">
+                            {{ active_listings|default:"0" }}
+                        </p>
+                    </div>
+
+                    <div class="bg-white rounded-2xl p-6 shadow-sm">
+                        <h3 class="text-gray-500 text-sm">
+                            Reviews
+                        </h3>
+                        <p class="text-3xl font-bold mt-2">
+                            {{ total_reviews|default:"0" }}
+                        </p>
+                    </div>
+
+                </div>
+
+                <!-- Profile Overview -->
+                <div class="bg-white rounded-2xl shadow-sm p-8">
+
+                    <h2 class="text-2xl font-bold mb-6">
+                        Profile Overview
+                    </h2>
+
+                    <p class="text-gray-600 leading-relaxed">
+                        Welcome to your account dashboard. Here you can manage
+                        your profile information, monitor activities, view
+                        statistics, and access all features available to your
+                        account.
+                    </p>
+
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="bg-white rounded-2xl shadow-sm p-8">
+
+                    <h2 class="text-2xl font-bold mb-6">
+                        Recent Activity
+                    </h2>
+
+                    <div class="space-y-4">
+
+                        <div class="border-l-4 border-orange-500 pl-4">
+                            <p class="font-medium">
+                                Account Created
+                            </p>
+                            <p class="text-sm text-gray-500">
+                                {{ user.date_joined|timesince }} ago
+                            </p>
+                        </div>
+
+                        <div class="border-l-4 border-green-500 pl-4">
+                            <p class="font-medium">
+                                Last Login
+                            </p>
+                            <p class="text-sm text-gray-500">
+                                {{ user.last_login|timesince }} ago
+                            </p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}
+```

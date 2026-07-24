@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('register/', views.register_view, name='register'),
@@ -9,3 +11,4 @@ urlpatterns = [
     path('profile/edit/', views.edit_profile_view, name='edit_profile'),
     path('change_password/', views.change_password_view, name='change_password')
 ]
+
