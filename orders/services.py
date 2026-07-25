@@ -1,5 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.db import transaction
+from django.utils import timezone
 
 from cart.models import Cart
 from cart.services import clear_cart
@@ -32,14 +33,29 @@ def validate_cart(cart, pickup_time):
 
     # Pickup time validation
     if pickup_time:
+        pickup_time_value = (
+            pickup_time.time()
+            if isinstance(pickup_time, datetime)
+            else pickup_time
+        )
 
-        if (
-            pickup_time < vendor.opening_time
-            or pickup_time > vendor.closing_time
-        ):
-            raise ValidationError(
-                "Selected pickup time is outside the vendor's operating hours."
-            )
+        if vendor.opening_time < vendor.closing_time:
+            if (
+                pickup_time_value < vendor.opening_time
+                or pickup_time_value > vendor.closing_time
+            ):
+                raise ValidationError(
+                    "Selected pickup time is outside the vendor's operating hours."
+                )
+        else:
+            # Vendor closes after midnight
+            if not (
+                pickup_time_value >= vendor.opening_time
+                or pickup_time_value <= vendor.closing_time
+            ):
+                raise ValidationError(
+                    "Selected pickup time is outside the vendor's operating hours."
+                )
 
     for item in cart.items.select_related(
         "menu_item",
@@ -109,13 +125,15 @@ def create_order_from_cart(student, pickup_time):
     order_items = []
 
     for cart_item in cart.items.all():
+        unit_price = cart_item.menu_item.current_price
 
         order_items.append(
             OrderItem(
                 order=order,
                 menu_item=cart_item.menu_item,
                 quantity=cart_item.quantity,
-                unit_price=cart_item.menu_item.current_price,
+                unit_price=unit_price,
+                subtotal=cart_item.quantity * unit_price,
             )
         )
 
@@ -149,7 +167,7 @@ def generate_pickup_slots(vendor, interval=15, prep_buffer=20):
     end = datetime.combine(today, vendor.closing_time)
 
     # Handle vendors that close after midnight
-    if end <= start:
+    if end < start:
         end += timedelta(days=1)
 
     # Don't allow pickup immediately after ordering

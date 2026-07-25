@@ -58,32 +58,17 @@ Checkout
                             Pickup Information
                         </h2>
 
-                        <label for="pickup_time" class="mb-2 block font-medium">
+                        <label for="id_pickup_time" class="mb-2 block font-medium">
                             Select Pickup Time
                         </label>
 
-                        <select id="pickup_time" name="pickup_time" required
-                            class="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-200">
+                        {% if form.pickup_time.errors %}
+                        <div class="mb-2 rounded-lg border border-red-300 bg-red-50 p-3 text-sm text-red-700">
+                            {{ form.pickup_time.errors.as_text|safe }}
+                        </div>
+                        {% endif %}
 
-                            <option value="">
-                                Choose a pickup time
-                            </option>
-
-                            {% for slot in pickup_slots %}
-
-                            <option value="{{ slot.value }}">
-                                {{ slot.label }}
-                            </option>
-
-                            {% empty %}
-
-                            <option disabled>
-                                No pickup slots available
-                            </option>
-
-                            {% endfor %}
-
-                        </select>
+                        {{ form.pickup_time }}
 
                         <p class="mt-3 text-sm text-gray-500">
                             Available pickup times are based on the vendor's operating hours.

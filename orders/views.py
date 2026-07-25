@@ -5,15 +5,14 @@ from django.core.exceptions import ValidationError
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from datetime import datetime
+from django.utils import timezone
 from cart.services import get_or_create_cart
 
 from vendors.models import Vendor
 
+from .forms import OrderForm
 from .models import Order, OrderStatus
-from .services import (
-    create_order_from_cart,
-    generate_pickup_slots,
-)
+from .services import create_order_from_cart
 
 # Create your views here.
 @login_required
@@ -36,48 +35,42 @@ def checkout_view(request):
         "menu_item__vendor"
     ).first().menu_item.vendor
 
-    # Generate available pickup slots
-    pickup_slots = generate_pickup_slots(vendor)
+    form = OrderForm(request.POST or None)
 
     if request.method == "POST":
+        if form.is_valid():
+            pickup_time = form.cleaned_data["pickup_time"]
 
-        pickup_time_str = request.POST.get("pickup_time")
+            if timezone.is_naive(pickup_time):
+                pickup_time = timezone.make_aware(
+                    pickup_time,
+                    timezone.get_current_timezone(),
+                )
 
-        try:
-            # Convert the submitted value into a time object
-            pickup_time = datetime.strptime(
-                pickup_time_str,
-                "%I:%M %p"
-             ).time()
+            try:
+                order = create_order_from_cart(
+                    student=request.user,
+                    pickup_time=pickup_time,
+                )
 
-            order = create_order_from_cart(
-                student=request.user,
-                pickup_time=pickup_time,
-            )
+            except ValidationError as e:
+                messages.error(request, e)
 
-            messages.success(
-                request,
-                "Your order has been placed successfully."
-            )
+            else:
+                messages.success(
+                    request,
+                    "Your order has been placed successfully."
+                )
 
-            return redirect(
-                "orders:order_success",
-                order_id=order.id,
-            )
-
-        except ValidationError as e:
-            messages.error(request, e)
-
-        except ValueError:
-            messages.error(
-                request,
-                "Please select a valid pickup time."
-            )
+                return redirect(
+                    "orders:order_success",
+                    order_id=order.id,
+                )
 
     context = {
         "cart": cart,
         "vendor": vendor,
-        "pickup_slots": pickup_slots,
+        "form": form,
     }
 
     return render(
