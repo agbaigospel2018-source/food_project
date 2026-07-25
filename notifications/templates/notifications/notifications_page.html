@@ -1,0 +1,268 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Notifications - Belleful Express{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 py-12 relative overflow-hidden">
+
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
+            <div>
+                <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight flex items-center gap-3">
+                    <svg class="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9">
+                        </path>
+                    </svg>
+                    Notifications
+                </h1>
+                <p class="text-gray-500 mt-1">Stay updated with your latest alerts</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <button onclick="markAllAsRead()"
+                    class="flex items-center gap-2 px-4 py-2 bg-white text-gray-700 text-sm font-medium rounded-xl shadow-sm border border-gray-200 hover:bg-gray-50 hover:text-orange-600 transition-all duration-200 transform hover:scale-105 active:scale-95">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    Mark All Read
+                </button>
+                <button onclick="deleteAll()"
+                    class="flex items-center gap-2 px-4 py-2 bg-white text-gray-700 text-sm font-medium rounded-xl shadow-sm border border-gray-200 hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-all duration-200 transform hover:scale-105 active:scale-95">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                        </path>
+                    </svg>
+                    Delete All
+                </button>
+            </div>
+        </div>
+
+        <!-- Notification List Container -->
+        <div
+            class="bg-white/70 backdrop-blur-xl border border-white/50 rounded-3xl shadow-xl overflow-hidden min-h-[400px] relative transition-all duration-500 hover:shadow-2xl">
+
+            <!-- Loading State -->
+            <div id="loading-state"
+                class="absolute inset-0 flex flex-col items-center justify-center bg-white/50 z-20 transition-opacity duration-300">
+                <svg class="w-10 h-10 animate-spin text-orange-500 mb-4" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                    </path>
+                </svg>
+                <p class="font-medium text-gray-500 animate-pulse">Loading your notifications...</p>
+            </div>
+
+            <!-- Empty State -->
+            <div id="empty-state"
+                class="hidden absolute inset-0 flex-col items-center justify-center py-24 text-center px-4 transition-all duration-500 transform scale-95 opacity-0">
+                <div
+                    class="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mb-6 shadow-inner relative">
+                    <div
+                        class="absolute inset-0 rounded-full border-4 border-dashed border-gray-200 animate-[spin_10s_linear_infinite]">
+                    </div>
+                    <svg class="w-10 h-10 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                            d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4">
+                        </path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900">You're all caught up!</h3>
+                <p class="text-gray-500 mt-2 max-w-sm">There are no new notifications for you right now. Take a break
+                    and check back later.</p>
+            </div>
+
+            <!-- List -->
+            <ul id="notifications-list" class="divide-y divide-gray-100 opacity-0 transition-opacity duration-500">
+                <!-- Notifications injected here -->
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+    // CSRF token setup for Django
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+
+    const headers = {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrftoken
+    };
+
+    // DOM Elements
+    const listEl = document.getElementById('notifications-list');
+    const emptyState = document.getElementById('empty-state');
+    const loadingState = document.getElementById('loading-state');
+
+    // Notification UI mapping based on type
+    const notificationConfig = {
+        'order_placed': { icon: 'M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z', color: 'bg-blue-50 text-blue-600 ring-blue-100' },
+        'order_accepted': { icon: 'M5 13l4 4L19 7', color: 'bg-indigo-50 text-indigo-600 ring-indigo-100' },
+        'order_preparing': { icon: 'M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z', color: 'bg-yellow-50 text-yellow-600 ring-yellow-100' },
+        'order_ready': { icon: 'M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4', color: 'bg-green-50 text-green-600 ring-green-100' },
+        'order_completed': { icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z', color: 'bg-emerald-50 text-emerald-600 ring-emerald-100' },
+        'order_cancelled': { icon: 'M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z', color: 'bg-red-50 text-red-600 ring-red-100' },
+        'order_rejected': { icon: 'M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z', color: 'bg-rose-50 text-rose-600 ring-rose-100' },
+        'new_order': { icon: 'M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9', color: 'bg-purple-50 text-purple-600 ring-purple-100' },
+        'low_stock': { icon: 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z', color: 'bg-orange-50 text-orange-600 ring-orange-100' },
+        'promo': { icon: 'M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7', color: 'bg-pink-50 text-pink-600 ring-pink-100' },
+        'system': { icon: 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z', color: 'bg-gray-50 text-gray-600 ring-gray-100' }
+    };
+
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        return new Intl.DateTimeFormat('en-US', {
+            month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit'
+        }).format(date);
+    }
+
+    function createNotificationHTML(n) {
+        const conf = notificationConfig[n.notification_type] || notificationConfig['system'];
+        const isReadClass = n.is_read ? 'opacity-60 bg-white hover:opacity-100' : 'bg-orange-50/20 font-medium hover:bg-orange-50/50';
+        const unreadDot = !n.is_read ? '<span class="absolute top-7 left-6 w-2.5 h-2.5 bg-orange-500 rounded-full shadow-[0_0_8px_rgba(249,115,22,0.6)]"></span>' : '';
+
+        return `
+        <li id="notif-${n.id}" class="group relative px-6 py-5 transition-all duration-300 flex items-start gap-5 ${isReadClass}">
+            ${unreadDot}
+            <div class="relative flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-2xl ring-1 ${conf.color} shadow-sm group-hover:scale-110 transition-transform duration-300 ml-3">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${conf.icon}"></path>
+                </svg>
+            </div>
+            
+            <div class="flex-grow min-w-0 pr-16">
+                <div class="flex items-center justify-between gap-2 mb-1.5">
+                    <h4 class="text-[15px] font-semibold text-gray-900 truncate">${n.title}</h4>
+                    <span class="text-xs text-gray-400 whitespace-nowrap">${formatDate(n.created_at)}</span>
+                </div>
+                <p class="text-sm text-gray-600 leading-relaxed">${n.message}</p>
+                
+                ${n.order_id ? `
+                    <a href="/orders/${n.order_id}" class="inline-flex items-center gap-1.5 mt-3 text-xs font-semibold text-orange-600 hover:text-orange-700 transition-colors bg-orange-50 px-3 py-1.5 rounded-lg w-max hover:bg-orange-100">
+                        View Order Details <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
+                    </a>
+                ` : ''}
+            </div>
+            
+            <div class="absolute right-6 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-200 transform translate-x-2 group-hover:translate-x-0 flex items-center gap-2">
+                ${!n.is_read ? `
+                <button onclick="markAsRead('${n.id}')" title="Mark as Read" class="p-2.5 text-gray-400 hover:text-green-600 bg-white rounded-full shadow hover:shadow-md border border-gray-100 hover:border-green-200 hover:bg-green-50 transition-all duration-200 active:scale-95">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                </button>
+                ` : ''}
+                <button onclick="deleteNotification('${n.id}')" title="Delete" class="p-2.5 text-gray-400 hover:text-red-600 bg-white rounded-full shadow hover:shadow-md border border-gray-100 hover:border-red-200 hover:bg-red-50 transition-all duration-200 active:scale-95">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                </button>
+            </div>
+        </li>
+        `;
+    }
+
+    async function fetchNotifications() {
+        try {
+            const response = await fetch('/notifications/api/list/');
+            if (!response.ok) throw new Error('Failed to fetch');
+            const data = await response.json();
+
+            loadingState.style.opacity = '0';
+            setTimeout(() => { loadingState.classList.add('hidden'); }, 300);
+
+            if (data.notifications.length === 0) {
+                emptyState.classList.remove('hidden');
+                setTimeout(() => {
+                    emptyState.classList.remove('scale-95', 'opacity-0');
+                    emptyState.classList.add('scale-100', 'opacity-100', 'flex');
+                }, 50);
+                listEl.classList.add('hidden');
+                listEl.classList.remove('opacity-100');
+            } else {
+                emptyState.classList.add('hidden');
+                emptyState.classList.remove('flex', 'scale-100', 'opacity-100');
+                emptyState.classList.add('scale-95', 'opacity-0');
+
+                listEl.classList.remove('hidden');
+                listEl.innerHTML = data.notifications.map(createNotificationHTML).join('');
+                setTimeout(() => { listEl.classList.add('opacity-100'); }, 50);
+            }
+        } catch (error) {
+            console.error('Error fetching notifications:', error);
+            loadingState.innerHTML = '<p class="text-red-500 font-medium bg-red-50 px-4 py-2 rounded-lg">Failed to load notifications. Please try again later.</p>';
+            loadingState.classList.remove('hidden');
+            loadingState.style.opacity = '1';
+        }
+    }
+
+    async function markAsRead(id) {
+        try {
+            const response = await fetch(`/notifications/${id}/read/`, { method: 'POST', headers });
+            if (response.ok) fetchNotifications();
+        } catch (error) {
+            console.error('Error marking read:', error);
+        }
+    }
+
+    async function deleteNotification(id) {
+        try {
+            const el = document.getElementById(`notif-${id}`);
+            if (el) {
+                el.classList.add('opacity-0', '-translate-x-full');
+                setTimeout(async () => {
+                    const response = await fetch(`/notifications/${id}/delete/`, { method: 'POST', headers });
+                    if (response.ok) fetchNotifications();
+                }, 300);
+            }
+        } catch (error) {
+            console.error('Error deleting:', error);
+        }
+    }
+
+    async function markAllAsRead() {
+        try {
+            const response = await fetch(`/notifications/read-all/`, { method: 'POST', headers });
+            if (response.ok) fetchNotifications();
+        } catch (error) {
+            console.error('Error marking all read:', error);
+        }
+    }
+
+    async function deleteAll() {
+        if (!confirm('Are you sure you want to delete all notifications?')) return;
+        try {
+            listEl.classList.remove('opacity-100');
+            listEl.classList.add('opacity-0', 'scale-95', 'transform');
+            listEl.style.transition = 'all 0.4s ease';
+
+            setTimeout(async () => {
+                const response = await fetch(`/notifications/delete-all/`, { method: 'POST', headers });
+                if (response.ok) {
+                    listEl.style.transition = '';
+                    listEl.classList.remove('scale-95', 'transform');
+                    fetchNotifications();
+                }
+            }, 400);
+        } catch (error) {
+            console.error('Error deleting all:', error);
+        }
+    }
+
+    // Initial load
+    document.addEventListener('DOMContentLoaded', fetchNotifications);
+</script>
+{% endblock %}

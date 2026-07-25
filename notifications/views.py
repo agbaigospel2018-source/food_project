@@ -1,8 +1,13 @@
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.views.decorators.http import require_POST
 from .models import Notification
+
+@login_required
+def notifications_page(request):
+    """Render the notifications frontend page."""
+    return render(request, 'notifications/notifications_page.html')
 
 
 @login_required
