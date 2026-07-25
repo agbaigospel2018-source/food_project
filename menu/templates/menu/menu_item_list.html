@@ -128,6 +128,34 @@
   }
   .menu-card form button:hover { background: var(--menu-primary-dark); }
   .menu-card form button:disabled { background: #E5E7EB; color: #9CA3AF; cursor: not-allowed; }
+
+  .search-container {
+    position: relative;
+    width: 100%;
+}
+
+   #suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: white;
+    border: 1px solid #ddd;
+    border-top: none;
+    display: none;
+    max-height: 250px;
+    overflow-y: auto;
+    z-index: 1000;
+    }
+
+  #suggestions div {
+    padding: 10px;
+    cursor: pointer;
+    }
+
+  #suggestions div:hover {
+    background: #f5f5f5;
+    }
 </style>
  
 <section class="menu-page">
@@ -135,17 +163,49 @@
         <h1>{% if vendor %}{{ vendor.business_name }} menu{% else %}Campus menu{% endif %}</h1>
  
         <form method="get" class="menu-filter-bar">
-            <input type="search" name="q" value="{{ request.GET.q }}" placeholder="Search food or vendor">
+
+            <div class="search-container">
+                <input
+                    type="search"
+                    id="search"
+                    name="q"
+                    value="{{ request.GET.q }}"
+                    placeholder="Search food or vendor"
+                    autocomplete="on">
+
+                <div id="suggestions"></div>
+            </div>
+
             <select name="category">
-            <option value="">All categories</option>
-            {% for category in categories %}
-                <option value="{{ category.slug }}" {% if request.GET.category == category.slug %}selected{% endif %}>{{ category.name }}</option>
-            {% endfor %}
+                <option value="">All categories</option>
+                {% for category in categories %}
+                    <option value="{{ category.slug }}"
+                        {% if request.GET.category == category.slug %}selected{% endif %}>
+                        {{ category.name }}
+                    </option>
+                {% endfor %}
             </select>
-            <label><input type="checkbox" name="available" value="1" {% if request.GET.available == "1" %}checked{% endif %}> Available now</label>
-            <label><input type="checkbox" name="is_halal" value="1" {% if request.GET.is_halal == "1" %}checked{% endif %}> Halal</label>
-            <label><input type="checkbox" name="is_vegetarian" value="1" {% if request.GET.is_vegetarian == "1" %}checked{% endif %}> Vegetarian</label>
+
+            <label>
+                <input type="checkbox" name="available" value="1"
+                {% if request.GET.available == "1" %}checked{% endif %}>
+                Available now
+            </label>
+
+            <label>
+                <input type="checkbox" name="is_halal" value="1"
+                {% if request.GET.is_halal == "1" %}checked{% endif %}>
+                Halal
+            </label>
+
+            <label>
+                <input type="checkbox" name="is_vegetarian" value="1"
+                {% if request.GET.is_vegetarian == "1" %}checked{% endif %}>
+                Vegetarian
+            </label>
+
             <button type="submit">Filter</button>
+
         </form>
     </header>
  
