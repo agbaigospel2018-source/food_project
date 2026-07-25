@@ -221,4 +221,4 @@ class VendorCategoryCreateView(VendorMenuMixin, CreateView):
         messages.success(self.request, "Category created.")
         return super().form_valid(form)
 
-    
+    def 
