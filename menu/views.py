@@ -221,5 +221,4 @@ class VendorCategoryCreateView(VendorMenuMixin, CreateView):
         messages.success(self.request, "Category created.")
         return super().form_valid(form)
 
-    def get_success_url(self):
-        return reverse("menu:vendor_items", kwargs={"vendor_pk": self.vendor.pk})
+    
