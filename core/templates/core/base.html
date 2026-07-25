@@ -41,42 +41,51 @@
                 Belleful Express
 
             </a>
+            
+            <!-- Mobile Menu Button -->
+            <div class="flex items-center md:hidden">
+                <button id="mobile-menu-button" type="button" class="text-white hover:text-yellow-200 focus:outline-none focus:text-yellow-200 p-2" aria-label="Toggle menu">
+                    <svg viewBox="0 0 24 24" class="w-6 h-6 fill-current">
+                        <path fill-rule="evenodd" d="M4 5h16a1 1 0 010 2H4a1 1 0 110-2zm0 6h16a1 1 0 010 2H4a1 1 0 010-2zm0 6h16a1 1 0 010 2H4a1 1 0 010-2z"></path>
+                    </svg>
+                </button>
+            </div>
 
             <div class="hidden md:flex items-center gap-6">
 
-                <a href="{% url 'home' %}" class="hover:text-yellow-200">
+                <a href="{% url 'home' %}" class="hover:text-yellow-200 transition-colors">
                     Home
                 </a>
 
-                <a href="{% url 'about' %}" class="hover:text-yellow-200">
+                <a href="{% url 'about' %}" class="hover:text-yellow-200 transition-colors">
                     About
                 </a>
 
-                <a href="{% url 'contact' %}" class="hover:text-yellow-200">
+                <a href="{% url 'contact' %}" class="hover:text-yellow-200 transition-colors">
                     Contact
                 </a>
 
                 {% if user.is_authenticated %}
 
                     <a href="{% url 'profile' %}"
-                       class="hover:text-yellow-200">
+                       class="hover:text-yellow-200 transition-colors">
                         Profile
                     </a>
 
                     <a href="{% url 'logout' %}"
-                       class="bg-white text-orange-600 px-4 py-2 rounded-lg font-semibold">
+                       class="bg-white text-orange-600 hover:bg-orange-50 px-4 py-2 rounded-lg font-semibold transition-colors">
                         Logout
                     </a>
 
                 {% else %}
 
                     <a href="{% url 'login' %}"
-                       class="hover:text-yellow-200">
+                       class="hover:text-yellow-200 transition-colors">
                         Login
                     </a>
 
                     <a href="{% url 'register' %}"
-                       class="bg-white text-orange-600 px-4 py-2 rounded-lg font-semibold">
+                       class="bg-white text-orange-600 hover:bg-orange-50 px-4 py-2 rounded-lg font-semibold transition-colors">
                         Register
                     </a>
 
@@ -84,6 +93,23 @@
 
             </div>
 
+        </div>
+
+        <!-- Mobile Menu (Hidden by default) -->
+        <div id="mobile-menu" class="hidden md:hidden pb-4 pt-2 border-t border-orange-500 mt-2">
+            <div class="flex flex-col gap-4">
+                <a href="{% url 'home' %}" class="block hover:text-yellow-200 px-2 py-1">Home</a>
+                <a href="{% url 'about' %}" class="block hover:text-yellow-200 px-2 py-1">About</a>
+                <a href="{% url 'contact' %}" class="block hover:text-yellow-200 px-2 py-1">Contact</a>
+                
+                {% if user.is_authenticated %}
+                    <a href="{% url 'profile' %}" class="block hover:text-yellow-200 px-2 py-1">Profile</a>
+                    <a href="{% url 'logout' %}" class="block bg-white text-orange-600 px-4 py-2 rounded-lg font-semibold text-center mt-2 w-full shadow">Logout</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="block hover:text-yellow-200 px-2 py-1">Login</a>
+                    <a href="{% url 'register' %}" class="block bg-white text-orange-600 px-4 py-2 rounded-lg font-semibold text-center mt-2 w-full shadow">Register</a>
+                {% endif %}
+            </div>
         </div>
 
     </div>
@@ -200,6 +226,19 @@
 </footer>
 
 <script src="{% static 'js/main.js' %}"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        if (mobileMenuButton && mobileMenu) {
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
+    });
+</script>
 
 {% block extra_js %}
 {% endblock %}
