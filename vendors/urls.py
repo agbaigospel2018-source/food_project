@@ -1,30 +1,64 @@
 from django.urls import path
 from . import views
 
+app_name = "vendors"
+
 urlpatterns = [
+
+    # ==========================================
+    # Student Views
+    # ==========================================
+
     path(
-        'dashboard/',
+        "",
+        views.vendor_list,
+        name="vendor_list"
+    ),
+
+    path(
+        "<int:pk>/",
+        views.vendor_detail,
+        name="vendor_detail"
+    ),
+
+    # ==========================================
+    # Vendor Management
+    # ==========================================
+
+    path(
+        "dashboard/",
         views.vendor_dashboard,
-        name='vendor_dashboard'
-),
+        name="vendor_dashboard"
+    ),
+
     path(
-    'create/',
-    views.create_vendor,
-    name='create_vendor'
-),
+        "profile/",
+        views.vendor_profile,
+        name="vendor_profile"
+    ),
+
     path(
-    'profile/',
-    views.vendor_profile,
-    name='vendor_profile'
-),
+        "create/",
+        views.create_vendor,
+        name="create_vendor"
+    ),
+
     path(
-    'profile/edit/',
-    views.edit_vendor,
-    name='edit_vendor'
-), 
+        "edit/",
+        views.edit_vendor,
+        name="edit_vendor"
+    ),
+
     path(
-    'toggle-status/',
-    views.toggle_vendor_status,
-    name='toggle_vendor_status'
-),
+        "toggle-status/",
+        views.toggle_vendor_status,
+        name="toggle_vendor_status"
+    ),
+
+    path(
+        "delete/",
+        views.delete_vendor,
+        name="delete_vendor"
+    ),
+
 ]
