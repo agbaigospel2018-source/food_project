@@ -1860,6 +1860,18 @@ input:where([type='file']):focus {
   padding-right: 4rem;
 }
 
+.pt-20 {
+  padding-top: 5rem;
+}
+
+.pt-4 {
+  padding-top: 1rem;
+}
+
+.pt-24 {
+  padding-top: 6rem;
+}
+
 .text-center {
   text-align: center;
 }
@@ -2606,6 +2618,18 @@ input:where([type='file']):focus {
 
   .md\:justify-between {
     justify-content: space-between;
+  }
+
+  .md\:pt-24 {
+    padding-top: 6rem;
+  }
+
+  .md\:pt-6 {
+    padding-top: 1.5rem;
+  }
+
+  .md\:pt-28 {
+    padding-top: 7rem;
   }
 
   .md\:text-4xl {
