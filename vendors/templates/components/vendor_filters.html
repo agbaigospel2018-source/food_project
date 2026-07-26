@@ -1,0 +1,49 @@
+<!-- ==========================================
+                Vendor Filters
+=========================================== -->
+
+<div class="flex flex-wrap items-center gap-3 mb-10">
+
+    <!-- All -->
+
+    <a href="{% url 'vendors:vendor_list' %}{% if request.GET.q %}?q={{ request.GET.q }}{% endif %}"
+       class="px-5 py-2 rounded-full font-medium transition
+       {% if not request.GET.status %}
+           bg-orange-600 text-white shadow
+       {% else %}
+           bg-white border border-gray-300 text-gray-700 hover:border-orange-600 hover:text-orange-600
+       {% endif %}">
+
+        All Restaurants
+
+    </a>
+
+    <!-- Open -->
+
+    <a href="?status=open{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}"
+       class="px-5 py-2 rounded-full font-medium transition
+       {% if request.GET.status == 'open' %}
+           bg-green-600 text-white shadow
+       {% else %}
+           bg-white border border-gray-300 text-gray-700 hover:border-green-600 hover:text-green-600
+       {% endif %}">
+
+        🟢 Open Now
+
+    </a>
+
+    <!-- Closed -->
+
+    <a href="?status=closed{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}"
+       class="px-5 py-2 rounded-full font-medium transition
+       {% if request.GET.status == 'closed' %}
+           bg-red-600 text-white shadow
+       {% else %}
+           bg-white border border-gray-300 text-gray-700 hover:border-red-600 hover:text-red-600
+       {% endif %}">
+
+        🔴 Closed
+
+    </a>
+
+</div>

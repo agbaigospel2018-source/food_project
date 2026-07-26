@@ -1,0 +1,81 @@
+<aside class="bg-white rounded-2xl shadow-lg p-6">
+
+    <div class="text-center mb-8">
+
+        {% if vendor.logo %}
+
+            <img
+                src="{{ vendor.logo.url }}"
+                class="w-24 h-24 rounded-full mx-auto object-cover">
+
+        {% else %}
+
+            <div class="w-24 h-24 rounded-full bg-orange-600 text-white flex items-center justify-center mx-auto text-3xl font-bold">
+
+                {{ vendor.initials }}
+
+            </div>
+
+        {% endif %}
+
+        <h2 class="mt-4 text-xl font-bold">
+
+            {{ vendor.business_name }}
+
+        </h2>
+
+        <p class="text-gray-500">
+
+            {{ vendor.location }}
+
+        </p>
+
+    </div>
+
+    <nav class="space-y-2">
+
+        <a href="{% url 'vendors:vendor_dashboard' %}"
+           class="block px-4 py-3 rounded-xl hover:bg-orange-100">
+
+            📊 Dashboard
+
+        </a>
+
+        <a href="{% url 'vendors:vendor_profile' %}"
+           class="block px-4 py-3 rounded-xl hover:bg-orange-100">
+
+            👤 Profile
+
+        </a>
+
+        <a href="#"
+           class="block px-4 py-3 rounded-xl hover:bg-orange-100">
+
+            🍽 Menu
+
+        </a>
+
+        <a href="#"
+           class="block px-4 py-3 rounded-xl hover:bg-orange-100">
+
+            📦 Orders
+
+        </a>
+
+        <a href="#"
+           class="block px-4 py-3 rounded-xl hover:bg-orange-100">
+
+            📈 Analytics
+
+        </a>
+
+        <a href="#"
+           class="block px-4 py-3 rounded-xl hover:bg-orange-100">
+
+            ⚙ Settings
+
+        </a>
+
+    </nav>
+
+</aside>

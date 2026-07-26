@@ -1,0 +1,154 @@
+<div class="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:-translate-y-2">
+
+    <!-- ==========================
+            Restaurant Image
+    =========================== -->
+
+    <div class="relative h-56 overflow-hidden">
+
+        {% if vendor.logo %}
+
+            <img
+                src="{{ vendor.logo.url }}"
+                alt="{{ vendor.business_name }}"
+                class="w-full h-full object-cover transition duration-500 group-hover:scale-110">
+
+        {% else %}
+
+            <div class="w-full h-full bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center">
+
+                <span class="text-5xl font-bold text-white">
+
+                    {{ vendor.initials }}
+
+                </span>
+
+            </div>
+
+        {% endif %}
+
+        <!-- Gradient Overlay -->
+
+        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
+
+        <!-- Status Badge -->
+
+        <div class="absolute top-4 right-4">
+
+            {% if vendor.is_currently_open %}
+
+                <span class="bg-green-500 text-white text-xs font-semibold px-3 py-1 rounded-full shadow">
+
+                    🟢 Open Now
+
+                </span>
+
+            {% else %}
+
+                <span class="bg-red-500 text-white text-xs font-semibold px-3 py-1 rounded-full shadow">
+
+                    🔴 Closed
+
+                </span>
+
+            {% endif %}
+
+        </div>
+
+        <!-- Restaurant Name -->
+
+        <div class="absolute bottom-5 left-5 right-5">
+
+            <h2 class="text-2xl font-bold text-white">
+
+                {{ vendor.business_name }}
+
+            </h2>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==========================
+            Card Content
+    =========================== -->
+
+    <div class="p-6">
+
+        <!-- Description -->
+
+        <p class="text-gray-600 text-sm leading-relaxed mb-5">
+
+            {{ vendor.short_description }}
+
+        </p>
+
+        <!-- Information -->
+
+        <div class="space-y-3 text-sm text-gray-500">
+
+            <div class="flex items-center">
+
+                <svg class="w-5 h-5 text-orange-500 mr-3"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="2"
+                     viewBox="0 0 24 24">
+
+                    <path d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0L6.343 16.657a8 8 0 1111.314 0z"/>
+
+                    <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+
+                </svg>
+
+                {{ vendor.location }}
+
+            </div>
+
+            <div class="flex items-center">
+
+                <svg class="w-5 h-5 text-orange-500 mr-3"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="2"
+                     viewBox="0 0 24 24">
+
+                    <circle cx="12" cy="12" r="10"></circle>
+
+                    <polyline points="12 6 12 12 16 14"></polyline>
+
+                </svg>
+
+                {{ vendor.operating_hours }}
+
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+
+        <div class="mt-8">
+
+            <a href="{% url 'vendors:vendor_detail' vendor.pk %}"
+               class="w-full flex items-center justify-center bg-orange-600 hover:bg-orange-700 text-white font-semibold py-3 rounded-xl transition">
+
+                View Restaurant
+
+                <svg class="ml-2 w-5 h-5"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="2"
+                     viewBox="0 0 24 24">
+
+                    <path d="M9 5l7 7-7 7"/>
+
+                </svg>
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
