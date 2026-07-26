@@ -10,37 +10,41 @@ from orders.models import Order
 # Create your views here.
 
 # Student views
-def vendor_list(request):
-    
-    """ 
-    Display all vendors.
-    """
-    
-    vendors = Vendor.objects.all().order_by('business_name')
-    
-    query = request.GET.get('q')
-    
-    if query:
-        vendors = Vendor.filter(
-            Q(business_name__icontains=query) |
-            Q(location__icontains=query) |
-            Q(description__icontains=query)
-        )
-        
-    status = request.GET.get('status')
-    
-    if status == 'open':
-        vendors = vendors.filter(is_open=True)
-        
-    elif status == 'closed':
-        vendors = vendors.filter(is_open=False)
-        
-    context = {
-        'vendors': vendors
-    }
-    
-    return render(request, 'vendors/vendor_list.html', context)
+from django.db.models import Q
 
+def vendor_list(request):
+
+    vendors = Vendor.objects.all().order_by("business_name")
+
+    query = request.GET.get("q")
+
+    status = request.GET.get("status")
+
+    if query:
+        vendors = vendors.filter(
+            Q(business_name__icontains=query) |
+            Q(location__icontains=query)
+        )
+
+    if status == "open":
+        vendors = vendors.filter(is_open=True)
+
+    elif status == "closed":
+        vendors = vendors.filter(is_open=False)
+
+    context = {
+        "vendors": vendors,
+        "total_vendors": Vendor.objects.count(),
+        "open_vendors": Vendor.objects.filter(is_open=True).count(),
+        "page_title": "Discover Amazing Restaurants",
+        "page_subtitle": "Order from your favorite campus restaurants and skip the queue.",
+    }
+
+    return render(
+        request,
+        "vendors/vendor_list.html",
+        context
+    )
 
 def vendor_detail(request, pk):
     
