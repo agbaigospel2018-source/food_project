@@ -30,7 +30,7 @@
 
                 </a>
 
-                <a href="{% url 'vendor_dashboard' %}"
+                <a href="{% url 'vendors:vendor_dashboard' %}"
                    class="{% if request.resolver_match.url_name == 'vendor_dashboard' %}text-yellow-300{% else %}text-white hover:text-yellow-200{% endif %} font-medium transition">
 
                     Restaurants

@@ -10,7 +10,7 @@ Restaurants | Belleful Express
                 Hero Section
 =========================================== -->
 
-{% include "vendors/components/vendor_header.html" %}
+{% include "components/vendor_header.html" %}
 
 <!-- ==========================================
                 Main Content
@@ -22,11 +22,11 @@ Restaurants | Belleful Express
 
         <!-- Search -->
 
-        {% include "vendors/components/vendor_search.html" %}
+        {% include "components/vendor_search.html" %}
 
         <!-- Filters -->
 
-        {% include "vendors/components/vendor_filters.html" %}
+        {% include "components/vendor_filters.html" %}
 
         <!-- Restaurant Grid -->
 
@@ -36,7 +36,7 @@ Restaurants | Belleful Express
 
                 {% for vendor in vendors %}
 
-                    {% include "vendors/components/vendor_card.html" %}
+                    {% include "components/vendor_card.html" %}
 
                 {% endfor %}
 
@@ -44,7 +44,7 @@ Restaurants | Belleful Express
 
         {% else %}
 
-            {% include "vendors/components/vendor_empty.html" %}
+            {% include "components/vendor_empty.html" %}
 
         {% endif %}
 
