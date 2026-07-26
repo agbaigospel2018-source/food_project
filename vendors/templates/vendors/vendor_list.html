@@ -1,25 +1,23 @@
-{% extends "base.html" %}
+{% extends "core/base.html" %}
 
-{% block title %}
-Restaurants
-{% endblock %}
+{% block title %}Restaurants{% endblock %}
 
 {% block content %}
 
-<section class="bg-orange-600 text-white">
+<!-- ===============================
+        Hero Section
+================================ -->
+
+<section class="bg-gradient-to-r from-orange-600 to-orange-500 text-white">
 
     <div class="max-w-7xl mx-auto px-6 py-16">
 
-        <h1 class="text-5xl font-extrabold mb-4">
-
-            Restaurants
-
+        <h1 class="text-4xl md:text-5xl font-extrabold mb-4">
+            Discover Amazing Food Around Campus
         </h1>
 
-        <p class="text-lg text-orange-100 max-w-2xl">
-
-            Browse restaurants around campus and order ahead for quick pickup.
-
+        <p class="text-orange-100 text-lg max-w-2xl">
+            Browse restaurants, explore menus and order ahead for quick pickup.
         </p>
 
     </div>
@@ -27,9 +25,11 @@ Restaurants
 </section>
 
 
-<section class="max-w-7xl mx-auto px-6 py-10">
+<!-- ===============================
+        Search + Filter
+================================ -->
 
-    <!-- Search -->
+<section class="max-w-7xl mx-auto px-6 py-10">
 
     <form method="GET" class="mb-8">
 
@@ -38,12 +38,13 @@ Restaurants
             <input
                 type="text"
                 name="q"
-                placeholder="Search restaurants..."
                 value="{{ request.GET.q }}"
-                class="w-full rounded-lg border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-orange-500 outline-none">
+                placeholder="Search restaurants..."
+                class="flex-1 rounded-xl border border-gray-300 px-5 py-3 focus:outline-none focus:ring-2 focus:ring-orange-500">
 
             <button
-                class="bg-orange-600 text-white px-6 rounded-lg hover:bg-orange-700">
+                type="submit"
+                class="bg-orange-600 hover:bg-orange-700 text-white px-8 py-3 rounded-xl transition">
 
                 Search
 
@@ -53,27 +54,24 @@ Restaurants
 
     </form>
 
-
-    <!-- Filters -->
-
     <div class="flex flex-wrap gap-3 mb-10">
 
-        <a href="?"
-           class="px-4 py-2 rounded-full bg-orange-600 text-white">
+        <a href="{% url 'vendors:vendor_list' %}"
+           class="px-5 py-2 rounded-full bg-orange-600 text-white hover:bg-orange-700">
 
             All
 
         </a>
 
         <a href="?status=open"
-           class="px-4 py-2 rounded-full border">
+           class="px-5 py-2 rounded-full border border-gray-300 hover:border-orange-600 hover:text-orange-600">
 
             Open
 
         </a>
 
         <a href="?status=closed"
-           class="px-4 py-2 rounded-full border">
+           class="px-5 py-2 rounded-full border border-gray-300 hover:border-orange-600 hover:text-orange-600">
 
             Closed
 
@@ -82,41 +80,52 @@ Restaurants
     </div>
 
 
+    <!-- ===============================
+            Vendors
+    ================================ -->
+
     {% if vendors %}
 
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
 
         {% for vendor in vendors %}
 
         <div
-            class="bg-white rounded-2xl shadow hover:shadow-xl transition overflow-hidden">
+            class="bg-white rounded-2xl shadow hover:shadow-2xl transition duration-300 overflow-hidden group">
+
+            <!-- Logo -->
 
             {% if vendor.logo %}
 
-            <img
-                src="{{ vendor.logo.url }}"
-                class="w-full h-52 object-cover">
+                <img
+                    src="{{ vendor.logo.url }}"
+                    alt="{{ vendor.business_name }}"
+                    class="h-56 w-full object-cover group-hover:scale-105 transition duration-500">
 
             {% else %}
 
-            <div
-                class="h-52 bg-gray-200 flex items-center justify-center">
+                <div
+                    class="h-56 bg-gray-100 flex items-center justify-center">
 
-                <span class="text-gray-500">
+                    <svg class="w-20 h-20 text-gray-300"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.5"
+                         viewBox="0 0 24 24">
 
-                    No Logo
+                        <path d="M4 19h16M4 5h16M7 5v14M17 5v14"/>
 
-                </span>
+                    </svg>
 
-            </div>
+                </div>
 
             {% endif %}
 
             <div class="p-6">
 
-                <div class="flex justify-between items-center mb-3">
+                <div class="flex justify-between items-start">
 
-                    <h2 class="text-xl font-bold">
+                    <h2 class="text-xl font-bold text-gray-900">
 
                         {{ vendor.business_name }}
 
@@ -124,47 +133,51 @@ Restaurants
 
                     {% if vendor.is_open %}
 
-                    <span
-                        class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">
+                        <span
+                            class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold">
 
-                        Open
+                            Open
 
-                    </span>
+                        </span>
 
                     {% else %}
 
-                    <span
-                        class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm">
+                        <span
+                            class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-semibold">
 
-                        Closed
+                            Closed
 
-                    </span>
+                        </span>
 
                     {% endif %}
 
                 </div>
 
-                <p class="text-gray-600 mb-4 line-clamp-2">
+                <p class="mt-4 text-gray-600 line-clamp-2">
 
                     {{ vendor.description }}
 
                 </p>
 
-                <p class="text-sm text-gray-500">
+                <div class="mt-5 space-y-2 text-sm text-gray-500">
 
-                    📍 {{ vendor.location }}
+                    <p>
 
-                </p>
+                        📍 {{ vendor.location }}
 
-                <p class="text-sm text-gray-500 mb-5">
+                    </p>
 
-                    🕒 {{ vendor.opening_time }} - {{ vendor.closing_time }}
+                    <p>
 
-                </p>
+                        🕒 {{ vendor.opening_time }} — {{ vendor.closing_time }}
+
+                    </p>
+
+                </div>
 
                 <a
                     href="{% url 'vendors:vendor_detail' vendor.pk %}"
-                    class="inline-flex items-center justify-center w-full bg-orange-600 text-white py-3 rounded-lg hover:bg-orange-700">
+                    class="mt-6 inline-flex w-full justify-center rounded-xl bg-orange-600 px-5 py-3 text-white font-semibold hover:bg-orange-700 transition">
 
                     View Restaurant
 
@@ -180,10 +193,28 @@ Restaurants
 
     {% else %}
 
-    <div
-        class="text-center bg-white rounded-xl shadow p-16">
+    <!-- ===============================
+            Empty State
+    ================================ -->
 
-        <h2 class="text-2xl font-bold mb-3">
+    <div
+        class="bg-white rounded-2xl shadow text-center py-20">
+
+        <div class="mx-auto w-24 h-24 rounded-full bg-orange-100 flex items-center justify-center mb-6">
+
+            <svg class="w-12 h-12 text-orange-500"
+                 fill="none"
+                 stroke="currentColor"
+                 stroke-width="1.5"
+                 viewBox="0 0 24 24">
+
+                <path d="M4 19h16M4 5h16M7 5v14M17 5v14"/>
+
+            </svg>
+
+        </div>
+
+        <h2 class="text-3xl font-bold text-gray-800 mb-3">
 
             No Restaurants Found
 
