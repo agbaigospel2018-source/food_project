@@ -45,7 +45,7 @@
  
   .menu-filter-bar {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     align-items: center;
     gap: 0.75rem;
     margin-top: 1rem;
@@ -56,13 +56,28 @@
     box-shadow: var(--menu-shadow);
   }
   .menu-filter-bar input[type="search"] {
-    flex: 1 1 220px;
-    padding: 0.6rem 0.9rem;
+    flex: 1 1 240px;
+    min-width: 220px;
+    padding: 0.7rem 0.95rem;
     border: 1px solid var(--menu-border);
     border-radius: 999px;
     font-size: 0.9rem;
+    background: #fff;
   }
-  .menu-filter-bar select { padding: 0.55rem 0.9rem; border: 1px solid var(--menu-border); border-radius: 999px; font-size: 0.9rem; background: #fff; }
+  .menu-filter-bar select {
+    padding: 0.7rem 0.95rem;
+    border: 1px solid var(--menu-border);
+    border-radius: 999px;
+    font-size: 0.9rem;
+    background: #fff;
+    color: var(--menu-text);
+    appearance: none;
+    background-image: linear-gradient(45deg, transparent 50%, var(--menu-muted) 50%), linear-gradient(135deg, var(--menu-muted) 50%, transparent 50%);
+    background-position: calc(100% - 20px) calc(50% - 2px), calc(100% - 14px) calc(50% - 2px);
+    background-size: 6px 6px, 6px 6px;
+    background-repeat: no-repeat;
+    padding-right: 2.4rem;
+  }
   .menu-filter-bar input[type="search"]:focus,
   .menu-filter-bar select:focus {
     outline: none;
@@ -75,10 +90,12 @@
     gap: 0.35rem;
     font-size: 0.85rem;
     color: var(--menu-muted);
-    padding: 0.4rem 0.8rem;
+    padding: 0.45rem 0.8rem;
     border: 1px solid var(--menu-border);
     border-radius: 999px;
     cursor: pointer;
+    white-space: nowrap;
+    background: #fff;
   }
   .menu-filter-bar label:has(input:checked) {
     border-color: var(--menu-primary);
@@ -86,13 +103,14 @@
     background: var(--menu-primary-light);
   }
   .menu-filter-bar button {
-    padding: 0.6rem 1.4rem;
+    padding: 0.7rem 1.4rem;
     border: none;
     border-radius: 999px;
     background: var(--menu-primary);
     color: #fff;
     font-weight: 600;
     cursor: pointer;
+    white-space: nowrap;
   }
   .menu-filter-bar button:hover { background: var(--menu-primary-dark); }
  
@@ -131,7 +149,8 @@
 
   .search-container {
     position: relative;
-    width: 100%;
+    flex: 1 1 260px;
+    min-width: 220px;
   }
 
   #suggestions {
@@ -147,6 +166,22 @@
     max-height: 250px;
     overflow-y: auto;
     z-index: 1000;
+  }
+
+  @media (max-width: 900px) {
+    .menu-filter-bar {
+      flex-wrap: wrap;
+    }
+
+    .search-container {
+      flex-basis: 100%;
+    }
+
+    .menu-filter-bar select,
+    .menu-filter-bar label,
+    .menu-filter-bar button {
+      width: auto;
+    }
   }
 
   #suggestions.show {
