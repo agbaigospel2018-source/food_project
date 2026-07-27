@@ -180,3 +180,18 @@ class Vendor(models.Model):
     @property
     def completed_orders(self):
         return self.orders.filter(status="completed").count()
+    
+    @property
+    def operating_hours(self):
+        return f"{self.opening_time.strftime('%I:%M %p')} - {self.closing_time.strftime('%I:%M %p')}"
+
+    @property
+    def is_currently_open(self):
+        from django.utils import timezone
+
+        now = timezone.localtime().time()
+
+        return (
+            self.is_open and
+            self.opening_time <= now <= self.closing_time
+        )

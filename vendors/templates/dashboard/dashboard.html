@@ -1,0 +1,387 @@
+{% extends "core/base.html" %}
+
+{% block title %}
+Vendor Dashboard | Belleful Express
+{% endblock %}
+
+{% block content %}
+
+<section class="bg-gray-100 min-h-screen py-8">
+
+    <div class="max-w-7xl mx-auto px-6">
+
+        <div class="grid lg:grid-cols-4 gap-8">
+
+            <!-- Sidebar -->
+
+            <div class="lg:col-span-1">
+
+                {% include "components/vendor_sidebar.html" %}
+
+            </div>
+
+            <!-- Main Content -->
+
+            <div class="lg:col-span-3 space-y-8">
+
+                <!-- Welcome -->
+
+                <div class="bg-gradient-to-r from-orange-600 to-orange-500 rounded-3xl p-8 text-white shadow-lg">
+
+                    <h1 class="text-4xl font-bold mb-3">
+
+                        Welcome back, {{ vendor.business_name }}
+
+                    </h1>
+
+                    <p class="text-orange-100">
+
+                        Manage your restaurant, monitor orders, and grow your business from one place.
+
+                    </p>
+
+                </div>
+
+                <!-- Status Card -->
+
+                <div class="bg-white rounded-3xl shadow-sm p-6">
+
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+
+                        <div>
+
+                            <h2 class="text-2xl font-bold">
+
+                                Restaurant Status
+
+                            </h2>
+
+                            <p class="text-gray-500 mt-2">
+
+                                Customers can only order when your restaurant is open.
+
+                            </p>
+
+                        </div>
+
+                        <div class="mt-6 md:mt-0">
+
+                            {% if vendor.is_currently_open %}
+
+                                <span class="inline-flex items-center px-5 py-3 rounded-full bg-green-100 text-green-700 font-semibold">
+
+                                    🟢 Open
+
+                                </span>
+
+                            {% else %}
+
+                                <span class="inline-flex items-center px-5 py-3 rounded-full bg-red-100 text-red-700 font-semibold">
+
+                                    🔴 Closed
+
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- Statistics -->
+
+                <div class="grid sm:grid-cols-2 xl:grid-cols-4 gap-6">
+
+                    <div class="bg-white rounded-2xl shadow-sm p-6">
+
+                        <p class="text-gray-500 text-sm">
+
+                            Orders Today
+
+                        </p>
+
+                        <h3 class="text-4xl font-bold mt-3 text-orange-600">
+
+                            {{ today_orders }}
+
+                        </h3>
+
+                    </div>
+
+                    <div class="bg-white rounded-2xl shadow-sm p-6">
+
+                        <p class="text-gray-500 text-sm">
+
+                            Pending Orders
+
+                        </p>
+
+                        <h3 class="text-4xl font-bold mt-3 text-yellow-500">
+
+                            {{ pending_orders }}
+
+                        </h3>
+
+                    </div>
+
+                    <div class="bg-white rounded-2xl shadow-sm p-6">
+
+                        <p class="text-gray-500 text-sm">
+
+                            Completed Orders
+
+                        </p>
+
+                        <h3 class="text-4xl font-bold mt-3 text-green-600">
+
+                            {{ completed_orders }}
+
+                        </h3>
+
+                    </div>
+
+                    <div class="bg-white rounded-2xl shadow-sm p-6">
+
+                        <p class="text-gray-500 text-sm">
+
+                            Revenue
+
+                        </p>
+
+                        <h3 class="text-4xl font-bold mt-3 text-orange-600">
+
+                            ₦{{ revenue }}
+
+                        </h3>
+
+                    </div>
+
+                </div>
+
+                <!-- Quick Actions -->
+
+                <div class="bg-white rounded-3xl shadow-sm p-8">
+
+                    <h2 class="text-2xl font-bold mb-8">
+
+                        Quick Actions
+
+                    </h2>
+
+                    <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-6">
+
+                        <a href="{% url 'vendors:edit_vendor' %}"
+                           class="bg-orange-50 hover:bg-orange-100 rounded-2xl p-6 transition">
+
+                            <div class="text-4xl mb-4">
+
+                                ✏️
+
+                            </div>
+
+                            <h3 class="font-bold">
+
+                                Edit Profile
+
+                            </h3>
+
+                            <p class="text-sm text-gray-500 mt-2">
+
+                                Update restaurant information.
+
+                            </p>
+
+                        </a>
+
+                        <a href="{% url 'orders:vendor_orders' %}"
+                           class="bg-orange-50 hover:bg-orange-100 rounded-2xl p-6 transition">
+
+                            <div class="text-4xl mb-4">
+
+                                📦
+
+                            </div>
+
+                            <h3 class="font-bold">
+
+                                Orders
+
+                            </h3>
+
+                            <p class="text-sm text-gray-500 mt-2">
+
+                                View customer orders.
+
+                            </p>
+
+                        </a>
+
+                        <a href="{% url 'vendors:analytics' %}"
+                           class="bg-orange-50 hover:bg-orange-100 rounded-2xl p-6 transition">
+
+                            <div class="text-4xl mb-4">
+
+                                📈
+
+                            </div>
+
+                            <h3 class="font-bold">
+
+                                Analytics
+
+                            </h3>
+
+                            <p class="text-sm text-gray-500 mt-2">
+
+                                Track business performance.
+
+                            </p>
+
+                        </a>
+
+                        <a href="{% url 'vendors:settings' %}"
+                           class="bg-orange-50 hover:bg-orange-100 rounded-2xl p-6 transition">
+
+                            <div class="text-4xl mb-4">
+
+                                ⚙️
+
+                            </div>
+
+                            <h3 class="font-bold">
+
+                                Settings
+
+                            </h3>
+
+                            <p class="text-sm text-gray-500 mt-2">
+
+                                Configure your restaurant.
+
+                            </p>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+                <!-- Recent Orders -->
+
+                <div class="bg-white rounded-3xl shadow-sm p-8">
+
+                    <div class="flex items-center justify-between mb-8">
+
+                        <h2 class="text-2xl font-bold">
+
+                            Recent Orders
+
+                        </h2>
+
+                        <a href="{% url 'orders:vendor_orders' %}"
+                           class="text-orange-600 font-semibold hover:text-orange-700">
+
+                            View All →
+
+                        </a>
+
+                    </div>
+
+                    {% if recent_orders %}
+
+                        <div class="overflow-x-auto">
+
+                            <table class="w-full">
+
+                                <thead>
+
+                                    <tr class="border-b">
+
+                                        <th class="text-left py-4">Order</th>
+                                        <th class="text-left py-4">Customer</th>
+                                        <th class="text-left py-4">Amount</th>
+                                        <th class="text-left py-4">Status</th>
+
+                                    </tr>
+
+                                </thead>
+
+                                <tbody>
+
+                                    {% for order in recent_orders %}
+
+                                        <tr class="border-b hover:bg-gray-50">
+
+                                            <td class="py-4">
+
+                                                #{{ order.short_id }}
+
+                                            </td>
+
+                                            <td>
+
+                                                {{ order.student.get_full_name|default:order.student.username }}
+
+                                            </td>
+
+                                            <td>
+
+                                                ₦{{ order.total_amount }}
+
+                                            </td>
+
+                                            <td>
+
+                                                {{ order.get_status_display }}
+
+                                            </td>
+
+                                        </tr>
+
+                                    {% endfor %}
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="text-center py-16">
+
+                            <div class="text-6xl mb-4">
+
+                                📦
+
+                            </div>
+
+                            <h3 class="text-2xl font-bold mb-3">
+
+                                No Orders Yet
+
+                            </h3>
+
+                            <p class="text-gray-500">
+
+                                Your recent customer orders will appear here.
+
+                            </p>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

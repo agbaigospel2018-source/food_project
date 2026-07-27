@@ -1,81 +1,228 @@
-<aside class="bg-white rounded-2xl shadow-lg p-6">
+<div class="bg-white rounded-3xl shadow-sm overflow-hidden sticky top-24">
 
-    <div class="text-center mb-8">
+    <!-- Vendor Header -->
+
+    <div class="bg-gradient-to-r from-orange-600 to-orange-500 p-8 text-center text-white">
 
         {% if vendor.logo %}
 
             <img
                 src="{{ vendor.logo.url }}"
-                class="w-24 h-24 rounded-full mx-auto object-cover">
+                alt="{{ vendor.business_name }}"
+                class="w-24 h-24 rounded-full object-cover border-4 border-white mx-auto shadow-lg">
 
         {% else %}
 
-            <div class="w-24 h-24 rounded-full bg-orange-600 text-white flex items-center justify-center mx-auto text-3xl font-bold">
+            <div class="w-24 h-24 rounded-full bg-white text-orange-600 flex items-center justify-center text-4xl font-bold mx-auto shadow-lg">
 
-                {{ vendor.initials }}
+                {{ vendor.business_name|first|upper }}
 
             </div>
 
         {% endif %}
 
-        <h2 class="mt-4 text-xl font-bold">
+        <h2 class="text-xl font-bold mt-5">
 
             {{ vendor.business_name }}
 
         </h2>
 
-        <p class="text-gray-500">
+        <p class="text-orange-100 text-sm mt-1">
 
-            {{ vendor.location }}
+            Vendor Dashboard
 
         </p>
 
+        <div class="mt-5">
+
+            {% if vendor.is_currently_open %}
+
+                <span class="inline-flex items-center px-4 py-2 rounded-full bg-green-500 text-white text-sm font-semibold">
+
+                    🟢 Open
+
+                </span>
+
+            {% else %}
+
+                <span class="inline-flex items-center px-4 py-2 rounded-full bg-red-500 text-white text-sm font-semibold">
+
+                    🔴 Closed
+
+                </span>
+
+            {% endif %}
+
+        </div>
+
     </div>
 
-    <nav class="space-y-2">
 
-        <a href="{% url 'vendors:vendor_dashboard' %}"
-           class="block px-4 py-3 rounded-xl hover:bg-orange-100">
+    <!-- Navigation -->
 
-            📊 Dashboard
+    <nav class="p-5">
 
-        </a>
+        <ul class="space-y-2">
 
-        <a href="{% url 'vendors:vendor_profile' %}"
-           class="block px-4 py-3 rounded-xl hover:bg-orange-100">
+            <li>
 
-            👤 Profile
+                <a
+                    href="{% url 'vendors:vendor_dashboard' %}"
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-orange-50 hover:text-orange-600 transition">
 
-        </a>
+                    <span class="text-xl">📊</span>
 
-        <a href="#"
-           class="block px-4 py-3 rounded-xl hover:bg-orange-100">
+                    <span class="font-medium">
 
-            🍽 Menu
+                        Dashboard
 
-        </a>
+                    </span>
 
-        <a href="#"
-           class="block px-4 py-3 rounded-xl hover:bg-orange-100">
+                </a>
 
-            📦 Orders
+            </li>
 
-        </a>
+            <li>
 
-        <a href="#"
-           class="block px-4 py-3 rounded-xl hover:bg-orange-100">
+                <a
+                    href="{% url 'vendors:vendor_profile' %}"
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-orange-50 hover:text-orange-600 transition">
 
-            📈 Analytics
+                    <span class="text-xl">🏪</span>
 
-        </a>
+                    <span class="font-medium">
 
-        <a href="#"
-           class="block px-4 py-3 rounded-xl hover:bg-orange-100">
+                        Business Profile
 
-            ⚙ Settings
+                    </span>
 
-        </a>
+                </a>
+
+            </li>
+
+            <li>
+
+                <a
+                    href="{% url 'menu:vendor_items' vendor.pk %}"
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-orange-50 hover:text-orange-600 transition">
+
+                    <span class="text-xl">🍽</span>
+
+                    <span class="font-medium">
+
+                        Menu Management
+
+                    </span>
+
+                </a>
+
+            </li>
+
+            <li>
+
+                <a
+                    href="{% url 'orders:vendor_orders' %}"
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-orange-50 hover:text-orange-600 transition">
+
+                    <span class="text-xl">📦</span>
+
+                    <span class="font-medium">
+
+                        Orders
+
+                    </span>
+
+                </a>
+
+            </li>
+
+            <li>
+
+                <a
+                    href="{% url 'vendors:analytics' %}"
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-orange-50 hover:text-orange-600 transition">
+
+                    <span class="text-xl">📈</span>
+
+                    <span class="font-medium">
+
+                        Analytics
+
+                    </span>
+
+                </a>
+
+            </li>
+
+            <li>
+
+                <a
+                    href="{% url 'vendors:business_hours' %}"
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-orange-50 hover:text-orange-600 transition">
+
+                    <span class="text-xl">🕒</span>
+
+                    <span class="font-medium">
+
+                        Business Hours
+
+                    </span>
+
+                </a>
+
+            </li>
+
+            <li>
+
+                <a
+                    href="{% url 'vendors:settings' %}"
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-orange-50 hover:text-orange-600 transition">
+
+                    <span class="text-xl">⚙️</span>
+
+                    <span class="font-medium">
+
+                        Settings
+
+                    </span>
+
+                </a>
+
+            </li>
+
+        </ul>
 
     </nav>
 
-</aside>
+
+    <!-- Footer -->
+
+    <div class="border-t px-5 py-5 bg-gray-50">
+
+        <a
+            href="{% url 'vendors:toggle_vendor_status' %}"
+            class="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-semibold transition">
+
+            {% if vendor.is_currently_open %}
+
+                🔴 Close Restaurant
+
+            {% else %}
+
+                🟢 Open Restaurant
+
+            {% endif %}
+
+        </a>
+
+        <a
+            href="{% url 'vendors:delete_vendor' %}"
+            class="mt-4 flex items-center justify-center gap-2 text-red-600 hover:text-red-700 font-medium">
+
+            🗑 Delete Restaurant
+
+        </a>
+
+    </div>
+
+</div>

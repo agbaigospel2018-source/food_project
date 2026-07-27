@@ -6,6 +6,7 @@ from django.db.models import Q
 
 from .models import Vendor
 from .forms import VendorForm
+from menu.models import MenuItem
 
 
 # ==========================================
@@ -62,31 +63,36 @@ def vendor_list(request):
 
 
 def vendor_detail(request, pk):
-    """
-    Public restaurant page.
-    """
 
     vendor = get_object_or_404(
         Vendor,
         pk=pk
     )
 
-    # Future integrations
-    categories = []
-    menu_items = []
-    reviews = []
+    menu_items = MenuItem.objects.filter(
+        vendor=vendor,
+        is_available=True
+    ).select_related(
+        "category"
+    )
+
+    categories = (
+        menu_items
+        .values_list("category__name", flat=True)
+        .distinct()
+    )
 
     context = {
         "vendor": vendor,
-        "categories": categories,
         "menu_items": menu_items,
-        "reviews": reviews,
+        "categories": categories,
+        "menu_count": menu_items.count(),
     }
 
     return render(
         request,
         "vendors/vendor_detail.html",
-        context,
+        context
     )
 
 
@@ -113,7 +119,7 @@ def vendor_dashboard(request):
 
     return render(
         request,
-        "vendors/dashboard/dashboard.html",
+        "dashboard/dashboard.html",
         context,
     )
 

@@ -50,6 +50,18 @@ urlpatterns = [
     ),
 
     path(
+        "analytics/",
+        views.analytics,
+        name="analytics"
+    ),
+
+    path(
+        "settings/",
+        views.settings,
+        name="settings"
+    ),
+
+    path(
         "toggle-status/",
         views.toggle_vendor_status,
         name="toggle_vendor_status"
@@ -60,5 +72,11 @@ urlpatterns = [
         views.delete_vendor,
         name="delete_vendor"
     ),
+    
+    path(
+        "business-hours/",
+        views.business_hours,
+        name="business_hours"
+    )
 
 ]
