@@ -211,7 +211,7 @@ def vendor_orders_view(request):
 
     return render(
         request,
-        "orders/vendor_orders.html",
+        "vendors/vendor_orders.html",
         context,
     )
 

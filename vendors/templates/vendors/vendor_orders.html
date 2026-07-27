@@ -1,0 +1,64 @@
+{% extends "core/base.html" %}
+
+{% block title %}
+Vendor Orders | Belleful Express
+{% endblock %}
+
+{% block content %}
+<section class="min-h-screen bg-gray-100 py-8">
+    <div class="mx-auto max-w-7xl px-6">
+        <div class="rounded-3xl bg-white p-8 shadow-sm">
+            <div class="mb-8 flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900">Incoming Orders</h1>
+                    <p class="mt-2 text-gray-500">Track every order received for {{ vendor.business_name }}.</p>
+                </div>
+            </div>
+
+            {% if orders %}
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead>
+                            <tr>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Order</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Customer</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Items</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Amount</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Status</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Pickup</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            {% for order in orders %}
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-4 text-sm font-medium text-gray-900">#{{ order.short_id }}</td>
+                                    <td class="px-4 py-4 text-sm text-gray-700">{{ order.student.get_full_name|default:order.student.username }}</td>
+                                    <td class="px-4 py-4 text-sm text-gray-700">
+                                        {% for item in order.items.all %}
+                                            {{ item.menu_item.name }}{% if not forloop.last %}, {% endif %}
+                                        {% empty %}
+                                            No items
+                                        {% endfor %}
+                                    </td>
+                                    <td class="px-4 py-4 text-sm text-gray-700">₦{{ order.total_amount }}</td>
+                                    <td class="px-4 py-4 text-sm">
+                                        <span class="rounded-full bg-orange-100 px-3 py-1 font-semibold text-orange-700">
+                                            {{ order.get_status_display }}
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-4 text-sm text-gray-700">{{ order.pickup_time }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="rounded-2xl border border-dashed border-gray-300 py-16 text-center">
+                    <h2 class="text-2xl font-semibold text-gray-800">No orders received yet</h2>
+                    <p class="mt-2 text-gray-500">Orders placed by students will appear here as soon as they arrive.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

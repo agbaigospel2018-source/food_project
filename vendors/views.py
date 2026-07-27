@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -5,10 +7,12 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import JsonResponse
 from django.urls import reverse
+from django.utils import timezone
 
 from .models import Vendor
 from .forms import VendorForm
 from menu.models import MenuItem
+from orders.models import Order, OrderStatus
 
 
 # ==========================================
@@ -134,13 +138,29 @@ def vendor_dashboard(request):
         owner=request.user
     )
 
+    orders = (
+        Order.objects
+        .filter(vendor=vendor)
+        .select_related("student")
+        .order_by("-created_at")
+    )
+
+    today_start = timezone.localtime(timezone.now()).replace(hour=0, minute=0, second=0, microsecond=0)
+    today_end = today_start + timezone.timedelta(days=1)
+
+    today_orders = orders.filter(created_at__gte=today_start, created_at__lt=today_end).count()
+    pending_orders = orders.filter(status=OrderStatus.PENDING).count()
+    completed_orders = orders.filter(status=OrderStatus.COMPLETED).count()
+    revenue = sum((order.total_amount for order in orders.filter(status=OrderStatus.COMPLETED)), start=0)
+
     context = {
         "vendor": vendor,
-        "total_orders": 0,
-        "pending_orders": 0,
-        "completed_orders": 0,
-        "today_orders": 0,
-        "revenue": 0,
+        "total_orders": orders.count(),
+        "pending_orders": pending_orders,
+        "completed_orders": completed_orders,
+        "today_orders": today_orders,
+        "revenue": f"{revenue:.2f}",
+        "recent_orders": orders[:5],
     }
 
     return render(
@@ -279,7 +299,13 @@ def vendor_orders(request):
         owner=request.user
     )
 
-    orders = []
+    orders = (
+        Order.objects
+        .filter(vendor=vendor)
+        .select_related("student")
+        .prefetch_related("items__menu_item")
+        .order_by("-created_at")
+    )
 
     context = {
         "vendor": vendor,
@@ -288,7 +314,7 @@ def vendor_orders(request):
 
     return render(
         request,
-        "vendors/dashboard/vendor_orders.html",
+        "vendors/vendor_orders.html",
         context,
     )
 
