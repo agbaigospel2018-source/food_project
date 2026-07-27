@@ -168,6 +168,30 @@
 
                     {% if user.role == "vendor" %}
 
+                        <a href="{% url 'notifications:notifications_page' %}"
+                           class="relative inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-3 py-2 text-white transition hover:bg-white/20 hover:text-yellow-100">
+
+                            <svg class="h-5 w-5"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="2"
+                                 viewBox="0 0 24 24">
+
+                                <path d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.2V11a6 6 0 1 0-12 0v3.2a2 2 0 0 1-.6 1.4L4 17h5"></path>
+                                <path d="M10 19a2 2 0 0 0 4 0"></path>
+
+                            </svg>
+
+                            <span class="text-sm font-medium">Alerts</span>
+
+                            {% if unread_notification_count %}
+                                <span class="inline-flex min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 py-0.5 text-[10px] font-semibold text-white">
+                                    {{ unread_notification_count }}
+                                </span>
+                            {% endif %}
+
+                        </a>
+
                         <a href="{% url 'vendors:vendor_profile' %}"
                            class="text-white hover:text-yellow-200">
 
@@ -219,7 +243,7 @@
 
 <nav class="fixed bottom-0 left-0 right-0 bg-white border-t shadow-2xl md:hidden z-50">
 
-    <div class="grid grid-cols-5 h-16">
+    <div class="grid grid-cols-6 h-16">
 
         <!-- ==========================
                 HOME
@@ -456,6 +480,39 @@
                         Menu
 
                     </span>
+
+                </a>
+
+                <a href="{% url 'notifications:notifications_page' %}"
+                   class="relative flex flex-col items-center justify-center gap-1
+                   {% if request.resolver_match.namespace == 'notifications' %}
+                        text-orange-600
+                   {% else %}
+                        text-gray-500
+                   {% endif %}">
+
+                    <svg class="w-6 h-6"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="2"
+                         viewBox="0 0 24 24">
+
+                        <path d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.2V11a6 6 0 1 0-12 0v3.2a2 2 0 0 1-.6 1.4L4 17h5"></path>
+                        <path d="M10 19a2 2 0 0 0 4 0"></path>
+
+                    </svg>
+
+                    <span class="text-xs">
+
+                        Alerts
+
+                    </span>
+
+                    {% if unread_notification_count %}
+                        <span class="absolute -top-1 right-1 inline-flex min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 py-0.5 text-[10px] font-semibold text-white">
+                            {{ unread_notification_count }}
+                        </span>
+                    {% endif %}
 
                 </a>
 
