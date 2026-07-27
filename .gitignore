@@ -17,7 +17,6 @@ __pycache__/
 
 # Static files
 /staticfiles/
-/media/
 
 # Window files
 ## Thumbs.db
