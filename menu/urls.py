@@ -6,6 +6,7 @@ app_name = "menu"
 urlpatterns = [
     path("", views.MenuItemListView.as_view(), name="item_list"),
     path("availability/", views.availability_feed, name="availability_feed"),
+    path("search-suggestions/", views.search_suggestions, name="search_suggestions"),
     path("vendors/<int:vendor_pk>/", views.MenuItemListView.as_view(), name="vendor_menu"),
     path("vendors/<int:vendor_pk>/<slug:slug>/", views.item_detail, name="item_detail"),
     path("items/<int:item_pk>/review/", views.upsert_review, name="upsert_review"),

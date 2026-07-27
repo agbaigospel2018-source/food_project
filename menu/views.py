@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.http import JsonResponse
+from django.utils.html import escape
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_POST
@@ -123,6 +124,47 @@ def availability_feed(request):
         for item in queryset[:100]
     ]
     return JsonResponse({"items": payload})
+
+
+def search_suggestions(request):
+    query = (request.GET.get("q") or "").strip()
+    suggestions = []
+
+    if query:
+        items = (
+            MenuItem.objects.public()
+            .select_related("vendor")
+            .filter(
+                Q(name__icontains=query) | Q(description__icontains=query) | Q(vendor__business_name__icontains=query)
+            )[:8]
+        )
+        for item in items:
+            suggestions.append(
+                {
+                    "type": "item",
+                    "label": item.name,
+                    "value": item.name,
+                    "url": item.get_absolute_url(),
+                    "meta": item.vendor.business_name,
+                }
+            )
+
+        vendors = (
+            get_vendor_model()
+            .objects.filter(business_name__icontains=query)[:6]
+        )
+        for vendor in vendors:
+            suggestions.append(
+                {
+                    "type": "vendor",
+                    "label": vendor.business_name,
+                    "value": vendor.business_name,
+                    "url": reverse("menu:vendor_menu", kwargs={"vendor_pk": vendor.pk}),
+                    "meta": "Restaurant",
+                }
+            )
+
+    return JsonResponse({"suggestions": suggestions})
 
 
 class VendorMenuMixin(LoginRequiredMixin):

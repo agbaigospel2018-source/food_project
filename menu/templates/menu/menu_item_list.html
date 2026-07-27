@@ -132,30 +132,56 @@
   .search-container {
     position: relative;
     width: 100%;
-}
+  }
 
-   #suggestions {
+  #suggestions {
     position: absolute;
-    top: 100%;
+    top: calc(100% + 0.25rem);
     left: 0;
     width: 100%;
     background: white;
-    border: 1px solid #ddd;
-    border-top: none;
+    border: 1px solid var(--menu-border);
+    border-radius: 12px;
+    box-shadow: var(--menu-shadow-hover);
     display: none;
     max-height: 250px;
     overflow-y: auto;
     z-index: 1000;
-    }
+  }
 
-  #suggestions div {
-    padding: 10px;
+  #suggestions.show {
+    display: block;
+  }
+
+  #suggestions button {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.7rem 0.8rem;
+    border: none;
+    background: white;
+    text-align: left;
     cursor: pointer;
-    }
+    font-size: 0.9rem;
+    color: var(--menu-text);
+  }
 
-  #suggestions div:hover {
-    background: #f5f5f5;
-    }
+  #suggestions button:hover {
+    background: var(--menu-primary-light);
+  }
+
+  #suggestions .suggestion-label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  #suggestions .suggestion-meta {
+    font-size: 0.78rem;
+    color: var(--menu-muted);
+  }
 </style>
  
 <section class="menu-page">
@@ -171,9 +197,9 @@
                     name="q"
                     value="{{ request.GET.q }}"
                     placeholder="Search food or vendor"
-                    autocomplete="on">
+                    autocomplete="off">
 
-                <div id="suggestions"></div>
+                <div id="suggestions" aria-live="polite"></div>
             </div>
 
             <select name="category">
@@ -253,6 +279,70 @@
       if (button) button.disabled = !item.available;
     }
   }
+
+  const searchInput = document.getElementById("search");
+  const suggestionsBox = document.getElementById("suggestions");
+  let suggestionTimer;
+
+  function hideSuggestions() {
+    suggestionsBox.classList.remove("show");
+    suggestionsBox.innerHTML = "";
+  }
+
+  function showSuggestions(items) {
+    if (!items.length) {
+      hideSuggestions();
+      return;
+    }
+
+    suggestionsBox.innerHTML = items.map((item) => `
+      <button type="button" data-url="${item.url}" data-value="${item.value}">
+        <span class="suggestion-label">
+          <strong>${item.label}</strong>
+          <span class="suggestion-meta">${item.meta}</span>
+        </span>
+        <span>${item.type === "vendor" ? "View menu" : "Open item"}</span>
+      </button>
+    `).join("");
+    suggestionsBox.classList.add("show");
+  }
+
+  async function fetchSuggestions(term) {
+    if (!term.trim()) {
+      hideSuggestions();
+      return;
+    }
+
+    const response = await fetch(`{% url 'menu:search_suggestions' %}?q=${encodeURIComponent(term)}`);
+    if (!response.ok) return;
+    const data = await response.json();
+    showSuggestions(data.suggestions || []);
+  }
+
+  searchInput.addEventListener("input", (event) => {
+    clearTimeout(suggestionTimer);
+    suggestionTimer = setTimeout(() => fetchSuggestions(event.target.value), 180);
+  });
+
+  searchInput.addEventListener("focus", () => {
+    if (searchInput.value.trim()) {
+      fetchSuggestions(searchInput.value);
+    }
+  });
+
+  document.addEventListener("click", (event) => {
+    if (!event.target.closest(".search-container")) {
+      hideSuggestions();
+    }
+  });
+
+  suggestionsBox.addEventListener("click", (event) => {
+    const button = event.target.closest("button[data-url]");
+    if (!button) return;
+    searchInput.value = button.dataset.value;
+    window.location.href = button.dataset.url;
+  });
+
   setInterval(refreshAvailability, 20000);
 </script>
 {% endblock %}
