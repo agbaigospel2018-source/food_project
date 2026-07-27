@@ -3,6 +3,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Q
+from django.http import JsonResponse
+from django.urls import reverse
 
 from .models import Vendor
 from .forms import VendorForm
@@ -60,6 +62,30 @@ def vendor_list(request):
         "vendors/vendor_list.html",
         context,
     )
+
+
+def vendor_search_suggestions(request):
+    query = (request.GET.get("q") or "").strip()
+    suggestions = []
+
+    if query:
+        vendors = Vendor.objects.filter(
+            Q(business_name__icontains=query) |
+            Q(location__icontains=query) |
+            Q(description__icontains=query)
+        )[:8]
+
+        for vendor in vendors:
+            suggestions.append(
+                {
+                    "label": vendor.business_name,
+                    "value": vendor.business_name,
+                    "url": reverse("vendors:vendor_detail", kwargs={"pk": vendor.pk}),
+                    "meta": vendor.location,
+                }
+            )
+
+    return JsonResponse({"suggestions": suggestions})
 
 
 def vendor_detail(request, pk):

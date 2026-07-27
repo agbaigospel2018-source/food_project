@@ -29,10 +29,14 @@
 
             <input
                 type="text"
+                id="vendor-search"
                 name="q"
                 value="{{ request.GET.q }}"
                 placeholder="Search restaurants, locations..."
+                autocomplete="off"
                 class="w-full pl-12 pr-4 py-4 rounded-2xl border border-gray-300 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition">
+
+            <div id="vendor-suggestions" class="absolute left-0 right-0 top-full mt-2 z-20 hidden rounded-2xl border border-gray-200 bg-white shadow-lg overflow-hidden"></div>
 
         </div>
 
@@ -49,3 +53,68 @@
     </div>
 
 </form>
+
+<script>
+  const vendorSearchInput = document.getElementById("vendor-search");
+  const vendorSuggestionsBox = document.getElementById("vendor-suggestions");
+  let vendorSuggestionTimer;
+
+  function hideVendorSuggestions() {
+    vendorSuggestionsBox.classList.add("hidden");
+    vendorSuggestionsBox.innerHTML = "";
+  }
+
+  function showVendorSuggestions(items) {
+    if (!items.length) {
+      hideVendorSuggestions();
+      return;
+    }
+
+    vendorSuggestionsBox.innerHTML = items.map((item) => `
+      <button type="button" class="flex w-full items-center justify-between px-4 py-3 text-left hover:bg-orange-50" data-url="${item.url}" data-value="${item.value}">
+        <span>
+          <span class="block font-medium text-gray-900">${item.label}</span>
+          <span class="block text-sm text-gray-500">${item.meta}</span>
+        </span>
+        <span class="text-sm text-orange-600">Open</span>
+      </button>
+    `).join("");
+    vendorSuggestionsBox.classList.remove("hidden");
+  }
+
+  async function fetchVendorSuggestions(term) {
+    if (!term.trim()) {
+      hideVendorSuggestions();
+      return;
+    }
+
+    const response = await fetch(`{% url 'vendors:vendor_search_suggestions' %}?q=${encodeURIComponent(term)}`);
+    if (!response.ok) return;
+    const data = await response.json();
+    showVendorSuggestions(data.suggestions || []);
+  }
+
+  vendorSearchInput.addEventListener("input", (event) => {
+    clearTimeout(vendorSuggestionTimer);
+    vendorSuggestionTimer = setTimeout(() => fetchVendorSuggestions(event.target.value), 180);
+  });
+
+  vendorSearchInput.addEventListener("focus", () => {
+    if (vendorSearchInput.value.trim()) {
+      fetchVendorSuggestions(vendorSearchInput.value);
+    }
+  });
+
+  document.addEventListener("click", (event) => {
+    if (!event.target.closest(".relative.flex-1")) {
+      hideVendorSuggestions();
+    }
+  });
+
+  vendorSuggestionsBox.addEventListener("click", (event) => {
+    const button = event.target.closest("button[data-url]");
+    if (!button) return;
+    vendorSearchInput.value = button.dataset.value;
+    window.location.href = button.dataset.url;
+  });
+</script>

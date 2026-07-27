@@ -16,6 +16,12 @@ urlpatterns = [
     ),
 
     path(
+        "search-suggestions/",
+        views.vendor_search_suggestions,
+        name="vendor_search_suggestions"
+    ),
+
+    path(
         "<int:pk>/",
         views.vendor_detail,
         name="vendor_detail"
