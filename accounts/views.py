@@ -59,7 +59,7 @@ def login_view(request):
                 'Logged in successfully.'
             )
 
-            return redirect('profile')
+            return redirect('home')
         else:
             messages.success(
                 request,
