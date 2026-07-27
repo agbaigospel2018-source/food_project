@@ -41,7 +41,7 @@ class MenuItemForm(forms.ModelForm):
     def __init__(self, *args, vendor=None, **kwargs):
         super().__init__(*args, **kwargs)
         if vendor is not None:
-            self.fields["category"].queryset = Category.objects.filter(vendor=vendor)
+            self.fields["category"].queryset = Category.objects.filter(is_active=True)
 
 
 class MenuItemOptionGroupForm(forms.ModelForm):

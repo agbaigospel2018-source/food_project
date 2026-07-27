@@ -22,9 +22,8 @@ class ActiveMenuItemQuerySet(models.QuerySet):
 
 
 class Category(models.Model):
-    vendor = models.ForeignKey(vendor_model_label(), on_delete=models.CASCADE, related_name="menu_categories")
-    name = models.CharField(max_length=120)
-    slug = models.SlugField(max_length=140, blank=True)
+    name = models.CharField(max_length=120, unique=True)
+    slug = models.SlugField(max_length=140, blank=True, unique=True)
     description = models.TextField(blank=True)
     sort_order = models.PositiveIntegerField(default=0)
     is_active = models.BooleanField(default=True)
@@ -33,13 +32,10 @@ class Category(models.Model):
 
     class Meta:
         ordering = ["sort_order", "name"]
-        constraints = [
-            models.UniqueConstraint(fields=["vendor", "slug"], name="unique_menu_category_slug_per_vendor"),
-        ]
         verbose_name_plural = "categories"
 
     def __str__(self):
-        return f"{self.vendor} - {self.name}"
+        return self.name
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -97,8 +93,6 @@ class MenuItem(models.Model):
     def clean(self):
         if self.discount_price is not None and self.discount_price > self.base_price:
             raise ValidationError({"discount_price": "Discount price cannot be greater than base price."})
-        if self.category and self.category.vendor_id != self.vendor_id:
-            raise ValidationError({"category": "Category must belong to the same vendor as the menu item."})
 
     def get_absolute_url(self):
         return reverse("menu:item_detail", kwargs={"vendor_pk": self.vendor_id, "slug": self.slug})

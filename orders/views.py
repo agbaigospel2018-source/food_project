@@ -127,15 +127,19 @@ def order_history_view(request):
 @login_required
 def order_detail_view(request, order_id):
     """
-    Display the details of a single order belonging to the logged-in student.
+    Display the details of a single order for either the student who placed it
+    or the vendor owner assigned to it.
     """
 
     order = get_object_or_404(
         Order.objects.select_related("vendor", "student")
         .prefetch_related("items__menu_item"),
         id=order_id,
-        student=request.user,
     )
+
+    if order.student_id != request.user.id and order.vendor.owner_id != request.user.id:
+        messages.error(request, "You do not have permission to view this order.")
+        return redirect("orders:order_history")
 
     context = {
         "order": order,

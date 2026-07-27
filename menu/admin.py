@@ -16,9 +16,9 @@ class MenuItemOptionGroupInline(admin.StackedInline):
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ("name", "vendor", "is_active", "sort_order")
-    list_filter = ("is_active", "vendor")
-    search_fields = ("name", "vendor__business_name")
+    list_display = ("name", "is_active", "sort_order")
+    list_filter = ("is_active",)
+    search_fields = ("name",)
     prepopulated_fields = {"slug": ("name",)}
 
 

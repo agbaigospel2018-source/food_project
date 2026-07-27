@@ -58,10 +58,7 @@ class MenuItemListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["vendor"] = self.vendor
-        if self.vendor:
-            context["categories"] = Category.objects.filter(vendor=self.vendor, is_active=True)
-        else:
-            context["categories"] = Category.objects.filter(is_active=True)
+        context["categories"] = Category.objects.filter(is_active=True)
         return context
 
 
