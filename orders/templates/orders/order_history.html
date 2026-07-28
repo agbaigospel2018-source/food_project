@@ -10,7 +10,7 @@ My Orders
 
     <div class="mx-auto max-w-6xl px-4">
 
-        <!-- Page Heading -->
+        <!-- Page Header -->
 
         <div class="mb-8">
 
@@ -114,54 +114,30 @@ My Orders
 
                         <div>
 
-                            {% if order.status == "pending" %}
-
+                            {% if order.status == OrderStatus.RECEIVED %}
                                 <span class="rounded-full bg-yellow-100 px-4 py-2 text-sm font-semibold text-yellow-700">
-
                                     Pending
-
                                 </span>
-
-                            {% elif order.status == "accepted" %}
-
+                            {% elif order.status == OrderStatus.ACCEPTED %}
                                 <span class="rounded-full bg-blue-100 px-4 py-2 text-sm font-semibold text-blue-700">
-
                                     Accepted
-
                                 </span>
-
-                            {% elif order.status == "preparing" %}
-
+                            {% elif order.status == OrderStatus.PREPARING %}
                                 <span class="rounded-full bg-purple-100 px-4 py-2 text-sm font-semibold text-purple-700">
-
                                     Preparing
-
                                 </span>
-
-                            {% elif order.status == "ready" %}
-
+                            {% elif order.status == OrderStatus.READY %}
                                 <span class="rounded-full bg-green-100 px-4 py-2 text-sm font-semibold text-green-700">
-
                                     Ready
-
                                 </span>
-
-                            {% elif order.status == "completed" %}
-
+                            {% elif order.status == OrderStatus.COMPLETED %}
                                 <span class="rounded-full bg-gray-200 px-4 py-2 text-sm font-semibold text-gray-700">
-
                                     Completed
-
                                 </span>
-
                             {% else %}
-
                                 <span class="rounded-full bg-red-100 px-4 py-2 text-sm font-semibold text-red-700">
-
-                                    Cancelled
-
+                                    {{ order.get_status_display }}
                                 </span>
-
                             {% endif %}
 
                         </div>

@@ -103,12 +103,13 @@ def order_success_view(request, order_id):
 @login_required
 def order_history_view(request):
     """
-    Display all orders placed by the logged-in student.
+    Display all active orders placed by the logged-in student (excluding completed, cancelled, and rejected orders).
     """
 
     orders = (
         Order.objects
         .filter(student=request.user)
+        .exclude(status__in=[OrderStatus.COMPLETED, OrderStatus.CANCELLED, OrderStatus.REJECTED])
         .select_related("vendor")
         .prefetch_related("items")
         .order_by("-created_at")
@@ -160,7 +161,7 @@ def cancel_order_view(request, order_id):
         student=request.user,
     )
 
-    if order.status != Order.PENDING:
+    if order.status != OrderStatus.RECEIVED:
 
         messages.error(
             request,

@@ -65,7 +65,7 @@ class VendorDashboardOrderStatsTests(TestCase):
             student=self.student,
             vendor=self.vendor,
             pickup_time=timezone.now() + timedelta(hours=1),
-            status=OrderStatus.PENDING,
+            status=OrderStatus.RECEIVED,
             total_amount="15.00",
         )
         Order.objects.create(
@@ -94,6 +94,6 @@ class VendorDashboardOrderStatsTests(TestCase):
 
         orders_response = self.client.get(reverse("orders:vendor_orders"))
         self.assertEqual(orders_response.status_code, 200)
-        self.assertContains(orders_response, "Pending")
+        self.assertContains(orders_response, "Order Received")
         self.assertContains(orders_response, "Accepted")
         self.assertContains(orders_response, "Completed")

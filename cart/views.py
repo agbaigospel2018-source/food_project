@@ -4,9 +4,9 @@ from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from.models import CartItem, Cart
 from django.views.decorators.http import require_POST
 
+from .models import CartItem, Cart
 from menu.models import MenuItem
 from .services import (
     add_to_cart,
@@ -15,38 +15,6 @@ from .services import (
     remove_from_cart,
     update_cart_item_quantity,
 )
-
-# Create your views here.
-def add_to_cart_view(request, menu_item_id):
-    """
-    Add a menu item to the student's cart.
-    """
-
-    menu_item = get_object_or_404(
-        MenuItem,
-        pk=menu_item_id,
-        is_active=True,
-    )
-
-    try:
-        add_to_cart(
-            student=request.user,
-            menu_item=menu_item,
-            quantity=1,
-        )
-
-        messages.success(
-            request,
-            f"{menu_item.name} was added to your cart."
-        )
-
-    except ValidationError as e:
-        messages.error(
-            request,
-            str(e)
-        )
-
-    return redirect(request.META.get("HTTP_REFERER", "menu:vendor_list"))
 
 @login_required
 def cart_detail(request):
@@ -59,10 +27,13 @@ def cart_detail(request):
             "cart": cart,
         },
     )
-    
-@require_POST
+
 @login_required
+@require_POST
 def add_to_cart_view(request, menu_item_id):
+    """
+    Add a menu item to the student's cart.
+    """
 
     menu_item = get_object_or_404(
         MenuItem,
@@ -90,7 +61,7 @@ def add_to_cart_view(request, menu_item_id):
             "menu:vendor_list",
         )
     )
-    
+
 @require_POST
 @login_required
 def remove_from_cart_view(request, menu_item_id):

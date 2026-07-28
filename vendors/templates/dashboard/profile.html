@@ -1,0 +1,415 @@
+{% extends "core/base.html" %}
+
+{% block title %}
+Vendor Profile | Belleful Express
+{% endblock %}
+
+{% block content %}
+
+<div class="bg-gray-100 min-h-screen py-10">
+
+    <div class="max-w-7xl mx-auto px-6">
+
+        <div class="grid lg:grid-cols-4 gap-8">
+
+            <!-- Sidebar -->
+
+            {% include "components/vendor_sidebar.html" %}
+
+            <!-- Main Content -->
+
+            <div class="lg:col-span-3 space-y-8">
+
+                <!-- ===================================== -->
+                <!-- Vendor Header -->
+                <!-- ===================================== -->
+
+                <div class="bg-white rounded-3xl shadow p-8">
+
+                    <div class="flex flex-col md:flex-row md:items-center gap-6">
+
+                        {% if vendor.logo %}
+
+                            <img
+                                src="{{ vendor.logo.url }}"
+                                class="w-32 h-32 rounded-2xl object-cover border"
+                                alt="{{ vendor.business_name }}">
+
+                        {% else %}
+
+                            <div class="w-32 h-32 rounded-2xl bg-orange-100 flex items-center justify-center text-5xl">
+
+                                🍽️
+
+                            </div>
+
+                        {% endif %}
+
+                        <div class="flex-1">
+
+                            <h1 class="text-4xl font-bold">
+
+                                {{ vendor.business_name }}
+
+                            </h1>
+
+                            <p class="text-gray-500 mt-2">
+
+                                {{ vendor.location }}
+
+                            </p>
+
+                            <div class="mt-4">
+
+                                {% if vendor.is_currently_open %}
+
+                                    <span class="bg-green-100 text-green-700 px-4 py-2 rounded-full text-sm font-semibold">
+
+                                        🟢 Open Now
+
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="bg-red-100 text-red-700 px-4 py-2 rounded-full text-sm font-semibold">
+
+                                        🔴 Closed
+
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                        <div>
+
+                            <a href="{% url 'vendors:edit_vendor' %}"
+                               class="bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-xl font-semibold">
+
+                                Edit Profile
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- ===================================== -->
+                <!-- Statistics -->
+                <!-- ===================================== -->
+
+                <div class="grid md:grid-cols-4 gap-6">
+
+                    <div class="bg-white rounded-2xl shadow p-6">
+
+                        <h3 class="text-gray-500 text-sm">
+
+                            Total Orders
+
+                        </h3>
+
+                        <p class="text-3xl font-bold mt-3">
+
+                            {{ total_orders }}
+
+                        </p>
+
+                    </div>
+
+                    <div class="bg-white rounded-2xl shadow p-6">
+
+                        <h3 class="text-gray-500 text-sm">
+
+                            Active Orders
+
+                        </h3>
+
+                        <p class="text-3xl font-bold mt-3 text-orange-600">
+
+                            {{ active_orders }}
+
+                        </p>
+
+                    </div>
+
+                    <div class="bg-white rounded-2xl shadow p-6">
+
+                        <h3 class="text-gray-500 text-sm">
+
+                            Completed
+
+                        </h3>
+
+                        <p class="text-3xl font-bold mt-3 text-green-600">
+
+                            {{ completed_orders }}
+
+                        </p>
+
+                    </div>
+
+                    <div class="bg-white rounded-2xl shadow p-6">
+
+                        <h3 class="text-gray-500 text-sm">
+
+                            Menu Items
+
+                        </h3>
+
+                        <p class="text-3xl font-bold mt-3">
+
+                            {{ menu_count }}
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <!-- ===================================== -->
+                <!-- Business Information -->
+                <!-- ===================================== -->
+
+                <div class="bg-white rounded-3xl shadow p-8">
+
+                    <h2 class="text-2xl font-bold mb-6">
+
+                        Business Information
+
+                    </h2>
+
+                    <div class="grid md:grid-cols-2 gap-8">
+
+                        <div>
+
+                            <p class="text-gray-500 text-sm">
+
+                                Business Name
+
+                            </p>
+
+                            <p class="font-semibold">
+
+                                {{ vendor.business_name }}
+
+                            </p>
+
+                        </div>
+
+                        <div>
+
+                            <p class="text-gray-500 text-sm">
+
+                                Phone Number
+
+                            </p>
+
+                            <p class="font-semibold">
+
+                                {{ vendor.phone_number }}
+
+                            </p>
+
+                        </div>
+
+                        <div>
+
+                            <p class="text-gray-500 text-sm">
+
+                                Location
+
+                            </p>
+
+                            <p class="font-semibold">
+
+                                {{ vendor.location }}
+
+                            </p>
+
+                        </div>
+
+                        <div>
+
+                            <p class="text-gray-500 text-sm">
+
+                                Business Hours
+
+                            </p>
+
+                            <p class="font-semibold">
+
+                                {{ vendor.opening_time }} - {{ vendor.closing_time }}
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <div class="mt-8">
+
+                        <p class="text-gray-500 text-sm mb-2">
+
+                            Description
+
+                        </p>
+
+                        <p class="text-gray-700 leading-8">
+
+                            {{ vendor.description }}
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <!-- ===================================== -->
+                <!-- Quick Actions -->
+                <!-- ===================================== -->
+
+                <div class="bg-white rounded-3xl shadow p-8">
+
+                    <h2 class="text-2xl font-bold mb-6">
+
+                        Quick Actions
+
+                    </h2>
+
+                    <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
+
+                        <a href="{% url 'vendors:edit_vendor' %}"
+                           class="bg-orange-600 text-white text-center rounded-xl py-4 hover:bg-orange-700">
+
+                            Edit Profile
+
+                        </a>
+
+                        <a href="{% url 'menu:vendor_menu' vendor_pk=vendor.pk %}"
+                           class="bg-blue-600 text-white text-center rounded-xl py-4 hover:bg-blue-700">
+
+                            Manage Menu
+
+                        </a>
+
+                        <a href="{% url 'orders:vendor_orders' %}"
+                           class="bg-green-600 text-white text-center rounded-xl py-4 hover:bg-green-700">
+
+                            View Orders
+
+                        </a>
+
+                        <a href="{% url 'vendors:analytics' %}"
+                           class="bg-purple-600 text-white text-center rounded-xl py-4 hover:bg-purple-700">
+
+                            Analytics
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+                <!-- ===================================== -->
+                <!-- Recent Orders -->
+                <!-- ===================================== -->
+
+                <div class="bg-white rounded-3xl shadow overflow-hidden">
+
+                    <div class="p-6 border-b">
+
+                        <h2 class="text-2xl font-bold">
+
+                            Recent Orders
+
+                        </h2>
+
+                    </div>
+
+                    {% if recent_orders %}
+
+                    <div class="overflow-x-auto">
+
+                        <table class="w-full">
+
+                            <thead class="bg-gray-50">
+
+                                <tr>
+
+                                    <th class="p-4 text-left">Order</th>
+
+                                    <th class="p-4 text-left">Student</th>
+
+                                    <th class="p-4 text-left">Status</th>
+
+                                    <th class="p-4 text-left">Amount</th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                                {% for order in recent_orders %}
+
+                                <tr class="border-t">
+
+                                    <td class="p-4">
+
+                                        #{{ order.short_id }}
+
+                                    </td>
+
+                                    <td class="p-4">
+
+                                        {{ order.student.get_full_name|default:order.student.username }}
+
+                                    </td>
+
+                                    <td class="p-4">
+
+                                        {{ order.get_status_display }}
+
+                                    </td>
+
+                                    <td class="p-4">
+
+                                        ₦{{ order.total_amount }}
+
+                                    </td>
+
+                                </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                    {% else %}
+
+                    <div class="p-10 text-center text-gray-500">
+
+                        No orders yet.
+
+                    </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

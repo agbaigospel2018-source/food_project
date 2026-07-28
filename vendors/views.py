@@ -149,7 +149,7 @@ def vendor_dashboard(request):
     today_end = today_start + timezone.timedelta(days=1)
 
     today_orders = orders.filter(created_at__gte=today_start, created_at__lt=today_end).count()
-    pending_orders = orders.filter(status=OrderStatus.PENDING).count()
+    pending_orders = orders.filter(status=OrderStatus.RECEIVED).count()
     completed_orders = orders.filter(status=OrderStatus.COMPLETED).count()
     revenue = sum((order.total_amount for order in orders.filter(status=OrderStatus.COMPLETED)), start=0)
 
@@ -178,13 +178,64 @@ def vendor_profile(request):
         owner=request.user
     )
 
+    orders = (
+        Order.objects
+        .filter(vendor=vendor)
+        .select_related("student")
+        .order_by("-created_at")
+    )
+
+    recent_orders = orders[:5]
+
+    total_orders = orders.count()
+
+    completed_orders = orders.filter(
+        status=OrderStatus.COMPLETED
+    ).count()
+
+    active_orders = orders.exclude(
+        status__in=[
+            OrderStatus.COMPLETED,
+            OrderStatus.CANCELLED,
+            OrderStatus.REJECTED,
+        ]
+    ).count()
+
+    total_revenue = sum(
+        (
+            order.total_amount
+            for order in orders.filter(
+                status=OrderStatus.COMPLETED
+            )
+        ),
+        start=0
+    )
+
+    menu_items = MenuItem.objects.filter(
+        vendor=vendor
+    )
+
     context = {
-        "vendor": vendor
+        "vendor": vendor,
+
+        "menu_items": menu_items,
+
+        "menu_count": menu_items.count(),
+
+        "total_orders": total_orders,
+
+        "completed_orders": completed_orders,
+
+        "active_orders": active_orders,
+
+        "total_revenue": total_revenue,
+
+        "recent_orders": recent_orders,
     }
 
     return render(
         request,
-        "vendors/dashboard/profile.html",
+        "dashboard/profile.html",
         context,
     )
 

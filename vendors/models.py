@@ -175,7 +175,7 @@ class Vendor(models.Model):
 
     @property
     def pending_orders(self):
-        return self.orders.filter(status="pending").count()
+        return self.orders.filter(status="received").count()
 
     @property
     def completed_orders(self):
