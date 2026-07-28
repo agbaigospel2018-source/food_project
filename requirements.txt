@@ -20,7 +20,7 @@ MarkupSafe==3.0.3
 mdurl==0.1.2
 packaging==26.2
 pillow==12.3.0
-psycopg[binary]
+psycopg2-binary
 Pygments==2.20.0
 pytailwindcss==0.3.1
 python-dateutil==2.9.0.post0
