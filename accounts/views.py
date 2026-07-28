@@ -5,6 +5,8 @@ from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 
+from orders.models import Order
+from menu.models import MenuItemReview
 from .forms import RegisterForm, ProfileUpdateForm
 # Create your views here.
 
@@ -98,8 +100,13 @@ def logout_view(request):
 @login_required
 def profile_view(request):
 
+    total_orders = Order.objects.filter(student=request.user).count()
+    total_reviews = MenuItemReview.objects.filter(student=request.user, is_approved=True).count()
+
     context = {
-        'user': request.user
+        'user': request.user,
+        'total_orders': total_orders,
+        'total_reviews': total_reviews,
     }
 
     return render(
