@@ -51,16 +51,31 @@
   }
  
   .availability {
-    display: inline-block;
-    padding: 0.25rem 0.75rem;
-    border-radius: 999px;
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: var(--menu-danger);
-    background: var(--menu-danger-bg);
-  }
-  .availability.is-available { color: var(--menu-success); background: var(--menu-success-bg); }
- 
+    position: absolute;
+    top: 25px;
+    right: -40px;
+    width: 150px;
+    padding: 15px 0;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+    transform: rotate(45deg);
+    z-index: 10;
+    border-radius: 2px;
+    margin: 0 !important;
+}
+
+.availability.is-available {
+    background: var(--menu-success);
+    color: #fff;
+}
+
+.availability:not(.is-available) {
+    background: var(--menu-danger);
+    color: #fff;
+}
+
   .menu-filter-bar {
     display: flex;
     flex-wrap: nowrap;
@@ -173,6 +188,7 @@
   }
  
   .menu-card {
+    position: relative;
     background: #ffffff;
     border: 1px solid rgba(234, 91, 12, 0.08);
     border-radius: var(--menu-radius);
@@ -209,9 +225,7 @@
     color: var(--menu-muted);
     line-height: 1.5;
   }
-  .menu-card p.availability {
-    margin: 0.6rem 1rem 0.25rem;
-  }
+  
   .menu-card form {
     padding: 0 1rem 1rem;
     margin-top: auto;
@@ -377,7 +391,9 @@
  
                 <p>{{ item.description|truncatewords:18 }}</p>
                 <p>{{ item.current_price|currency }}{% if item.review_count %} - {{ item.average_rating }} / 5{% endif %}</p>
-                <p class="availability {% if item.is_available_now %}is-available{% endif %}">{{ item.availability_label }}</p>
+                <p class="availability {% if item.is_available_now %}is-available{% else %}is-unavailable{% endif %}">
+                  <span>{{ item.availability_label }}</span>
+                </p>
  
                 <form method="post" action="{% url 'cart:add_to_cart' item.pk %}">
                     {% csrf_token %}

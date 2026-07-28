@@ -127,7 +127,7 @@ class MenuItem(models.Model):
         if not self.is_in_stock:
             return "Sold out"
         if not self.is_within_service_time:
-            return "Outside service time"
+            return "Closed"
         return "Available"
 
     def refresh_rating_cache(self):
