@@ -97,3 +97,39 @@ class VendorDashboardOrderStatsTests(TestCase):
         self.assertContains(orders_response, "Order Received")
         self.assertContains(orders_response, "Accepted")
         self.assertContains(orders_response, "Completed")
+
+    def test_analytics_view_status_counts(self):
+        Order.objects.create(
+            student=self.student,
+            vendor=self.vendor,
+            pickup_time=timezone.now() + timedelta(hours=1),
+            status=OrderStatus.RECEIVED,
+            total_amount="15.00",
+        )
+        Order.objects.create(
+            student=self.student,
+            vendor=self.vendor,
+            pickup_time=timezone.now() + timedelta(hours=2),
+            status=OrderStatus.ACCEPTED,
+            total_amount="20.00",
+        )
+        Order.objects.create(
+            student=self.student,
+            vendor=self.vendor,
+            pickup_time=timezone.now() + timedelta(hours=3),
+            status=OrderStatus.COMPLETED,
+            total_amount="30.00",
+        )
+
+        self.client.force_login(self.user)
+
+        analytics_response = self.client.get(reverse("vendors:analytics"))
+        self.assertEqual(analytics_response.status_code, 200)
+        self.assertEqual(analytics_response.context["pending_orders"], 1)
+        self.assertEqual(analytics_response.context["accepted_orders"], 1)
+        self.assertEqual(analytics_response.context["preparing_orders"], 0)
+        self.assertEqual(analytics_response.context["ready_orders"], 0)
+        self.assertEqual(analytics_response.context["completed_orders"], 1)
+        self.assertEqual(analytics_response.context["cancelled_orders"], 0)
+        self.assertEqual(analytics_response.context["rejected_orders"], 0)
+        self.assertContains(analytics_response, "Harbor Kitchen")

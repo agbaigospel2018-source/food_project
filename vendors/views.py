@@ -468,7 +468,7 @@ def analytics(request):
     # ==========================================
 
     pending_orders = orders.filter(
-        status=OrderStatus.PENDING
+        status=OrderStatus.RECEIVED
     ).count()
 
     accepted_orders = orders.filter(
