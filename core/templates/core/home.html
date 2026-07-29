@@ -61,6 +61,7 @@ Home
 {% endblock %}
 
 {% block content %}
+{% if user.is_authenticated %}
 <!-- Changed bg-gradient-to-br to bg-linear-to-br -->
 <section class="min-h-screen flex items-center justify-center bg-linear-to-br from-orange-50 via-white to-orange-100 px-6 py-20">
     <div class="max-w-6xl w-full grid lg:grid-cols-2 gap-12 items-center">
@@ -125,5 +126,8 @@ Home
 
     </div>
 </section>
+{% else %}
+    {{ block.super }}
+{% endif %}
 {% endblock %}
 
