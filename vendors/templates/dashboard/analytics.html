@@ -14,11 +14,8 @@ Analytics | Belleful Express
 
             <!-- Sidebar -->
 
-            <div class="hidden lg:block">
-
                 {% include "components/vendor_sidebar.html" %}
 
-            </div>
 
             <!-- Main Content -->
 
@@ -450,5 +447,244 @@ Analytics | Belleful Express
 
 </div>
 
+<!-- ====================================== -->
+<!-- Revenue Analytics -->
+<!-- ====================================== -->
+
+<div class="bg-white rounded-3xl shadow p-6 md:p-8">
+
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+
+        <div>
+
+            <h2 class="text-2xl font-bold">
+
+                Revenue Analytics
+
+            </h2>
+
+            <p class="text-gray-500 mt-1">
+
+                Daily revenue performance over time.
+
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="h-96">
+
+        <canvas id="revenueChart"></canvas>
+
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const labels = [
+        {% for item in revenue_chart %}
+            "{{ item.day|date:'M d' }}",
+        {% endfor %}
+    ];
+
+    const revenue = [
+        {% for item in revenue_chart %}
+            {{ item.revenue|default:0 }},
+        {% endfor %}
+    ];
+
+    // ----------------------------------------
+    // Show a placeholder if there's no revenue
+    // ----------------------------------------
+
+    if (labels.length === 0) {
+
+        labels.push("No Data");
+
+        revenue.push(0);
+
+    }
+
+    const ctx = document.getElementById("revenueChart");
+
+    if (!ctx) return;
+
+    new Chart(ctx, {
+
+        type: "line",
+
+        data: {
+
+            labels: labels,
+
+            datasets: [
+
+                {
+
+                    label: "Revenue",
+
+                    data: revenue,
+
+                    borderColor: "#EA5B0C",
+
+                    backgroundColor: "rgba(234,91,12,0.12)",
+
+                    fill: true,
+
+                    borderWidth: 3,
+
+                    tension: 0.4,
+
+                    pointRadius: 5,
+
+                    pointHoverRadius: 8,
+
+                    pointBackgroundColor: "#EA5B0C",
+
+                    pointBorderColor: "#FFFFFF",
+
+                    pointBorderWidth: 2,
+
+                    pointHoverBackgroundColor: "#FFFFFF",
+
+                    pointHoverBorderColor: "#EA5B0C",
+
+                }
+
+            ]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            animation: {
+
+                duration: 1200,
+
+                easing: "easeOutQuart"
+
+            },
+
+            interaction: {
+
+                mode: "index",
+
+                intersect: false,
+
+            },
+
+            plugins: {
+
+                legend: {
+
+                    display: false,
+
+                },
+
+                tooltip: {
+
+                    backgroundColor: "#1F2937",
+
+                    titleColor: "#FFFFFF",
+
+                    bodyColor: "#FFFFFF",
+
+                    padding: 12,
+
+                    displayColors: false,
+
+                    callbacks: {
+
+                        title: function(context){
+
+                            return context[0].label;
+
+                        },
+
+                        label: function(context){
+
+                            return "Revenue: ₦" +
+                                Number(context.raw).toLocaleString();
+
+                        }
+
+                    }
+
+                }
+
+            },
+
+            scales: {
+
+                x: {
+
+                    grid: {
+
+                        display: false,
+
+                        drawBorder: false,
+
+                    },
+
+                    ticks: {
+
+                        color: "#6B7280",
+
+                        font: {
+
+                            size: 12
+
+                        }
+
+                    }
+
+                },
+
+                y: {
+
+                    beginAtZero: true,
+
+                    grid: {
+
+                        color: "#E5E7EB",
+
+                        drawBorder: false,
+
+                    },
+
+                    ticks: {
+
+                        color: "#6B7280",
+
+                        callback: function(value){
+
+                            return "₦" +
+                                Number(value).toLocaleString();
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    });
+
+});
+
+</script>
 
 {% endblock %}
