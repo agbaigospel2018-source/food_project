@@ -6,41 +6,51 @@
 
 <head>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>
-    {% block title %}
+    <title>
+        {% block title %}
         Belleful Express
+        {% endblock %}
+    </title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
+        rel="stylesheet" />
+
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+
+    {% block extra_css %}
     {% endblock %}
-</title>
 
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
+    <style>
+        @keyframes bounce-subtle {
 
-<link rel="stylesheet" href="{% static 'css/main.css' %}">
+            0%,
+            100% {
+                transform: translateY(0);
+            }
 
-{% block extra_css %}
-{% endblock %}
+            50% {
+                transform: translateY(-12px);
+            }
+        }
 
-<style>
-  @keyframes bounce-subtle {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-12px); }
-  }
-  .animate-bounce-subtle {
-    animation: bounce-subtle 4s ease-in-out infinite;
-  }
-  .perspective-\[2000px\] {
-    perspective: 2000px;
-  }
-</style>
+        .animate-bounce-subtle {
+            animation: bounce-subtle 4s ease-in-out infinite;
+        }
+
+        .perspective-\[2000px\] {
+            perspective: 2000px;
+        }
+    </style>
 
 </head>
 
 <body class="bg-gray-50 min-h-screen flex flex-col font-sans text-gray-900">
 
-<!-- Navigation -->
+    <!-- Navigation -->
 
     {% include "partials/navbar.html" %}
 
@@ -81,492 +91,532 @@
     });
 </script>
 
-<!-- Main Content -->
+    <!-- Main Content -->
 
-<main class="flex-grow pt-4 md:pt-6">
+    <main class="flex-grow pt-4 md:pt-6">
 
-    {% block content %}
-    <div class="flex flex-col w-full overflow-hidden">
-        <!-- Hero Section -->
-        <section class="relative min-h-[90vh] flex items-center justify-center px-4 lg:px-10 overflow-hidden">
-            <!-- Immersive Background Layer -->
-            <div class="absolute inset-0 z-0 bg-white">
-                <!-- Decorative Blurred Gradients -->
-                <div class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-orange-600/10 blur-[120px]"></div>
-                <div class="absolute bottom-[-5%] right-[-5%] w-[40%] h-[40%] rounded-full bg-orange-600/5 blur-[100px]"></div>
-                
-                <!-- 3D Animation Background -->
-                <div class="absolute inset-0 w-full h-full opacity-80" style="display:block;">
-                    <script src="https://ajax.googleapis.com/ajax/libs/threejs/r125/three.min.js"></script>
-                    <div id="threejs-container-ANIMATION_11" style="width:100%;height:100%"></div>
-                    <script>
-                    (function() {
-                        const container = document.getElementById('threejs-container-ANIMATION_11');
-                        if (!container) return;
-                        const devicePixelRatio = window.devicePixelRatio || 1;
-                        let width = container.clientWidth || window.innerWidth;
-                        let height = container.clientHeight || window.innerHeight;
-                        
-                        const scene = new THREE.Scene();
-                        const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
-                        camera.position.z = 5;
-                        
-                        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-                        renderer.setSize(width, height);
-                        renderer.setPixelRatio(devicePixelRatio);
-                        container.appendChild(renderer.domElement);
-                        
-                        const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
-                        scene.add(ambientLight);
-                        
-                        const pointLight = new THREE.PointLight(0xffffff, 0.5);
-                        pointLight.position.set(5, 5, 5);
-                        scene.add(pointLight);
-                        
-                        const textureLoader = new THREE.TextureLoader();
-                        const imageUrls = [
-                            'https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Hamburger/3D/hamburger_3d.png',
-                            'https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Pizza/3D/pizza_3d.png',
-                            'https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Taco/3D/taco_3d.png',
-                            'https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Burrito/3D/burrito_3d.png',
-                            'https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Sushi/3D/sushi_3d.png',
-                            'https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Hot%20Dog/3D/hot_dog_3d.png'
-                        ];
-                        
-                        const textures = imageUrls.map(url => textureLoader.load(url));
-                        
-                        const foodItems = [];
-                        const itemCount = 20;
-                        
-                        for (let i = 0; i < itemCount; i++) {
-                            const geometry = new THREE.PlaneGeometry(1, 1);
-                            const texture = textures[Math.floor(Math.random() * textures.length)];
-                            
-                            const material = new THREE.MeshPhongMaterial({
-                                map: texture,
-                                transparent: true,
-                                side: THREE.DoubleSide,
-                                shininess: 100
-                            });
-                            
-                            const mesh = new THREE.Mesh(geometry, material);
-                            
-                            // Initialize positions scattered
-                            mesh.position.set(
-                                (Math.random() - 0.5) * 16,
-                                (Math.random() - 0.5) * 12,
-                                (Math.random() - 0.5) * 10
-                            );
-                            
-                            // Increase size of floating items
-                            const s = Math.random() * 0.8 + 1.2; 
-                            mesh.scale.set(s, s, s);
-                            scene.add(mesh);
-                            
-                            // Drift outwards (float out)
-                            const angle = Math.random() * Math.PI * 2;
-                            const speed = Math.random() * 0.02 + 0.01;
-                            
-                            foodItems.push({
-                                mesh,
-                                rotationSpeed: (Math.random() - 0.5) * 0.02,
-                                driftX: Math.cos(angle) * speed,
-                                driftY: Math.sin(angle) * speed,
-                                driftZ: Math.random() * 0.02 + 0.01, // Move towards camera
-                                parallaxFactor: Math.random() * 0.5 + 0.1
-                            });
-                        }
-                        
-                        let mouseX = 0;
-                        let mouseY = 0;
-                        window.addEventListener('mousemove', (e) => {
-                            mouseX = (e.clientX / window.innerWidth) - 0.5;
-                            mouseY = (e.clientY / window.innerHeight) - 0.5;
-                        });
-                        
-                        window.addEventListener('resize', () => {
-                            width = container.clientWidth || window.innerWidth;
-                            height = container.clientHeight || window.innerHeight;
-                            camera.aspect = width / height;
-                            camera.updateProjectionMatrix();
-                            renderer.setSize(width, height);
-                        });
-                        
-                        function animate() {
-                            requestAnimationFrame(animate);
-                            foodItems.forEach(item => {
-                                item.mesh.rotation.z += item.rotationSpeed;
-                                
-                                // Float out instead of floating in
-                                item.mesh.position.x += item.driftX;
-                                item.mesh.position.y += item.driftY;
-                                item.mesh.position.z += item.driftZ;
-                                
-                                // Reset position if it goes too far out
-                                if (Math.abs(item.mesh.position.x) > 12 || Math.abs(item.mesh.position.y) > 10 || item.mesh.position.z > 6) {
-                                    item.mesh.position.set(
-                                        (Math.random() - 0.5) * 2,
-                                        (Math.random() - 0.5) * 2,
-                                        -8 // Start from far back
+        {% block content %}
+        <div class="flex flex-col w-full overflow-hidden">
+            <!-- Hero Section -->
+            <section class="relative min-h-[90vh] flex items-center justify-center px-4 lg:px-10 overflow-hidden">
+                <!-- Immersive Background Layer -->
+                <div class="absolute inset-0 z-0 bg-white">
+                    <!-- Decorative Blurred Gradients -->
+                    <div
+                        class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-orange-600/10 blur-[120px]">
+                    </div>
+                    <div
+                        class="absolute bottom-[-5%] right-[-5%] w-[40%] h-[40%] rounded-full bg-orange-600/5 blur-[100px]">
+                    </div>
+
+                    <!-- 3D Animation Background -->
+                    <div class="absolute inset-0 w-full h-full opacity-80" style="display:block;">
+                        <script src="https://ajax.googleapis.com/ajax/libs/threejs/r125/three.min.js"></script>
+                        <div id="threejs-container-ANIMATION_11" style="width:100%;height:100%"></div>
+                        <script>
+                            (function () {
+                                const container = document.getElementById('threejs-container-ANIMATION_11');
+                                if (!container) return;
+                                const devicePixelRatio = window.devicePixelRatio || 1;
+                                let width = container.clientWidth || window.innerWidth;
+                                let height = container.clientHeight || window.innerHeight;
+
+                                const scene = new THREE.Scene();
+                                const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+                                camera.position.z = 5;
+
+                                const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+                                renderer.setSize(width, height);
+                                renderer.setPixelRatio(devicePixelRatio);
+                                container.appendChild(renderer.domElement);
+
+                                const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+                                scene.add(ambientLight);
+
+                                const pointLight = new THREE.PointLight(0xffffff, 0.5);
+                                pointLight.position.set(5, 5, 5);
+                                scene.add(pointLight);
+
+                                const textureLoader = new THREE.TextureLoader();
+                                const imageUrls = [
+                                    "{% static 'images/floating_custom.png' %}",
+                                    'https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Pizza/3D/pizza_3d.png',
+                                    'https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Taco/3D/taco_3d.png',
+                                    'https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Burrito/3D/burrito_3d.png',
+                                    'https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Sushi/3D/sushi_3d.png',
+                                    'https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Hot%20Dog/3D/hot_dog_3d.png'
+                                ];
+
+                                const textures = imageUrls.map(url => textureLoader.load(url));
+
+                                const foodItems = [];
+                                const itemCount = 20;
+
+                                for (let i = 0; i < itemCount; i++) {
+                                    const geometry = new THREE.PlaneGeometry(1, 1);
+                                    const texIndex = Math.floor(Math.random() * textures.length);
+                                    const texture = textures[texIndex];
+
+                                    const material = new THREE.MeshPhongMaterial({
+                                        map: texture,
+                                        transparent: true,
+                                        side: THREE.DoubleSide,
+                                        shininess: 100
+                                    });
+
+                                    const mesh = new THREE.Mesh(geometry, material);
+
+                                    // Initialize positions scattered
+                                    mesh.position.set(
+                                        (Math.random() - 0.5) * 16,
+                                        (Math.random() - 0.5) * 12,
+                                        (Math.random() - 0.5) * 10
                                     );
+
+                                    // Increase size of floating items
+                                    const s = Math.random() * 0.8 + 1.2;
+                                    mesh.scale.set(s, s, s);
+                                    scene.add(mesh);
+
+                                    // Drift outwards (float out)
+                                    const angle = Math.random() * Math.PI * 2;
+                                    const speed = Math.random() * 0.02 + 0.01;
+                                    
+                                    // Custom image (index 0) stays upright
+                                    const rotationSpeed = texIndex === 0 ? 0 : (Math.random() - 0.5) * 0.02;
+
+                                    foodItems.push({
+                                        mesh,
+                                        rotationSpeed: rotationSpeed,
+                                        driftX: Math.cos(angle) * speed,
+                                        driftY: Math.sin(angle) * speed,
+                                        driftZ: Math.random() * 0.02 + 0.01, // Move towards camera
+                                        parallaxFactor: Math.random() * 0.5 + 0.1
+                                    });
                                 }
-                                
-                                // Apply subtle parallax effect from mouse
-                                item.mesh.position.x += (mouseX * item.parallaxFactor * 0.5 - (item.mesh.position.x * 0.001));
-                                item.mesh.position.y += (-mouseY * item.parallaxFactor * 0.5 - (item.mesh.position.y * 0.001));
-                            });
-                            renderer.render(scene, camera);
-                        }
-                        animate();
-                    })();
-                    </script>
-                </div>
-            </div>
-            
-            <!-- Main Hero Content -->
-            <div class="relative z-10 w-full max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-16 lg:gap-8 pt-20 lg:pt-0">
-                <!-- Textual Impact Container -->
-                <div class="w-full lg:w-3/5 text-center lg:text-left flex flex-col items-center lg:items-start">
-                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100 mb-8">
-                        <span class="w-2 h-2 rounded-full bg-orange-600 animate-pulse"></span>
-                        <span class="font-semibold text-sm text-gray-500 uppercase tracking-widest">Now serving campus life</span>
+
+                                let mouseX = 0;
+                                let mouseY = 0;
+                                window.addEventListener('mousemove', (e) => {
+                                    mouseX = (e.clientX / window.innerWidth) - 0.5;
+                                    mouseY = (e.clientY / window.innerHeight) - 0.5;
+                                });
+
+                                window.addEventListener('resize', () => {
+                                    width = container.clientWidth || window.innerWidth;
+                                    height = container.clientHeight || window.innerHeight;
+                                    camera.aspect = width / height;
+                                    camera.updateProjectionMatrix();
+                                    renderer.setSize(width, height);
+                                });
+
+                                function animate() {
+                                    requestAnimationFrame(animate);
+                                    foodItems.forEach(item => {
+                                        item.mesh.rotation.z += item.rotationSpeed;
+
+                                        // Float out instead of floating in
+                                        item.mesh.position.x += item.driftX;
+                                        item.mesh.position.y += item.driftY;
+                                        item.mesh.position.z += item.driftZ;
+
+                                        // Reset position if it goes too far out
+                                        if (Math.abs(item.mesh.position.x) > 12 || Math.abs(item.mesh.position.y) > 10 || item.mesh.position.z > 6) {
+                                            item.mesh.position.set(
+                                                (Math.random() - 0.5) * 2,
+                                                (Math.random() - 0.5) * 2,
+                                                -8 // Start from far back
+                                            );
+                                        }
+
+                                        // Apply subtle parallax effect from mouse
+                                        item.mesh.position.x += (mouseX * item.parallaxFactor * 0.5 - (item.mesh.position.x * 0.001));
+                                        item.mesh.position.y += (-mouseY * item.parallaxFactor * 0.5 - (item.mesh.position.y * 0.001));
+                                    });
+                                    renderer.render(scene, camera);
+                                }
+                                animate();
+                            })();
+                        </script>
                     </div>
-                    <h1 class="text-5xl font-extrabold text-gray-900 leading-[1.05] tracking-tighter mb-8 lg:max-w-[18ch]">
-                        Your Favourite Food.<br/>
-                        <span class="text-orange-600">A Restaurant Of Your Choice.</span>
-                    </h1>
-                    <p class="text-lg text-gray-500 mb-12 max-w-[500px] leading-relaxed">
-                        Order from verified campus vendors and pick up fresh meals on your schedule. No more long queues, just pure culinary delight.
+                </div>
+
+                <!-- Main Hero Content -->
+                <div
+                    class="relative z-10 w-full max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-16 lg:gap-8 pt-20 lg:pt-0">
+                    <!-- Textual Impact Container -->
+                    <div class="w-full lg:w-3/5 text-center lg:text-left flex flex-col items-center lg:items-start">
+                        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100 mb-8">
+                            <span class="w-2 h-2 rounded-full bg-orange-600 animate-pulse"></span>
+                            <span class="font-semibold text-sm text-gray-500 uppercase tracking-widest">Now serving
+                                campus life</span>
+                        </div>
+                        <h1
+                            class="text-5xl font-extrabold text-gray-900 leading-[1.05] tracking-tighter mb-8 lg:max-w-[18ch]">
+                            Your Favourite Food.<br />
+                            <span class="text-orange-600">A Restaurant Of Your Choice.</span>
+                        </h1>
+                        <p class="text-lg text-gray-500 mb-12 max-w-[500px] leading-relaxed">
+                            Order from verified campus vendors and pick up fresh meals on your schedule. No more long
+                            queues, just pure culinary delight.
+                        </p>
+                        <div class="flex flex-col sm:flex-row items-center gap-6">
+                            <a class="group relative px-10 py-5 bg-orange-600 text-white rounded-full font-semibold overflow-hidden transition-all hover:scale-105 hover:shadow-[0_20px_40px_rgba(234,88,12,0.3)]"
+                                href="{% url 'login' %}">
+                                <span class="relative z-10">Order Now</span>
+                                <div
+                                    class="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                                </div>
+                            </a>
+                            <a class="px-10 py-5 border-[1.5px] border-gray-900 text-gray-900 rounded-full font-semibold hover:bg-gray-900 hover:text-white transition-all"
+                                href="{% url 'register' %}">
+                                For Vendors
+                            </a>
+                        </div>
+                        <div
+                            class="mt-16 flex items-center justify-center lg:justify-start gap-12 border-t border-gray-200 pt-8 w-full lg:w-auto">
+                            <div class="flex flex-col">
+                                <span class="text-2xl font-bold text-gray-900">50+</span>
+                                <span class="text-sm font-medium text-gray-500">Verified Vendors</span>
+                            </div>
+                            <div class="w-px h-10 bg-gray-200"></div>
+                            <div class="flex flex-col">
+                                <span class="text-2xl font-bold text-gray-900">15m</span>
+                                <span class="text-sm font-medium text-gray-500">Avg. Pickup Time</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Phone Mockup Container (3D Interaction Space) -->
+                    <div
+                        class="w-full lg:w-2/5 relative h-[600px] flex items-center justify-center perspective-[2000px]">
+                        <div
+                            class="relative group cursor-pointer transition-transform duration-700 [transform-style:preserve-3d] hover:rotate-y-12 hover:rotate-x-6">
+                            <!-- Main Device Image -->
+                            <img alt="Belleful App Interface"
+                                class="h-[550px] w-auto rounded-[3rem] shadow-[0_50px_100px_-20px_rgba(0,0,0,0.25)] relative z-20"
+                                src="https://lh3.googleusercontent.com/aida/AP1WRLuPwbA-ld9ZiAjVFjsAcQY5PETJAfAaJfDpwCBxg_NtC4i8t69H6S-5pNQLMLNwlsT01S5MSEGo9B6D_FDwM645aMyN3876QQQhZlme2APRbvmLvl0lc72tIwl-uLqNDfnmyAaW4Hnqz6FIucQ9bA6ZV4BX83o3m7NYUTqF53hM72FDhe6SQ1iMlKHa6FqZm77gwDLeJdSKUfkwWbvYtMjen9nxLGAH9A2QoRbsp2E_IUQ48l51g_OAnbUZ" />
+
+                            <!-- Floating UI Elements (Glassmorphism) -->
+                            <div
+                                class="absolute -right-12 top-20 z-30 bg-white/90 backdrop-blur-xl p-4 rounded-2xl shadow-xl flex items-center gap-4 animate-bounce-subtle">
+                                <div class="w-10 h-10 rounded-full bg-orange-600/10 flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-orange-600">local_fire_department</span>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-gray-900 text-sm">Trending Rice Bowl</p>
+                                    <p class="font-medium text-gray-500 text-xs">Ordered by 42 students today</p>
+                                </div>
+                            </div>
+                            <div
+                                class="absolute -left-12 bottom-32 z-30 bg-white/90 backdrop-blur-xl p-4 rounded-2xl shadow-xl flex items-center gap-4 animate-bounce-subtle [animation-delay:1s]">
+                                <div class="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-green-600">check_circle</span>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-gray-900 text-sm">Verified Kitchen</p>
+                                    <p class="font-medium text-gray-500 text-xs">Safety Inspection Passed</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Feature Grid Section -->
+            <section class="py-24 px-4 lg:px-10 bg-gray-50">
+                <div class="max-w-7xl mx-auto">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <!-- Card 1 -->
+                        <div
+                            class="group bg-white p-10 rounded-[32px] transition-all duration-500 hover:-translate-y-4 hover:shadow-[0_32px_64px_-16px_rgba(0,0,0,0.06)] flex flex-col items-start">
+                            <div
+                                class="w-16 h-16 rounded-2xl bg-orange-600/5 flex items-center justify-center mb-8 group-hover:bg-orange-600 transition-colors duration-500">
+                                <span
+                                    class="material-symbols-outlined text-orange-600 group-hover:text-white text-[32px]">restaurant_menu</span>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-900 mb-4">Browse Menus</h3>
+                            <p class="text-gray-500 leading-relaxed">
+                                Explore diverse menus from every corner of the campus. From street food to gourmet
+                                bowls, find exactly what you crave.
+                            </p>
+                            <a href="{% url 'login' %}"
+                                class="mt-8 flex items-center gap-2 text-orange-600 font-bold group-hover:gap-4 transition-all">
+                                <span>Explore menus</span>
+                                <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                            </a>
+                        </div>
+                        <!-- Card 2 -->
+                        <div
+                            class="group bg-white p-10 rounded-[32px] transition-all duration-500 hover:-translate-y-4 hover:shadow-[0_32px_64px_-16px_rgba(0,0,0,0.06)] flex flex-col items-start">
+                            <div
+                                class="w-16 h-16 rounded-2xl bg-orange-600/5 flex items-center justify-center mb-8 group-hover:bg-orange-600 transition-colors duration-500">
+                                <span
+                                    class="material-symbols-outlined text-orange-600 group-hover:text-white text-[32px]">schedule</span>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-900 mb-4">Schedule Pickup</h3>
+                            <p class="text-gray-500 leading-relaxed">
+                                Time your order perfectly with your lecture breaks. Order in class, pick up when you're
+                                out. Freshness guaranteed.
+                            </p>
+                            <a href="{% url 'login' %}"
+                                class="mt-8 flex items-center gap-2 text-orange-600 font-bold group-hover:gap-4 transition-all">
+                                <span>See schedules</span>
+                                <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                            </a>
+                        </div>
+                        <!-- Card 3 -->
+                        <div
+                            class="group bg-white p-10 rounded-[32px] transition-all duration-500 hover:-translate-y-4 hover:shadow-[0_32px_64px_-16px_rgba(0,0,0,0.06)] flex flex-col items-start">
+                            <div
+                                class="w-16 h-16 rounded-2xl bg-orange-600/5 flex items-center justify-center mb-8 group-hover:bg-orange-600 transition-colors duration-500">
+                                <span
+                                    class="material-symbols-outlined text-orange-600 group-hover:text-white text-[32px]">location_on</span>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-900 mb-4">Track Your Order</h3>
+                            <p class="text-gray-500 leading-relaxed">
+                                Real-time updates on your meal's preparation. Know exactly when it's ready to hit your
+                                tastebuds.
+                            </p>
+                            <a href="{% url 'login' %}"
+                                class="mt-8 flex items-center gap-2 text-orange-600 font-bold group-hover:gap-4 transition-all">
+                                <span>Track order</span>
+                                <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Trust & Validation Section -->
+            <section class="py-20 border-t border-gray-200">
+                <div class="max-w-7xl mx-auto px-4 lg:px-10">
+                    <div class="flex flex-col lg:flex-row items-center justify-between gap-12">
+                        <div class="flex flex-col gap-2 max-w-md">
+                            <h2 class="text-3xl font-bold text-gray-900">Trust in every bite.</h2>
+                            <p class="text-gray-500">We partner exclusively with vendors who meet our rigorous quality
+                                and safety standards.</p>
+                        </div>
+                        <div class="flex flex-wrap justify-center gap-12">
+                            <div class="flex items-center gap-4">
+                                <div class="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-orange-600 text-[28px]">verified</span>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-gray-900">Verified Kitchens</p>
+                                    <p class="text-sm font-medium text-gray-500">Daily hygiene checks</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div class="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-orange-600 text-[28px]">update</span>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-gray-900">Real-time Menus</p>
+                                    <p class="text-sm font-medium text-gray-500">Live stock updates</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div class="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-orange-600 text-[28px]">payments</span>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-gray-900">Secure Payment</p>
+                                    <p class="text-sm font-medium text-gray-500">Encrypted transactions</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+        <script>
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('opacity-100', 'translate-y-0');
+                        entry.target.classList.remove('opacity-0', 'translate-y-12');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.group').forEach(el => {
+                el.classList.add('transition-all', 'duration-1000', 'opacity-0', 'translate-y-12');
+                observer.observe(el);
+            });
+        </script>
+        {% endblock %}
+
+    </main>
+
+    <!-- Footer -->
+
+    <footer class="bg-gray-900 text-white mt-16 relative border-t-2 border-orange-600/10">
+        <div class="absolute top-0 left-0 w-full h-[2px] bg-orange-600/20"></div>
+
+        <div class="max-w-7xl mx-auto px-6 py-12">
+
+            <div class="grid md:grid-cols-3 gap-8">
+
+                <div>
+
+                    <h3 class="text-2xl font-bold text-orange-400">
+                        Belleful Express
+                    </h3>
+
+                    <p class="mt-4 text-gray-400">
+                        Order meals online, skip the queue,
+                        and enjoy faster campus dining.
                     </p>
-                    <div class="flex flex-col sm:flex-row items-center gap-6">
-                        <a class="group relative px-10 py-5 bg-orange-600 text-white rounded-full font-semibold overflow-hidden transition-all hover:scale-105 hover:shadow-[0_20px_40px_rgba(234,88,12,0.3)]" href="{% url 'login' %}">
-                            <span class="relative z-10">Order Now</span>
-                            <div class="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-                        </a>
-                        <a class="px-10 py-5 border-[1.5px] border-gray-900 text-gray-900 rounded-full font-semibold hover:bg-gray-900 hover:text-white transition-all" href="{% url 'register' %}">
-                            For Vendors
-                        </a>
-                    </div>
-                    <div class="mt-16 flex items-center justify-center lg:justify-start gap-12 border-t border-gray-200 pt-8 w-full lg:w-auto">
-                        <div class="flex flex-col">
-                            <span class="text-2xl font-bold text-gray-900">50+</span>
-                            <span class="text-sm font-medium text-gray-500">Verified Vendors</span>
-                        </div>
-                        <div class="w-px h-10 bg-gray-200"></div>
-                        <div class="flex flex-col">
-                            <span class="text-2xl font-bold text-gray-900">15m</span>
-                            <span class="text-sm font-medium text-gray-500">Avg. Pickup Time</span>
-                        </div>
-                    </div>
+
                 </div>
-                
-                <!-- Phone Mockup Container (3D Interaction Space) -->
-                <div class="w-full lg:w-2/5 relative h-[600px] flex items-center justify-center perspective-[2000px]">
-                    <div class="relative group cursor-pointer transition-transform duration-700 [transform-style:preserve-3d] hover:rotate-y-12 hover:rotate-x-6">
-                        <!-- Main Device Image -->
-                        <img alt="Belleful App Interface" class="h-[550px] w-auto rounded-[3rem] shadow-[0_50px_100px_-20px_rgba(0,0,0,0.25)] relative z-20" src="https://lh3.googleusercontent.com/aida/AP1WRLuPwbA-ld9ZiAjVFjsAcQY5PETJAfAaJfDpwCBxg_NtC4i8t69H6S-5pNQLMLNwlsT01S5MSEGo9B6D_FDwM645aMyN3876QQQhZlme2APRbvmLvl0lc72tIwl-uLqNDfnmyAaW4Hnqz6FIucQ9bA6ZV4BX83o3m7NYUTqF53hM72FDhe6SQ1iMlKHa6FqZm77gwDLeJdSKUfkwWbvYtMjen9nxLGAH9A2QoRbsp2E_IUQ48l51g_OAnbUZ"/>
-                        
-                        <!-- Floating UI Elements (Glassmorphism) -->
-                        <div class="absolute -right-12 top-20 z-30 bg-white/90 backdrop-blur-xl p-4 rounded-2xl shadow-xl flex items-center gap-4 animate-bounce-subtle">
-                            <div class="w-10 h-10 rounded-full bg-orange-600/10 flex items-center justify-center">
-                                <span class="material-symbols-outlined text-orange-600">local_fire_department</span>
-                            </div>
-                            <div>
-                                <p class="font-bold text-gray-900 text-sm">Trending Rice Bowl</p>
-                                <p class="font-medium text-gray-500 text-xs">Ordered by 42 students today</p>
-                            </div>
-                        </div>
-                        <div class="absolute -left-12 bottom-32 z-30 bg-white/90 backdrop-blur-xl p-4 rounded-2xl shadow-xl flex items-center gap-4 animate-bounce-subtle [animation-delay:1s]">
-                            <div class="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center">
-                                <span class="material-symbols-outlined text-green-600">check_circle</span>
-                            </div>
-                            <div>
-                                <p class="font-bold text-gray-900 text-sm">Verified Kitchen</p>
-                                <p class="font-medium text-gray-500 text-xs">Safety Inspection Passed</p>
-                            </div>
-                        </div>
-                    </div>
+
+                <div>
+
+                    <h3 class="font-semibold mb-4">
+                        Quick Links
+                    </h3>
+
+                    <ul class="space-y-2">
+
+                        <li>
+                            <a href="{% url 'home' %}" class="hover:text-orange-400">Home</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'login' %}" class="hover:text-orange-400">Restaurants</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'login' %}" class="hover:text-orange-400">Menu</a>
+                        </li>
+
+                    </ul>
+
                 </div>
-            </div>
-        </section>
-        
-        <!-- Feature Grid Section -->
-        <section class="py-24 px-4 lg:px-10 bg-gray-50">
-            <div class="max-w-7xl mx-auto">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <!-- Card 1 -->
-                    <div class="group bg-white p-10 rounded-[32px] transition-all duration-500 hover:-translate-y-4 hover:shadow-[0_32px_64px_-16px_rgba(0,0,0,0.06)] flex flex-col items-start">
-                        <div class="w-16 h-16 rounded-2xl bg-orange-600/5 flex items-center justify-center mb-8 group-hover:bg-orange-600 transition-colors duration-500">
-                            <span class="material-symbols-outlined text-orange-600 group-hover:text-white text-[32px]">restaurant_menu</span>
-                        </div>
-                        <h3 class="text-2xl font-bold text-gray-900 mb-4">Browse Menus</h3>
-                        <p class="text-gray-500 leading-relaxed">
-                            Explore diverse menus from every corner of the campus. From street food to gourmet bowls, find exactly what you crave.
-                        </p>
-                        <a href="{% url 'login' %}" class="mt-8 flex items-center gap-2 text-orange-600 font-bold group-hover:gap-4 transition-all">
-                            <span>Explore menus</span>
-                            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-                        </a>
-                    </div>
-                    <!-- Card 2 -->
-                    <div class="group bg-white p-10 rounded-[32px] transition-all duration-500 hover:-translate-y-4 hover:shadow-[0_32px_64px_-16px_rgba(0,0,0,0.06)] flex flex-col items-start">
-                        <div class="w-16 h-16 rounded-2xl bg-orange-600/5 flex items-center justify-center mb-8 group-hover:bg-orange-600 transition-colors duration-500">
-                            <span class="material-symbols-outlined text-orange-600 group-hover:text-white text-[32px]">schedule</span>
-                        </div>
-                        <h3 class="text-2xl font-bold text-gray-900 mb-4">Schedule Pickup</h3>
-                        <p class="text-gray-500 leading-relaxed">
-                            Time your order perfectly with your lecture breaks. Order in class, pick up when you're out. Freshness guaranteed.
-                        </p>
-                        <a href="{% url 'login' %}" class="mt-8 flex items-center gap-2 text-orange-600 font-bold group-hover:gap-4 transition-all">
-                            <span>See schedules</span>
-                            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-                        </a>
-                    </div>
-                    <!-- Card 3 -->
-                    <div class="group bg-white p-10 rounded-[32px] transition-all duration-500 hover:-translate-y-4 hover:shadow-[0_32px_64px_-16px_rgba(0,0,0,0.06)] flex flex-col items-start">
-                        <div class="w-16 h-16 rounded-2xl bg-orange-600/5 flex items-center justify-center mb-8 group-hover:bg-orange-600 transition-colors duration-500">
-                            <span class="material-symbols-outlined text-orange-600 group-hover:text-white text-[32px]">location_on</span>
-                        </div>
-                        <h3 class="text-2xl font-bold text-gray-900 mb-4">Track Your Order</h3>
-                        <p class="text-gray-500 leading-relaxed">
-                            Real-time updates on your meal's preparation. Know exactly when it's ready to hit your tastebuds.
-                        </p>
-                        <a href="{% url 'login' %}" class="mt-8 flex items-center gap-2 text-orange-600 font-bold group-hover:gap-4 transition-all">
-                            <span>Track order</span>
-                            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-                        </a>
-                    </div>
+
+                <div>
+
+                    <h3 class="font-semibold mb-4">
+                        Contact
+                    </h3>
+
+                    <p>
+                        support@bellefulexpress.com
+                    </p>
+
                 </div>
-            </div>
-        </section>
-        
-        <!-- Trust & Validation Section -->
-        <section class="py-20 border-t border-gray-200">
-            <div class="max-w-7xl mx-auto px-4 lg:px-10">
-                <div class="flex flex-col lg:flex-row items-center justify-between gap-12">
-                    <div class="flex flex-col gap-2 max-w-md">
-                        <h2 class="text-3xl font-bold text-gray-900">Trust in every bite.</h2>
-                        <p class="text-gray-500">We partner exclusively with vendors who meet our rigorous quality and safety standards.</p>
-                    </div>
-                    <div class="flex flex-wrap justify-center gap-12">
-                        <div class="flex items-center gap-4">
-                            <div class="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center">
-                                <span class="material-symbols-outlined text-orange-600 text-[28px]">verified</span>
-                            </div>
-                            <div>
-                                <p class="font-bold text-gray-900">Verified Kitchens</p>
-                                <p class="text-sm font-medium text-gray-500">Daily hygiene checks</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-4">
-                            <div class="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center">
-                                <span class="material-symbols-outlined text-orange-600 text-[28px]">update</span>
-                            </div>
-                            <div>
-                                <p class="font-bold text-gray-900">Real-time Menus</p>
-                                <p class="text-sm font-medium text-gray-500">Live stock updates</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-4">
-                            <div class="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center">
-                                <span class="material-symbols-outlined text-orange-600 text-[28px]">payments</span>
-                            </div>
-                            <div>
-                                <p class="font-bold text-gray-900">Secure Payment</p>
-                                <p class="text-sm font-medium text-gray-500">Encrypted transactions</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        
-    </div>
-    <script>
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('opacity-100', 'translate-y-0');
-            entry.target.classList.remove('opacity-0', 'translate-y-12');
-          }
-        });
-      }, { threshold: 0.1 });
-    
-      document.querySelectorAll('.group').forEach(el => {
-        el.classList.add('transition-all', 'duration-1000', 'opacity-0', 'translate-y-12');
-        observer.observe(el);
-      });
-    </script>
-    {% endblock %}
-
-</main>
-
-<!-- Footer -->
-
-<footer class="bg-gray-900 text-white mt-16 relative border-t-2 border-orange-600/10">
-    <div class="absolute top-0 left-0 w-full h-[2px] bg-orange-600/20"></div>
-
-    <div class="max-w-7xl mx-auto px-6 py-12">
-
-        <div class="grid md:grid-cols-3 gap-8">
-
-            <div>
-
-                <h3 class="text-2xl font-bold text-orange-400">
-                    Belleful Express
-                </h3>
-
-                <p class="mt-4 text-gray-400">
-                    Order meals online, skip the queue,
-                    and enjoy faster campus dining.
-                </p>
 
             </div>
 
-            <div>
+            <hr class="my-6 border-gray-700">
 
-                <h3 class="font-semibold mb-4">
-                    Quick Links
-                </h3>
-
-                <ul class="space-y-2">
-
-                    <li>
-                        <a href="{% url 'home' %}" class="hover:text-orange-400">Home</a>
-                    </li>
-                    <li>
-                        <a href="{% url 'login' %}" class="hover:text-orange-400">Restaurants</a>
-                    </li>
-                    <li>
-                        <a href="{% url 'login' %}" class="hover:text-orange-400">Menu</a>
-                    </li>
-
-                </ul>
-
-            </div>
-
-            <div>
-
-                <h3 class="font-semibold mb-4">
-                    Contact
-                </h3>
-
-                <p>
-                    support@bellefulexpress.com
-                </p>
-
-            </div>
+            <p class="text-center text-gray-500">
+                © 2026 Belleful Express. All Rights Reserved.
+            </p>
 
         </div>
 
-        <hr class="my-6 border-gray-700">
+    </footer>
 
-        <p class="text-center text-gray-500">
-            © 2026 Belleful Express. All Rights Reserved.
-        </p>
+    <script src="{% static 'js/main.js' %}"></script>
 
-    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
 
-</footer>
-
-<script src="{% static 'js/main.js' %}"></script>
-
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const mobileMenuButton = document.getElementById('mobile-menu-button');
-        const mobileMenu = document.getElementById('mobile-menu');
-
-        if (mobileMenuButton && mobileMenu) {
-            mobileMenuButton.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
-            });
-        }
-
-        const sidebarToggle = document.getElementById('vendor-sidebar-toggle');
-        const sidebarWrapper = document.getElementById('vendor-sidebar-wrapper');
-        const sidebarClose = document.getElementById('vendor-sidebar-close');
-
-        function openSidebarMobile() {
-            if (!sidebarWrapper) return;
-            if (window.innerWidth >= 1024) return; // only mobile
-
-            // Prepare overlay positioning
-            sidebarWrapper.classList.remove('hidden');
-            sidebarWrapper.style.position = 'fixed';
-            sidebarWrapper.style.left = '1rem';
-            sidebarWrapper.style.right = '1rem';
-            sidebarWrapper.style.top = '4.5rem';
-            sidebarWrapper.style.zIndex = '60';
-            sidebarWrapper.style.transform = 'translateX(-110%)';
-            sidebarWrapper.style.transition = 'transform .28s ease';
-
-            // Force reflow then slide in
-            void sidebarWrapper.offsetWidth;
-            sidebarWrapper.style.transform = 'translateX(0)';
-        }
-
-        function closeSidebarMobile() {
-            if (!sidebarWrapper) return;
-            if (window.innerWidth >= 1024) return;
-
-            sidebarWrapper.style.transform = 'translateX(-110%)';
-            const handler = function () {
-                sidebarWrapper.classList.add('hidden');
-                // cleanup inline styles
-                sidebarWrapper.style.position = '';
-                sidebarWrapper.style.left = '';
-                sidebarWrapper.style.right = '';
-                sidebarWrapper.style.top = '';
-                sidebarWrapper.style.zIndex = '';
-                sidebarWrapper.style.transform = '';
-                sidebarWrapper.style.transition = '';
-                sidebarWrapper.removeEventListener('transitionend', handler);
-            };
-            sidebarWrapper.addEventListener('transitionend', handler);
-        }
-
-        if (sidebarToggle && sidebarWrapper) {
-            sidebarToggle.addEventListener('click', () => {
-                if (sidebarWrapper.classList.contains('hidden')) {
-                    openSidebarMobile();
-                } else {
-                    closeSidebarMobile();
-                }
-            });
-        }
-
-        if (sidebarClose && sidebarWrapper) {
-            sidebarClose.addEventListener('click', () => {
-                closeSidebarMobile();
-            });
-        }
-
-        // Keep desktop layout unaffected when resizing
-        window.addEventListener('resize', () => {
-            if (!sidebarWrapper) return;
-            if (window.innerWidth >= 1024) {
-                // ensure sidebar is visible and reset any mobile inline styles
-                sidebarWrapper.classList.remove('hidden');
-                sidebarWrapper.style.position = '';
-                sidebarWrapper.style.left = '';
-                sidebarWrapper.style.right = '';
-                sidebarWrapper.style.top = '';
-                sidebarWrapper.style.zIndex = '';
-                sidebarWrapper.style.transform = '';
-                sidebarWrapper.style.transition = '';
-            } else {
-                // hide it on small screens by default
-                if (!sidebarWrapper.classList.contains('hidden')) {
-                    sidebarWrapper.classList.add('hidden');
-                }
+            if (mobileMenuButton && mobileMenu) {
+                mobileMenuButton.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                });
             }
-        });
-    });
-</script>
 
-{% block extra_js %}
-{% endblock %}
+            const sidebarToggle = document.getElementById('vendor-sidebar-toggle');
+            const sidebarWrapper = document.getElementById('vendor-sidebar-wrapper');
+            const sidebarClose = document.getElementById('vendor-sidebar-close');
+
+            function openSidebarMobile() {
+                if (!sidebarWrapper) return;
+                if (window.innerWidth >= 1024) return; // only mobile
+
+                // Prepare overlay positioning
+                sidebarWrapper.classList.remove('hidden');
+                sidebarWrapper.style.position = 'fixed';
+                sidebarWrapper.style.left = '1rem';
+                sidebarWrapper.style.right = '1rem';
+                sidebarWrapper.style.top = '4.5rem';
+                sidebarWrapper.style.zIndex = '60';
+                sidebarWrapper.style.transform = 'translateX(-110%)';
+                sidebarWrapper.style.transition = 'transform .28s ease';
+
+                // Force reflow then slide in
+                void sidebarWrapper.offsetWidth;
+                sidebarWrapper.style.transform = 'translateX(0)';
+            }
+
+            function closeSidebarMobile() {
+                if (!sidebarWrapper) return;
+                if (window.innerWidth >= 1024) return;
+
+                sidebarWrapper.style.transform = 'translateX(-110%)';
+                const handler = function () {
+                    sidebarWrapper.classList.add('hidden');
+                    // cleanup inline styles
+                    sidebarWrapper.style.position = '';
+                    sidebarWrapper.style.left = '';
+                    sidebarWrapper.style.right = '';
+                    sidebarWrapper.style.top = '';
+                    sidebarWrapper.style.zIndex = '';
+                    sidebarWrapper.style.transform = '';
+                    sidebarWrapper.style.transition = '';
+                    sidebarWrapper.removeEventListener('transitionend', handler);
+                };
+                sidebarWrapper.addEventListener('transitionend', handler);
+            }
+
+            if (sidebarToggle && sidebarWrapper) {
+                sidebarToggle.addEventListener('click', () => {
+                    if (sidebarWrapper.classList.contains('hidden')) {
+                        openSidebarMobile();
+                    } else {
+                        closeSidebarMobile();
+                    }
+                });
+            }
+
+            if (sidebarClose && sidebarWrapper) {
+                sidebarClose.addEventListener('click', () => {
+                    closeSidebarMobile();
+                });
+            }
+
+            // Keep desktop layout unaffected when resizing
+            window.addEventListener('resize', () => {
+                if (!sidebarWrapper) return;
+                if (window.innerWidth >= 1024) {
+                    // ensure sidebar is visible and reset any mobile inline styles
+                    sidebarWrapper.classList.remove('hidden');
+                    sidebarWrapper.style.position = '';
+                    sidebarWrapper.style.left = '';
+                    sidebarWrapper.style.right = '';
+                    sidebarWrapper.style.top = '';
+                    sidebarWrapper.style.zIndex = '';
+                    sidebarWrapper.style.transform = '';
+                    sidebarWrapper.style.transition = '';
+                } else {
+                    // hide it on small screens by default
+                    if (!sidebarWrapper.classList.contains('hidden')) {
+                        sidebarWrapper.classList.add('hidden');
+                    }
+                }
+            });
+        });
+    </script>
+
+    {% block extra_js %}
+    {% endblock %}
 
 
 </body>
+
 </html>
