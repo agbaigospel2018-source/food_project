@@ -10,76 +10,504 @@
        ORDER DASHBOARD STATS
     =============================== */
 
-    .stat-card{
+    .stat-card {
         position: relative;
         overflow: hidden;
         border-radius: 1.5rem;
-        background: rgba(255,255,255,.05);
+        background: rgba(255, 255, 255, .05);
         backdrop-filter: blur(18px);
         -webkit-backdrop-filter: blur(18px);
-        border:1px solid rgba(255,255,255,.08);
-        transition:.35s ease;
+        border: 1px solid rgba(255, 255, 255, .08);
+        transition: .35s ease;
     }
 
-    .stat-card:hover{
-        transform:translateY(-6px);
-        border-color:rgba(99,102,241,.45);
-        box-shadow:0 20px 40px rgba(0,0,0,.18);
+    .stat-card:hover {
+        transform: translateY(-6px);
+        border-color: rgba(99, 102, 241, .45);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, .18);
     }
 
-    .stat-card::before{
-        content:"";
-        position:absolute;
-        inset:0;
-        background:linear-gradient(
-            135deg,
-            rgba(255,255,255,.05),
-            transparent
-        );
-        pointer-events:none;
+    .stat-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg,
+                rgba(255, 255, 255, .05),
+                transparent);
+        pointer-events: none;
     }
 
-    .stat-icon{
-        width:60px;
-        height:60px;
-        border-radius:18px;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        transition:.35s ease;
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: .35s ease;
     }
 
-    .stat-card:hover .stat-icon{
-        transform:rotate(-8deg) scale(1.08);
+    .stat-card:hover .stat-icon {
+        transform: rotate(-8deg) scale(1.08);
     }
 
-    .stat-number{
-        font-size:2rem;
-        font-weight:700;
-        line-height:1;
+    .stat-number {
+        font-size: 2rem;
+        font-weight: 700;
+        line-height: 1;
     }
 
-    .fade-up{
-        opacity:0;
-        transform:translateY(18px);
-        animation:fadeUp .6s forwards;
+    .fade-up {
+        opacity: 0;
+        transform: translateY(18px);
+        animation: fadeUp .6s forwards;
     }
 
-    .fade-delay-1{animation-delay:.05s;}
-    .fade-delay-2{animation-delay:.15s;}
-    .fade-delay-3{animation-delay:.25s;}
-    .fade-delay-4{animation-delay:.35s;}
-    .fade-delay-5{animation-delay:.45s;}
+    .fade-delay-1 {
+        animation-delay: .05s;
+    }
 
-    @keyframes fadeUp{
+    .fade-delay-2 {
+        animation-delay: .15s;
+    }
 
-        to{
-            opacity:1;
-            transform:translateY(0);
+    .fade-delay-3 {
+        animation-delay: .25s;
+    }
+
+    .fade-delay-4 {
+        animation-delay: .35s;
+    }
+
+    .fade-delay-5 {
+        animation-delay: .45s;
+    }
+
+    @keyframes fadeUp {
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
         }
 
     }
 
+    /* ======================================
+        FILTER BAR
+====================================== */
+
+    .filter-container {
+
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+
+        padding: 22px;
+
+        border-radius: 20px;
+
+        background: rgba(255, 255, 255, .05);
+
+        backdrop-filter: blur(16px);
+
+        border: 1px solid rgba(255, 255, 255, .08);
+
+        margin-top: 30px;
+
+        flex-wrap: wrap;
+
+    }
+
+    .filter-search {
+
+        position: relative;
+
+        flex: 1;
+
+        min-width: 280px;
+
+    }
+
+    .filter-search input {
+
+        width: 100%;
+
+        height: 52px;
+
+        padding-left: 50px;
+
+        border: none;
+
+        outline: none;
+
+        border-radius: 14px;
+
+        background: #f8fafc;
+
+        transition: .3s;
+
+    }
+
+    .filter-search input:focus {
+
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, .2);
+
+    }
+
+    .filter-search-icon {
+
+        position: absolute;
+
+        left: 16px;
+
+        top: 50%;
+
+        transform: translateY(-50%);
+
+        width: 18px;
+
+        height: 18px;
+
+        color: #64748b;
+
+    }
+
+    .filter-actions {
+
+        display: flex;
+
+        align-items: center;
+
+        gap: 15px;
+
+        flex-wrap: wrap;
+
+    }
+
+    .filter-actions select {
+
+        height: 52px;
+
+        padding: 0 18px;
+
+        border-radius: 14px;
+
+        border: 1px solid #e2e8f0;
+
+        background: white;
+
+        cursor: pointer;
+
+    }
+
+    .btn-primary {
+
+        display: flex;
+
+        align-items: center;
+
+        gap: 10px;
+
+        height: 52px;
+
+        padding: 0 22px;
+
+        border: none;
+
+        border-radius: 14px;
+
+        background: #4f46e5;
+
+        color: white;
+
+        cursor: pointer;
+
+        transition: .3s;
+
+    }
+
+    .btn-primary:hover {
+
+        background: #4338ca;
+
+    }
+
+    .btn-primary i {
+
+        width: 18px;
+
+        height: 18px;
+
+    }
+
+    @media(max-width:768px) {
+
+        .filter-container {
+
+            flex-direction: column;
+
+            align-items: stretch;
+
+        }
+
+        .filter-actions {
+
+            width: 100%;
+
+            flex-direction: column;
+
+        }
+
+        .filter-actions select,
+        .btn-primary {
+
+            width: 100%;
+
+        }
+
+    }
+
+    /* ===============================
+        ORDER SECTION
+================================ */
+
+    .order-section {
+
+        margin-top: 40px;
+
+    }
+
+    .section-header {
+
+        display: flex;
+
+        justify-content: space-between;
+
+        align-items: center;
+
+        margin-bottom: 20px;
+
+        cursor: pointer;
+
+    }
+
+    .section-title {
+
+        display: flex;
+
+        gap: 15px;
+
+        align-items: center;
+
+    }
+
+    .section-title h2 {
+
+        font-size: 1.3rem;
+
+        font-weight: 700;
+
+    }
+
+    .section-title span {
+
+        color: #64748b;
+
+        font-size: .9rem;
+
+    }
+
+    .section-icon {
+
+        width: 52px;
+
+        height: 52px;
+
+        border-radius: 14px;
+
+        display: flex;
+
+        justify-content: center;
+
+        align-items: center;
+
+    }
+
+    .collapse-btn {
+
+        border: none;
+
+        background: transparent;
+
+        cursor: pointer;
+
+    }
+
+    .orders-grid {
+
+        display: grid;
+
+        grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+
+        gap: 24px;
+
+    }
+
+    .order-card {
+
+        background: rgba(255, 255, 255, .05);
+
+        backdrop-filter: blur(16px);
+
+        border: 1px solid rgba(255, 255, 255, .08);
+
+        border-radius: 22px;
+
+        padding: 22px;
+
+        transition: .35s;
+
+    }
+
+    .order-card:hover {
+
+        transform: translateY(-6px);
+
+        border-color: #6366f1;
+
+    }
+
+    .order-top {
+
+        display: flex;
+
+        justify-content: space-between;
+
+        margin-bottom: 20px;
+
+    }
+
+    .status {
+
+        padding: 6px 14px;
+
+        border-radius: 999px;
+
+        font-size: .75rem;
+
+        font-weight: 600;
+
+    }
+
+    .status.pending {
+
+        background: #fef3c7;
+
+        color: #b45309;
+
+    }
+
+    .customer-row {
+
+        display: flex;
+
+        align-items: center;
+
+        gap: 12px;
+
+        margin-bottom: 16px;
+
+        color: #475569;
+
+    }
+
+    .customer-row i {
+
+        width: 18px;
+
+        height: 18px;
+
+    }
+
+    .order-actions {
+
+        display: flex;
+
+        gap: 12px;
+
+        margin-top: 25px;
+
+    }
+
+    .accept-btn,
+    .reject-btn {
+
+        flex: 1;
+
+        border: none;
+
+        border-radius: 12px;
+
+        padding: 12px;
+
+        cursor: pointer;
+
+        display: flex;
+
+        justify-content: center;
+
+        align-items: center;
+
+        gap: 8px;
+
+        font-weight: 600;
+
+        transition: .3s;
+
+    }
+
+    .accept-btn {
+
+        background: #16a34a;
+
+        color: white;
+
+    }
+
+    .accept-btn:hover {
+
+        background: #15803d;
+
+    }
+
+    .reject-btn {
+
+        background: #ef4444;
+
+        color: white;
+
+    }
+
+    .reject-btn:hover {
+
+        background: #dc2626;
+
+    }
+
+    .empty-orders {
+
+        grid-column: 1/-1;
+
+        text-align: center;
+
+        padding: 80px 30px;
+
+        border-radius: 20px;
+
+        border: 2px dashed #d1d5db;
+
+    }
 </style>
 
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -287,17 +715,358 @@
 
     </div>
 
+    <!-- ==========================================
+            FILTERS & SEARCH BAR
+=========================================== -->
+
+    <div class="filter-container">
+
+        <div class="filter-search">
+
+            <i data-lucide="search" class="filter-search-icon"></i>
+
+            <input type="text" id="orderSearch" placeholder="Search by order ID or customer..." autocomplete="off">
+
+        </div>
+
+        <div class="filter-actions">
+
+            <!-- Status -->
+
+            <select id="statusFilter">
+
+                <option value="all">All Status</option>
+                <option value="pending">Pending</option>
+                <option value="accepted">Accepted</option>
+                <option value="preparing">Preparing</option>
+                <option value="ready">Ready</option>
+                <option value="completed">Completed</option>
+                <option value="cancelled">Cancelled</option>
+                <option value="rejected">Rejected</option>
+
+            </select>
+
+            <!-- Sort -->
+
+            <select id="sortOrders">
+
+                <option value="newest">
+                    Newest First
+                </option>
+
+                <option value="oldest">
+                    Oldest First
+                </option>
+
+                <option value="pickup">
+                    Pickup Time
+                </option>
+
+            </select>
+
+            <button id="refreshOrders" class="btn-primary">
+
+                <i data-lucide="refresh-cw"></i>
+
+                Refresh
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- ==========================================
+            PENDING ORDERS
+=========================================== -->
+
+    <section class="order-section">
+
+        <div class="section-header" id="pendingToggle">
+
+            <div class="section-title">
+
+                <div class="section-icon bg-amber-100 text-amber-600">
+
+                    <i data-lucide="clock-3"></i>
+
+                </div>
+
+                <div>
+
+                    <h2>Pending Orders</h2>
+
+                    <span>{{ pending_orders }} waiting for acceptance</span>
+
+                </div>
+
+            </div>
+
+            <button class="collapse-btn">
+
+                <i data-lucide="chevron-down"></i>
+
+            </button>
+
+        </div>
+
+        <div class="orders-grid" id="pendingContainer">
+
+            {% for order in pending_list %}
+
+            <div class="order-card" data-status="pending" data-order="{{ order.id }}">
+
+                <!-- Card Header -->
+
+                <div class="order-top">
+
+                    <div>
+
+                        <h3>#{{ order.id }}</h3>
+
+                        <small>{{ order.created_at|timesince }} ago</small>
+
+                    </div>
+
+                    <span class="status pending">
+
+                        Pending
+
+                    </span>
+
+                </div>
+
+                <!-- Customer -->
+
+                <div class="customer-row">
+
+                    <i data-lucide="user"></i>
+
+                    <span>
+
+                        {{ order.student.get_full_name|default:order.student.username }}
+
+                    </span>
+
+                </div>
+
+                <!-- Pickup -->
+
+                <div class="customer-row">
+
+                    <i data-lucide="clock"></i>
+
+                    <span>
+
+                        {{ order.pickup_time|time:"g:i A" }}
+
+                    </span>
+
+                </div>
+
+                <!-- Total -->
+
+                <div class="customer-row">
+
+                    <i data-lucide="wallet"></i>
+
+                    <span>
+
+                        ₦{{ order.total_amount }}
+
+                    </span>
+
+                </div>
+
+                <!-- Items -->
+
+                <div class="customer-row">
+
+                    <i data-lucide="shopping-bag"></i>
+
+                    <span>
+
+                        {{ order.items.count }} item{{ order.items.count|pluralize }}
+
+                    </span>
+
+                </div>
+
+                <!-- Actions -->
+
+                <div class="order-actions">
+
+                    <button class="accept-btn" data-order="{{ order.id }}">
+
+                        <i data-lucide="check"></i>
+
+                        Accept
+
+                    </button>
+
+                    <button class="reject-btn" data-order="{{ order.id }}">
+
+                        <i data-lucide="x"></i>
+
+                        Reject
+
+                    </button>
+
+                </div>
+
+            </div>
+
+            {% empty %}
+
+            <div class="empty-orders">
+
+                <i data-lucide="package-search"></i>
+
+                <h3>No Pending Orders</h3>
+
+                <p>You're all caught up.</p>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
 </div>
 
 <script>
 
-document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function () {
 
-    if (window.lucide) {
-        lucide.createIcons();
-    }
+        if (window.lucide) {
+            lucide.createIcons();
+        }
 
-});
+    });
+
+    /* ======================================
+        SEARCH
+====================================== */
+
+    const searchInput = document.getElementById("orderSearch");
+
+    searchInput.addEventListener("keyup", function () {
+
+        const value = this.value.toLowerCase();
+
+        document.querySelectorAll(".order-card").forEach(card => {
+
+            const text = card.textContent.toLowerCase();
+
+            card.style.display = text.includes(value)
+                ? ""
+                : "none";
+
+        });
+
+    });
+
+    /* ======================================
+            STATUS FILTER
+    ====================================== */
+
+    document.getElementById("statusFilter")
+        .addEventListener("change", function () {
+
+            const status = this.value;
+
+            document.querySelectorAll(".order-card")
+                .forEach(card => {
+
+                    if (status === "all") {
+
+                        card.style.display = "";
+
+                        return;
+
+                    }
+
+                    card.style.display =
+                        card.dataset.status === status
+                            ? ""
+                            : "none";
+
+                });
+
+        });
+
+    /* ======================================
+            REFRESH
+    ====================================== */
+
+    document.getElementById("refreshOrders")
+        .addEventListener("click", function () {
+
+            location.reload();
+
+        });
+
+    /* ===============================
+COLLAPSE SECTION
+================================ */
+
+    document
+        .getElementById("pendingToggle")
+        .addEventListener("click", function () {
+
+            const body = document.getElementById("pendingContainer");
+
+            body.style.display =
+                body.style.display === "none"
+                    ? "grid" : "none";
+
+        });
+
+    /* ===============================
+        ACCEPT BUTTON
+    ================================ */
+
+    document
+        .querySelectorAll(".accept-btn")
+        .forEach(button => {
+
+            button.addEventListener("click", function () {
+
+                const card = this.closest(".order-card");
+
+                card.style.opacity = ".5";
+
+                console.log("Accept Order", this.dataset.order);
+
+                // AJAX comes later
+
+            });
+
+        });
+
+    /* ===============================
+        REJECT BUTTON
+    ================================ */
+
+    document
+        .querySelectorAll(".reject-btn")
+        .forEach(button => {
+
+            button.addEventListener("click", function () {
+
+                const card = this.closest(".order-card");
+
+                card.style.opacity = ".5";
+
+                console.log("Reject Order", this.dataset.order);
+
+                // AJAX comes later
+
+            });
+
+        });
 
 </script>
 

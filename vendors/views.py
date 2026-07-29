@@ -15,6 +15,8 @@ from django.db.models.functions import (
 
 from django.utils import timezone
 
+from decimal import Decimal
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -388,6 +390,8 @@ def vendor_orders(request):
         owner=request.user
     )
 
+    today = timezone.localdate()
+
     orders = (
         Order.objects
         .filter(vendor=vendor)
@@ -396,9 +400,78 @@ def vendor_orders(request):
         .order_by("-created_at")
     )
 
+    today_orders = orders.filter(
+        created_at__date=today
+    )
+
+    stats = today_orders.aggregate(
+
+        pending_orders=Count(
+            "id",
+            filter=Q(status="pending")
+        ),
+
+        accepted_orders=Count(
+            "id",
+            filter=Q(status="accepted")
+        ),
+
+        preparing_orders=Count(
+            "id",
+            filter=Q(status="preparing")
+        ),
+
+        ready_orders=Count(
+            "id",
+            filter=Q(status="ready")
+        ),
+
+        completed_orders=Count(
+            "id",
+            filter=Q(status="completed")
+        ),
+
+        rejected_orders=Count(
+            "id",
+            filter=Q(status="rejected")
+        ),
+
+        cancelled_orders=Count(
+            "id",
+            filter=Q(status="cancelled")
+        ),
+
+        today_revenue=Sum(
+            "total_amount",
+            filter=Q(status="completed")
+        ),
+
+    )
+
     context = {
+
         "vendor": vendor,
+
         "orders": orders,
+
+        "today_orders": today_orders.count(),
+
+        "pending_orders": stats["pending_orders"] or 0,
+
+        "accepted_orders": stats["accepted_orders"] or 0,
+
+        "preparing_orders": stats["preparing_orders"] or 0,
+
+        "ready_orders": stats["ready_orders"] or 0,
+
+        "completed_orders": stats["completed_orders"] or 0,
+
+        "rejected_orders": stats["rejected_orders"] or 0,
+
+        "cancelled_orders": stats["cancelled_orders"] or 0,
+
+        "today_revenue": stats["today_revenue"] or Decimal("0.00"),
+
     }
 
     return render(
