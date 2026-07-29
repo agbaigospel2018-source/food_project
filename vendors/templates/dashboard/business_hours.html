@@ -1,0 +1,400 @@
+{% extends "core/base.html" %}
+
+{% block title %}
+Business Hours | Belleful Express
+{% endblock %}
+
+{% block content %}
+
+<div class="bg-gray-100 min-h-screen py-10">
+
+    <div class="max-w-7xl mx-auto px-6">
+
+        <div class="grid lg:grid-cols-4 gap-8">
+
+            <!-- Sidebar -->
+
+            {% include "components/vendor_sidebar.html" %}
+
+            <!-- Main Content -->
+
+            <div class="lg:col-span-3 space-y-8">
+
+                <!-- ========================= -->
+                <!-- Header -->
+                <!-- ========================= -->
+
+                <div class="bg-white rounded-3xl shadow p-8">
+
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+
+                        <div>
+
+                            <h1 class="text-3xl font-bold">
+
+                                Business Hours
+
+                            </h1>
+
+                            <p class="text-gray-500 mt-2">
+
+                                Manage your restaurant availability and operating schedule.
+
+                            </p>
+
+                        </div>
+
+                        {% if vendor.is_currently_open %}
+
+                            <span class="mt-5 md:mt-0 inline-flex items-center bg-green-100 text-green-700 px-5 py-2 rounded-full font-semibold">
+
+                                🟢 Currently Open
+
+                            </span>
+
+                        {% else %}
+
+                            <span class="mt-5 md:mt-0 inline-flex items-center bg-red-100 text-red-700 px-5 py-2 rounded-full font-semibold">
+
+                                🔴 Currently Closed
+
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+                <!-- Messages -->
+
+                {% if messages %}
+
+                    {% for message in messages %}
+
+                        <div class="rounded-2xl p-4 shadow
+                            {% if message.tags == 'success' %}
+                                bg-green-100 text-green-700
+                            {% elif message.tags == 'error' %}
+                                bg-red-100 text-red-700
+                            {% else %}
+                                bg-blue-100 text-blue-700
+                            {% endif %}">
+
+                            {{ message }}
+
+                        </div>
+
+                    {% endfor %}
+
+                {% endif %}
+
+                <!-- ========================= -->
+                <!-- Status Cards -->
+                <!-- ========================= -->
+
+                <div class="grid md:grid-cols-3 gap-6">
+
+                    <div class="bg-white rounded-2xl shadow p-6">
+
+                        <p class="text-gray-500 text-sm">
+
+                            Restaurant Status
+
+                        </p>
+
+                        {% if vendor.is_open %}
+
+                            <h3 class="text-2xl font-bold text-green-600 mt-3">
+
+                                Open
+
+                            </h3>
+
+                        {% else %}
+
+                            <h3 class="text-2xl font-bold text-red-600 mt-3">
+
+                                Closed
+
+                            </h3>
+
+                        {% endif %}
+
+                    </div>
+
+                    <div class="bg-white rounded-2xl shadow p-6">
+
+                        <p class="text-gray-500 text-sm">
+
+                            Opening Time
+
+                        </p>
+
+                        <h3 class="text-2xl font-bold text-orange-600 mt-3">
+
+                            {{ vendor.opening_time|time:"g:i A" }}
+
+                        </h3>
+
+                    </div>
+
+                    <div class="bg-white rounded-2xl shadow p-6">
+
+                        <p class="text-gray-500 text-sm">
+
+                            Closing Time
+
+                        </p>
+
+                        <h3 class="text-2xl font-bold text-orange-600 mt-3">
+
+                            {{ vendor.closing_time|time:"g:i A" }}
+
+                        </h3>
+
+                    </div>
+
+                </div>
+
+                <!-- ========================= -->
+                <!-- Current Schedule -->
+                <!-- ========================= -->
+
+                <div class="bg-white rounded-3xl shadow p-8">
+
+                    <h2 class="text-2xl font-bold mb-8">
+
+                        Current Business Schedule
+
+                    </h2>
+
+                    <div class="grid md:grid-cols-2 gap-8">
+
+                        <div>
+
+                            <p class="text-gray-500 mb-2">
+
+                                Operating Hours
+
+                            </p>
+
+                            <p class="text-xl font-semibold">
+
+                                {{ vendor.operating_hours }}
+
+                            </p>
+
+                        </div>
+
+                        <div>
+
+                            <p class="text-gray-500 mb-2">
+
+                                Order Availability
+
+                            </p>
+
+                            {% if vendor.is_currently_open %}
+
+                                <span class="inline-flex bg-green-100 text-green-700 px-4 py-2 rounded-full">
+
+                                    Customers can place orders
+
+                                </span>
+
+                            {% else %}
+
+                                <span class="inline-flex bg-red-100 text-red-700 px-4 py-2 rounded-full">
+
+                                    Orders are currently unavailable
+
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- ========================= -->
+                <!-- Update Hours -->
+                <!-- ========================= -->
+
+                <div class="bg-white rounded-3xl shadow p-8">
+
+                    <h2 class="text-2xl font-bold mb-8">
+
+                        Update Business Hours
+
+                    </h2>
+
+                    <form method="POST">
+
+                        {% csrf_token %}
+
+                        <div class="grid md:grid-cols-2 gap-8">
+
+                            <div>
+
+                                <label class="block font-medium mb-2">
+
+                                    Opening Time
+
+                                </label>
+
+                                {{ form.opening_time }}
+
+                                {{ form.opening_time.errors }}
+
+                            </div>
+
+                            <div>
+
+                                <label class="block font-medium mb-2">
+
+                                    Closing Time
+
+                                </label>
+
+                                {{ form.closing_time }}
+
+                                {{ form.closing_time.errors }}
+
+                            </div>
+
+                        </div>
+
+                        <div class="mt-8 flex justify-end">
+
+                            <button
+                                type="submit"
+                                class="bg-orange-600 hover:bg-orange-700 text-white px-8 py-3 rounded-xl font-semibold transition">
+
+                                Save Changes
+
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+                <!-- ========================= -->
+                <!-- Restaurant Toggle -->
+                <!-- ========================= -->
+
+                <div class="bg-white rounded-3xl shadow p-8">
+
+                    <h2 class="text-2xl font-bold mb-6">
+
+                        Restaurant Availability
+
+                    </h2>
+
+                    {% if vendor.is_open %}
+
+                        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6 bg-green-50 rounded-2xl p-6">
+
+                            <div>
+
+                                <h3 class="text-xl font-semibold text-green-700">
+
+                                    Restaurant is Open
+
+                                </h3>
+
+                                <p class="text-gray-600 mt-2">
+
+                                    Customers can currently place new orders.
+
+                                </p>
+
+                            </div>
+
+                            <a
+                                href="{% url 'vendors:toggle_vendor_status' %}"
+                                onclick="return confirm('Close your restaurant? Customers won't be able to place new orders.')"
+                                class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl font-semibold">
+
+                                Close Restaurant
+
+                            </a>
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6 bg-red-50 rounded-2xl p-6">
+
+                            <div>
+
+                                <h3 class="text-xl font-semibold text-red-700">
+
+                                    Restaurant is Closed
+
+                                </h3>
+
+                                <p class="text-gray-600 mt-2">
+
+                                    Customers cannot place new orders.
+
+                                </p>
+
+                            </div>
+
+                            <a
+                                href="{% url 'vendors:toggle_vendor_status' %}"
+                                onclick="return confirm('Open your restaurant and begin accepting orders?')"
+                                class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl font-semibold">
+
+                                Open Restaurant
+
+                            </a>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+                <!-- ========================= -->
+                <!-- Tips -->
+                <!-- ========================= -->
+
+                <div class="bg-blue-50 border border-blue-200 rounded-3xl p-8">
+
+                    <h2 class="text-xl font-bold text-blue-800 mb-5">
+
+                        Business Tips
+
+                    </h2>
+
+                    <ul class="space-y-3 text-blue-700">
+
+                        <li>• Keep your operating hours accurate to avoid missed pickups.</li>
+
+                        <li>• Close your restaurant temporarily if you're unavailable.</li>
+
+                        <li>• Customers can only place new orders while your restaurant is accepting orders.</li>
+
+                        <li>• Accepted orders remain active even after you close the restaurant.</li>
+
+                        <li>• Updating your schedule helps students know exactly when you're available.</li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

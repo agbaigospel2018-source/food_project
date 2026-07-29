@@ -1,6 +1,5 @@
+{% extends 'core/base.html' %}
 {% load static tailwind_tags %}
-
-{% tailwind_css %}
 
 {% block content %}
 <div class="min-h-screen bg-gray-100 flex items-center justify-center px-4 py-10">
@@ -29,6 +28,10 @@
         <form method="POST" class="space-y-5">
             {% csrf_token %}
 
+            <!-- Redirect Target -->
+            <input type="hidden" name="next" value="{{ next }}">
+
+            <!-- Username -->
             <div>
                 <label for="username" class="block text-sm font-medium text-gray-700 mb-1">
                     Username
@@ -37,37 +40,53 @@
                     type="text"
                     name="username"
                     id="username"
+                    value="{{ request.POST.username }}"
                     placeholder="Enter your username"
                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none"
                     required
                 >
             </div>
 
+            <!-- Password -->
             <div>
                 <label for="password" class="block text-sm font-medium text-gray-700 mb-1">
                     Password
                 </label>
-                <input
-                    type="password"
-                    name="password"
-                    id="password"
-                    placeholder="Enter your password"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none"
-                    required
-                >
+
+                <div class="relative">
+                    <input
+                        type="password"
+                        name="password"
+                        id="password"
+                        placeholder="Enter your password"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        onclick="togglePassword()"
+                        class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-orange-500"
+                    >
+                        👁
+                    </button>
+                </div>
             </div>
 
+            <!-- Remember Me & Forgot Password -->
             <div class="flex items-center justify-between">
                 <label class="flex items-center gap-2 text-sm text-gray-600">
                     <input type="checkbox" class="rounded">
                     Remember me
                 </label>
 
-                <a href="#" class="text-sm text-orange-500 hover:text-orange-600">
+                <a href="{% url 'change_password' %}"
+                   class="text-sm text-orange-500 hover:text-orange-600">
                     Forgot Password?
                 </a>
             </div>
 
+            <!-- Submit Button -->
             <button
                 type="submit"
                 class="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 rounded-lg transition duration-300"
@@ -82,12 +101,23 @@
                 Don't have an account?
                 <a href="{% url 'register' %}"
                    class="text-orange-500 hover:text-orange-600 font-semibold">
-                    Create one
+                    Sign Up
                 </a>
             </p>
         </div>
 
     </div>
 </div>
-{% endblock %}
 
+<script>
+function togglePassword() {
+    const password = document.getElementById('password');
+
+    if (password.type === 'password') {
+        password.type = 'text';
+    } else {
+        password.type = 'password';
+    }
+}
+</script>
+{% endblock %}
