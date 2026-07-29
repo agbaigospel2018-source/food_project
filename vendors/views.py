@@ -32,6 +32,7 @@ from .models import Vendor
 from .forms import VendorForm, BusinessHoursForm
 from menu.models import MenuItem
 from orders.models import Order, OrderStatus, OrderItem
+from notifications.models import NotificationPreference
 
 
 # ==========================================
@@ -792,8 +793,31 @@ def settings(request):
         owner=request.user
     )
 
+    prefs, _ = NotificationPreference.objects.get_or_create(
+        user=request.user
+    )
+
+    if request.method == "POST":
+
+        prefs.notify_new_orders = "notify_new_orders" in request.POST
+        prefs.notify_status     = "notify_status"     in request.POST
+        prefs.notify_reviews    = "notify_reviews"    in request.POST
+        prefs.notify_push       = "notify_push"       in request.POST
+        prefs.notify_email      = "notify_email"      in request.POST
+        prefs.notify_marketing  = "notify_marketing"  in request.POST
+
+        prefs.save()
+
+        messages.success(
+            request,
+            "Notification preferences saved successfully."
+        )
+
+        return redirect("vendors:settings")
+
     context = {
         "vendor": vendor,
+        "preferences": prefs,
     }
 
     return render(

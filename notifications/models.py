@@ -61,3 +61,20 @@ class Notification(models.Model):
         if not self.is_read:
             self.is_read = True
             self.save(update_fields=['is_read'])
+
+
+class NotificationPreference(models.Model):
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='notification_preferences'
+    )
+    notify_new_orders = models.BooleanField(default=True)
+    notify_status = models.BooleanField(default=True)
+    notify_reviews = models.BooleanField(default=True)
+    notify_push = models.BooleanField(default=True)
+    notify_email = models.BooleanField(default=False)
+    notify_marketing = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'{self.user.username} Preferences'
