@@ -1274,6 +1274,10 @@ input:where([type='file']):focus {
   min-height: 90vh;
 }
 
+.min-h-\[calc\(100vh-8rem\)\] {
+  min-height: calc(100vh - 8rem);
+}
+
 .w-10 {
   width: 2.5rem;
 }
@@ -2408,6 +2412,10 @@ input:where([type='file']):focus {
   padding-top: 5rem;
 }
 
+.pb-20 {
+  padding-bottom: 5rem;
+}
+
 .text-left {
   text-align: left;
 }
@@ -3519,6 +3527,10 @@ input:where([type='file']):focus {
 
   .md\:pt-6 {
     padding-top: 1.5rem;
+  }
+
+  .md\:pb-0 {
+    padding-bottom: 0px;
   }
 
   .md\:text-4xl {
