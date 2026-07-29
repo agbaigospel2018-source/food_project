@@ -1205,10 +1205,265 @@ Vendor Settings | Belleful Express
 
     </div>
 
-</div>
+</div><!-- ===================================== -->
+<!-- Danger Zone -->
+<!-- ===================================== -->
+
+<div class="bg-white rounded-3xl shadow-lg border border-red-200 mt-8 overflow-hidden">
+
+    <!-- Header -->
+
+    <div class="bg-red-50 border-b border-red-200 px-8 py-6">
+
+        <div class="flex items-center gap-4">
+
+            <div class="w-14 h-14 rounded-2xl bg-red-100 flex items-center justify-center">
+
+                <!-- Alert Triangle -->
+
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     fill="none"
+                     viewBox="0 0 24 24"
+                     stroke-width="1.8"
+                     stroke="currentColor"
+                     class="w-7 h-7 text-red-600">
+
+                    <path stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M12 9v3.75m0 3.75h.008v.008H12v-.008Zm-9.75-.75L10.94 3.91a1.25 1.25 0 0 1 2.12 0l8.69 14.84A1.25 1.25 0 0 1 20.69 21H3.31a1.25 1.25 0 0 1-1.06-1.875Z"/>
+
+                </svg>
+
+            </div>
+
+            <div>
+
+                <h2 class="text-2xl font-bold text-red-700">
+
+                    Danger Zone
+
+                </h2>
+
+                <p class="text-red-600 mt-1">
+
+                    These actions are irreversible. Please proceed carefully.
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="p-8 space-y-8">
+
+        <!-- Disable Restaurant -->
+
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 border rounded-2xl p-6">
+
+            <div>
+
+                <h3 class="text-xl font-semibold">
+
+                    Temporarily Disable Restaurant
+
+                </h3>
+
+                <p class="text-gray-500 mt-2 max-w-2xl">
+
+                    Hide your restaurant from customers without deleting your account.
+                    Existing orders remain available, but customers won't be able to place new ones until you enable your restaurant again.
+
+                </p>
+
+            </div>
+
+            <form method="post"
+                  action="{% url 'vendors:toggle_vendor_status' %}">
+
+                {% csrf_token %}
+
+                {% if vendor.is_open %}
+
+                    <button type="submit"
+                            class="px-6 py-3 rounded-xl bg-yellow-500 hover:bg-yellow-600 text-white font-semibold transition">
+
+                        Disable Restaurant
+
+                    </button>
+
+                {% else %}
+
+                    <button type="submit"
+                            class="px-6 py-3 rounded-xl bg-green-600 hover:bg-green-700 text-white font-semibold transition">
+
+                        Enable Restaurant
+
+                    </button>
+
+                {% endif %}
+
+            </form>
+
+        </div>
+
+        <!-- Delete Account -->
+
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 border border-red-300 rounded-2xl p-6 bg-red-50">
+
+            <div>
+
+                <h3 class="text-xl font-semibold text-red-700">
+
+                    Delete Vendor Account
+
+                </h3>
+
+                <p class="text-gray-600 mt-2 max-w-2xl">
+
+                    Permanently remove your restaurant, menu, analytics, orders and all associated data from Belleful Express.
+
+                    <strong>This action cannot be undone.</strong>
+
+                </p>
+
+            </div>
+
+            <button
+                type="button"
+                onclick="openDeleteModal()"
+                class="px-6 py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold transition">
+
+                Delete Account
+
+            </button>
+
+        </div>
+
+    </div>
 
 </div>
 
+<!-- ===================================== -->
+<!-- Delete Confirmation Modal -->
+<!-- ===================================== -->
 
+<div id="deleteModal"
+     class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4">
+
+    <div class="bg-white rounded-3xl max-w-lg w-full shadow-2xl">
+
+        <div class="p-8">
+
+            <div class="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto">
+
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     fill="none"
+                     viewBox="0 0 24 24"
+                     stroke-width="2"
+                     stroke="currentColor"
+                     class="w-8 h-8 text-red-600">
+
+                    <path stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M12 9v4m0 4h.01M10.29 3.86 1.82 18A2 2 0 0 0 3.55 21h16.9a2 2 0 0 0 1.73-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/>
+
+                </svg>
+
+            </div>
+
+            <h3 class="text-2xl font-bold text-center mt-6">
+
+                Delete Vendor Account?
+
+            </h3>
+
+            <p class="text-gray-500 text-center mt-4 leading-7">
+
+                This will permanently delete your restaurant, menu items,
+                analytics, reviews, and vendor account.
+
+                This action cannot be reversed.
+
+            </p>
+
+            <div class="mt-8 flex flex-col sm:flex-row gap-4">
+
+                <button
+                    onclick="closeDeleteModal()"
+                    class="flex-1 border border-gray-300 rounded-xl py-3 font-semibold hover:bg-gray-100">
+
+                    Cancel
+
+                </button>
+
+                <form method="post"
+                      action="{% url 'vendors:delete_vendor' %}"
+                      class="flex-1">
+
+                    {% csrf_token %}
+
+                    <button
+                        type="submit"
+                        class="w-full bg-red-600 hover:bg-red-700 text-white rounded-xl py-3 font-semibold">
+
+                        Permanently Delete
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+</div>
+
+<script>
+
+function openDeleteModal() {
+
+    document
+        .getElementById("deleteModal")
+        .classList.remove("hidden");
+
+    document
+        .getElementById("deleteModal")
+        .classList.add("flex");
+
+}
+
+function closeDeleteModal() {
+
+    document
+        .getElementById("deleteModal")
+        .classList.remove("flex");
+
+    document
+        .getElementById("deleteModal")
+        .classList.add("hidden");
+
+}
+
+window.onclick = function(event){
+
+    const modal = document.getElementById("deleteModal");
+
+    if(event.target === modal){
+
+        closeDeleteModal();
+
+    }
+
+}
+
+</script>
 
 {% endblock %}
