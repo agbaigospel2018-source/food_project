@@ -1,0 +1,178 @@
+{% extends "core/base.html" %}
+
+{% block title %}
+Vendor Settings | Belleful Express
+{% endblock %}
+
+{% block content %}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+    <!-- ===================================== -->
+    <!-- Page Header -->
+    <!-- ===================================== -->
+
+    <div class="mb-10">
+
+        <h1 class="text-4xl font-bold text-gray-900">
+
+            Settings
+
+        </h1>
+
+        <p class="mt-2 text-gray-500">
+
+            Configure your restaurant preferences, notifications and account settings.
+
+        </p>
+
+    </div>
+
+    <!-- ===================================== -->
+    <!-- Restaurant Status -->
+    <!-- ===================================== -->
+
+    <div class="bg-white rounded-3xl shadow-lg p-8">
+
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
+
+            <!-- Left -->
+
+            <div>
+
+                <h2 class="text-2xl font-bold text-gray-900">
+
+                    Restaurant Status
+
+                </h2>
+
+                <p class="text-gray-500 mt-2">
+
+                    Control whether customers can place new orders.
+
+                </p>
+
+            </div>
+
+            <!-- Right -->
+
+            <div class="flex flex-col items-start lg:items-end gap-4">
+
+                {% if vendor.is_open %}
+
+                    <span class="inline-flex items-center px-4 py-2 rounded-full bg-green-100 text-green-700 font-semibold">
+
+                        🟢 Currently Open
+
+                    </span>
+
+                {% else %}
+
+                    <span class="inline-flex items-center px-4 py-2 rounded-full bg-red-100 text-red-700 font-semibold">
+
+                        🔴 Currently Closed
+
+                    </span>
+
+                {% endif %}
+
+                <form method="post"
+                      action="{% url 'vendors:toggle_vendor_status' %}">
+
+                    {% csrf_token %}
+
+                    {% if vendor.is_open %}
+
+                        <button
+                            type="submit"
+                            class="px-6 py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold transition">
+
+                            Close Restaurant
+
+                        </button>
+
+                    {% else %}
+
+                        <button
+                            type="submit"
+                            class="px-6 py-3 rounded-xl bg-green-600 hover:bg-green-700 text-white font-semibold transition">
+
+                            Open Restaurant
+
+                        </button>
+
+                    {% endif %}
+
+                </form>
+
+            </div>
+
+        </div>
+
+        <!-- Information -->
+
+        <div class="mt-8 grid md:grid-cols-3 gap-6">
+
+            <div class="rounded-2xl bg-orange-50 p-5">
+
+                <h4 class="font-semibold text-orange-700">
+
+                    Current Status
+
+                </h4>
+
+                <p class="mt-2 text-gray-600">
+
+                    {% if vendor.is_open %}
+                        Students can currently browse your menu and place orders.
+                    {% else %}
+                        Your restaurant is hidden from new customer orders until reopened.
+                    {% endif %}
+
+                </p>
+
+            </div>
+
+            <div class="rounded-2xl bg-blue-50 p-5">
+
+                <h4 class="font-semibold text-blue-700">
+
+                    Business Hours
+
+                </h4>
+
+                <p class="mt-2 text-gray-600">
+
+                    {{ vendor.opening_time|time:"g:i A" }}
+
+                    -
+
+                    {{ vendor.closing_time|time:"g:i A" }}
+
+                </p>
+
+            </div>
+
+            <div class="rounded-2xl bg-green-50 p-5">
+
+                <h4 class="font-semibold text-green-700">
+
+                    Orders
+
+                </h4>
+
+                <p class="mt-2 text-gray-600">
+
+                    Existing orders remain accessible even when your restaurant is closed.
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

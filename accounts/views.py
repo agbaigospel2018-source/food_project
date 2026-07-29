@@ -13,12 +13,25 @@ from .forms import RegisterForm, ProfileUpdateForm
 # -----------Register View
 def register_view(request):
     if request.user.is_authenticated:
+        if request.user.role == 'vendor':
+            if hasattr(request.user, 'vendor_profile'):
+                return redirect('vendors:vendor_dashboard')
+            return redirect('vendors:create_vendor')
         return redirect('profile')
     
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
+            
+            if user.role == 'vendor':
+                request.session['pending_vendor_user_id'] = user.id
+                messages.info(
+                    request,
+                    'Account created. Please complete your business profile to finish logging in.'
+                )
+                return redirect('vendors:create_vendor')
+
             login(request, user)
             
             messages.success(
@@ -41,6 +54,10 @@ def register_view(request):
 def login_view(request):
 
     if request.user.is_authenticated:
+        if request.user.role == 'vendor':
+            if hasattr(request.user, 'vendor_profile'):
+                return redirect('vendors:vendor_dashboard')
+            return redirect('vendors:create_vendor')
         return redirect('profile')
 
     if request.method == 'POST':
@@ -54,6 +71,14 @@ def login_view(request):
 
             user = form.get_user()
 
+            if user.role == 'vendor' and not hasattr(user, 'vendor_profile'):
+                request.session['pending_vendor_user_id'] = user.id
+                messages.info(
+                    request,
+                    'Please complete your business profile to finish logging in.'
+                )
+                return redirect('vendors:create_vendor')
+
             login(request, user)
 
             messages.success(
@@ -61,11 +86,13 @@ def login_view(request):
                 'Logged in successfully.'
             )
 
+            if user.role == 'vendor':
+                return redirect('vendors:vendor_dashboard')
             return redirect('home')
         else:
-            messages.success(
+            messages.error(
                 request,
-                "Account does't exist. Create new account to login"
+                "Invalid username or password"
             )
 
     else:
@@ -99,6 +126,10 @@ def logout_view(request):
 # -----------Profile View
 @login_required
 def profile_view(request):
+    if request.user.role == 'vendor':
+        if hasattr(request.user, 'vendor_profile'):
+            return redirect('vendors:vendor_profile')
+        return redirect('vendors:create_vendor')
 
     total_orders = Order.objects.filter(student=request.user).count()
     total_reviews = MenuItemReview.objects.filter(student=request.user, is_approved=True).count()

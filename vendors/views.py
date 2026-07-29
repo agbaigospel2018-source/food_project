@@ -23,6 +23,10 @@ from django.db.models import Q
 from django.http import JsonResponse
 from django.urls import reverse
 from django.utils import timezone
+from django.contrib.auth import get_user_model
+from django.contrib.auth import login
+
+User = get_user_model()
 
 from .models import Vendor
 from .forms import VendorForm, BusinessHoursForm
@@ -255,19 +259,32 @@ def vendor_profile(request):
     )
 
 
-@login_required
 def create_vendor(request):
 
-    if hasattr(request.user, "vendor_profile"):
+    user = request.user
+    pending_user_id = request.session.get('pending_vendor_user_id')
 
-        messages.info(
-            request,
-            "You already have a vendor profile."
-        )
+    if not user.is_authenticated:
+        if pending_user_id:
+            try:
+                user = User.objects.get(id=pending_user_id)
+            except User.DoesNotExist:
+                return redirect('login')
+        else:
+            return redirect('login')
 
-        return redirect(
-            "vendors:vendor_dashboard"
-        )
+    if hasattr(user, "vendor_profile"):
+        if request.user.is_authenticated:
+            messages.info(
+                request,
+                "You already have a vendor profile."
+            )
+            return redirect("vendors:vendor_dashboard")
+        else:
+            login(request, user)
+            if 'pending_vendor_user_id' in request.session:
+                del request.session['pending_vendor_user_id']
+            return redirect("vendors:vendor_dashboard")
 
     if request.method == "POST":
 
@@ -282,7 +299,7 @@ def create_vendor(request):
                 commit=False
             )
 
-            vendor.owner = request.user
+            vendor.owner = user
 
             vendor.save()
 
@@ -290,6 +307,11 @@ def create_vendor(request):
                 request,
                 "Vendor profile created successfully."
             )
+            
+            if not request.user.is_authenticated:
+                login(request, user)
+                if 'pending_vendor_user_id' in request.session:
+                    del request.session['pending_vendor_user_id']
 
             return redirect(
                 "vendors:vendor_dashboard"
@@ -305,7 +327,7 @@ def create_vendor(request):
 
     return render(
         request,
-        "vendors/dashboard/create_vendor.html",
+        "dashboard/create_vendor.html",
         context,
     )
 
@@ -776,7 +798,7 @@ def settings(request):
 
     return render(
         request,
-        "vendors/dashboard/settings.html",
+        "dashboard/settings.html",
         context,
     )
 
