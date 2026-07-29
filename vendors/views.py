@@ -1,8 +1,19 @@
-from datetime import datetime
-from django.db.models import Sum, Count
-from django.db.models.functions import TruncDate
-from django.utils import timezone
 from datetime import timedelta
+
+from django.db.models import (
+    Sum,
+    Count,
+    Avg,
+    F,
+    DecimalField,
+)
+
+from django.db.models.functions import (
+    TruncDate,
+    ExtractHour,
+)
+
+from django.utils import timezone
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -383,12 +394,11 @@ def analytics(request):
     )
 
     now = timezone.now()
-
     today = now.date()
 
     week_start = today - timedelta(days=today.weekday())
-
     month_start = today.replace(day=1)
+    last_30_days = today - timedelta(days=29)
 
     orders = (
         Order.objects
@@ -396,48 +406,48 @@ def analytics(request):
         .select_related("student")
     )
 
-    # -----------------------------
+    # ==========================================
     # Revenue
-    # -----------------------------
+    # ==========================================
 
     today_revenue = (
         orders.filter(
             created_at__date=today,
             status=OrderStatus.COMPLETED
-        )
-        .aggregate(total=Sum("total_amount"))["total"]
-        or 0
+        ).aggregate(
+            total=Sum("total_amount")
+        )["total"] or 0
     )
 
     weekly_revenue = (
         orders.filter(
             created_at__date__gte=week_start,
             status=OrderStatus.COMPLETED
-        )
-        .aggregate(total=Sum("total_amount"))["total"]
-        or 0
+        ).aggregate(
+            total=Sum("total_amount")
+        )["total"] or 0
     )
 
     monthly_revenue = (
         orders.filter(
             created_at__date__gte=month_start,
             status=OrderStatus.COMPLETED
-        )
-        .aggregate(total=Sum("total_amount"))["total"]
-        or 0
+        ).aggregate(
+            total=Sum("total_amount")
+        )["total"] or 0
     )
 
     lifetime_revenue = (
         orders.filter(
             status=OrderStatus.COMPLETED
-        )
-        .aggregate(total=Sum("total_amount"))["total"]
-        or 0
+        ).aggregate(
+            total=Sum("total_amount")
+        )["total"] or 0
     )
 
-    # -----------------------------
+    # ==========================================
     # Orders
-    # -----------------------------
+    # ==========================================
 
     today_orders = orders.filter(
         created_at__date=today
@@ -453,12 +463,12 @@ def analytics(request):
 
     total_orders = orders.count()
 
-    # -----------------------------
+    # ==========================================
     # Status Counts
-    # -----------------------------
+    # ==========================================
 
     pending_orders = orders.filter(
-        status=OrderStatus.RECEIVED
+        status=OrderStatus.PENDING
     ).count()
 
     accepted_orders = orders.filter(
@@ -485,55 +495,172 @@ def analytics(request):
         status=OrderStatus.REJECTED
     ).count()
 
-    # -----------------------------
+    # ==========================================
     # Average Order Value
-    # -----------------------------
+    # ==========================================
 
     average_order_value = 0
 
-    if completed_orders > 0:
+    if completed_orders:
 
         average_order_value = (
             lifetime_revenue / completed_orders
         )
 
-    # -----------------------------
-    # Top Selling Menu Items
-    # -----------------------------
-
-    top_items = (
-        OrderItem.objects
-        .filter(order__vendor=vendor)
-        .values(
-            "menu_item__name"
-        )
-        .annotate(
-            total_sold=Sum("quantity")
-        )
-        .order_by("-total_sold")[:5]
-    )
-
-    # -----------------------------
-    # Revenue By Day
-    # -----------------------------
+    # ==========================================
+    # Revenue Chart (Last 30 Days)
+    # ==========================================
 
     revenue_chart = (
+
         orders.filter(
+            created_at__date__gte=last_30_days,
             status=OrderStatus.COMPLETED
         )
+
         .annotate(
             day=TruncDate("created_at")
         )
+
         .values("day")
+
         .annotate(
             revenue=Sum("total_amount")
         )
+
         .order_by("day")
+
     )
 
-    # -----------------------------
+    # ==========================================
+    # Orders Per Day
+    # ==========================================
+
+    order_chart = (
+
+        orders.filter(
+            created_at__date__gte=last_30_days
+        )
+
+        .annotate(
+            day=TruncDate("created_at")
+        )
+
+        .values("day")
+
+        .annotate(
+            total=Count("id")
+        )
+
+        .order_by("day")
+
+    )
+
+    # ==========================================
+    # Top Selling Menu Items
+    # ==========================================
+
+    top_items = (
+
+        OrderItem.objects
+
+        .filter(
+            order__vendor=vendor,
+            order__status=OrderStatus.COMPLETED,
+        )
+
+        .values(
+            "menu_item__name"
+        )
+
+        .annotate(
+            quantity_sold=Sum("quantity"),
+            revenue=Sum("subtotal"),
+        )
+
+        .order_by("-quantity_sold")[:5]
+
+    )
+
+    # ==========================================
+    # Peak Ordering Hour
+    # ==========================================
+
+    peak_hour = (
+
+        orders
+
+        .annotate(
+            hour=ExtractHour("created_at")
+        )
+
+        .values("hour")
+
+        .annotate(
+            total=Count("id")
+        )
+
+        .order_by("-total")
+
+        .first()
+
+    )
+
+    # ==========================================
+    # Completion & Cancellation Rates
+    # ==========================================
+
+    completion_rate = 0
+    cancellation_rate = 0
+
+    if total_orders:
+
+        completion_rate = round(
+            (completed_orders / total_orders) * 100,
+            1
+        )
+
+        cancellation_rate = round(
+            (cancelled_orders / total_orders) * 100,
+            1
+        )
+
+    # ==========================================
+    # Revenue Growth
+    # ==========================================
+
+    previous_week_start = week_start - timedelta(days=7)
+    previous_week_end = week_start
+
+    previous_week_revenue = (
+
+        orders.filter(
+            created_at__date__gte=previous_week_start,
+            created_at__date__lt=previous_week_end,
+            status=OrderStatus.COMPLETED,
+        )
+
+        .aggregate(
+            total=Sum("total_amount")
+        )["total"] or 0
+
+    )
+
+    revenue_growth = 0
+
+    if previous_week_revenue:
+
+        revenue_growth = round(
+            (
+                (weekly_revenue - previous_week_revenue)
+                / previous_week_revenue
+            ) * 100,
+            1
+        )
+
+    # ==========================================
     # Recent Orders
-    # -----------------------------
+    # ==========================================
 
     recent_orders = orders.order_by(
         "-created_at"
@@ -563,9 +690,16 @@ def analytics(request):
 
         "average_order_value": average_order_value,
 
+        "completion_rate": completion_rate,
+        "cancellation_rate": cancellation_rate,
+
+        "peak_hour": peak_hour,
+        "revenue_growth": revenue_growth,
+
         "top_items": top_items,
 
         "revenue_chart": revenue_chart,
+        "order_chart": order_chart,
 
         "recent_orders": recent_orders,
 
