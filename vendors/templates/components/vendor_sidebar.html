@@ -1,4 +1,18 @@
-<div class="bg-white rounded-3xl shadow-sm overflow-hidden sticky top-24">
+<div class="lg:hidden mb-4">
+    <button id="vendor-sidebar-toggle" type="button" class="w-full inline-flex items-center justify-between rounded-3xl border border-gray-200 bg-white px-5 py-4 text-left text-gray-700 shadow-sm hover:bg-gray-50">
+        <span class="font-semibold">Dashboard Menu</span>
+        <span class="text-xl">☰</span>
+    </button>
+</div>
+
+<div id="vendor-sidebar-wrapper" class="hidden lg:block bg-white rounded-3xl shadow-sm overflow-hidden lg:sticky lg:top-24">
+
+    <div class="lg:hidden flex justify-end p-4 border-b border-gray-100">
+        <button id="vendor-sidebar-close" type="button" class="inline-flex items-center gap-2 rounded-full bg-orange-50 px-4 py-2 text-sm font-semibold text-orange-700 hover:bg-orange-100">
+            <span>Close</span>
+            <span aria-hidden="true">×</span>
+        </button>
+    </div>
 
     <!-- Vendor Header -->
 

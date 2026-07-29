@@ -152,6 +152,21 @@
                 mobileMenu.classList.toggle('hidden');
             });
         }
+        const sidebarToggle = document.getElementById('vendor-sidebar-toggle');
+        const sidebarWrapper = document.getElementById('vendor-sidebar-wrapper');
+        const sidebarClose = document.getElementById('vendor-sidebar-close');
+
+        if (sidebarToggle && sidebarWrapper) {
+            sidebarToggle.addEventListener('click', () => {
+                sidebarWrapper.classList.toggle('hidden');
+            });
+        }
+
+        if (sidebarClose && sidebarWrapper) {
+            sidebarClose.addEventListener('click', () => {
+                sidebarWrapper.classList.add('hidden');
+            });
+        }
     });
 </script>
 

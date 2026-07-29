@@ -42,7 +42,7 @@ Message:
 {message_text}
             """,
             from_email=None,
-            recipient_list=["agbaigospel2018@gmail.com"],
+            recipient_list=[email],
             fail_silently=False,
         )
 
