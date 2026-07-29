@@ -4,7 +4,7 @@
             Restaurant Image
     =========================== -->
 
-    <div class="relative h-56 overflow-hidden">
+    <div class="relative h-48 sm:h-56 overflow-hidden">
 
         {% if vendor.logo %}
 
@@ -74,11 +74,11 @@
             Card Content
     =========================== -->
 
-    <div class="p-6">
+    <div class="p-4 sm:p-6">
 
         <!-- Description -->
 
-        <p class="text-gray-600 text-sm leading-relaxed mb-5">
+        <p class="text-gray-600 text-xs sm:text-sm leading-relaxed mb-5">
 
             {{ vendor.short_description }}
 
@@ -86,7 +86,7 @@
 
         <!-- Information -->
 
-        <div class="space-y-3 text-sm text-gray-500">
+        <div class="space-y-2 sm:space-y-3 text-xs sm:text-sm text-gray-500">
 
             <div class="flex items-center">
 

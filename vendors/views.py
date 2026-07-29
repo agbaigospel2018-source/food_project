@@ -1,4 +1,8 @@
 from datetime import datetime
+from django.db.models import Sum, Count
+from django.db.models.functions import TruncDate
+from django.utils import timezone
+from datetime import timedelta
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -10,9 +14,9 @@ from django.urls import reverse
 from django.utils import timezone
 
 from .models import Vendor
-from .forms import VendorForm
+from .forms import VendorForm, BusinessHoursForm
 from menu.models import MenuItem
-from orders.models import Order, OrderStatus
+from orders.models import Order, OrderStatus, OrderItem
 
 
 # ==========================================
@@ -337,7 +341,7 @@ def edit_vendor(request):
 
     return render(
         request,
-        "vendors/dashboard/edit_profile.html",
+        "dashboard/edit_profile.html",
         context,
     )
 
@@ -378,15 +382,202 @@ def analytics(request):
         owner=request.user
     )
 
+    now = timezone.now()
+
+    today = now.date()
+
+    week_start = today - timedelta(days=today.weekday())
+
+    month_start = today.replace(day=1)
+
+    orders = (
+        Order.objects
+        .filter(vendor=vendor)
+        .select_related("student")
+    )
+
+    # -----------------------------
+    # Revenue
+    # -----------------------------
+
+    today_revenue = (
+        orders.filter(
+            created_at__date=today,
+            status=OrderStatus.COMPLETED
+        )
+        .aggregate(total=Sum("total_amount"))["total"]
+        or 0
+    )
+
+    weekly_revenue = (
+        orders.filter(
+            created_at__date__gte=week_start,
+            status=OrderStatus.COMPLETED
+        )
+        .aggregate(total=Sum("total_amount"))["total"]
+        or 0
+    )
+
+    monthly_revenue = (
+        orders.filter(
+            created_at__date__gte=month_start,
+            status=OrderStatus.COMPLETED
+        )
+        .aggregate(total=Sum("total_amount"))["total"]
+        or 0
+    )
+
+    lifetime_revenue = (
+        orders.filter(
+            status=OrderStatus.COMPLETED
+        )
+        .aggregate(total=Sum("total_amount"))["total"]
+        or 0
+    )
+
+    # -----------------------------
+    # Orders
+    # -----------------------------
+
+    today_orders = orders.filter(
+        created_at__date=today
+    ).count()
+
+    weekly_orders = orders.filter(
+        created_at__date__gte=week_start
+    ).count()
+
+    monthly_orders = orders.filter(
+        created_at__date__gte=month_start
+    ).count()
+
+    total_orders = orders.count()
+
+    # -----------------------------
+    # Status Counts
+    # -----------------------------
+
+    pending_orders = orders.filter(
+        status=OrderStatus.RECEIVED
+    ).count()
+
+    accepted_orders = orders.filter(
+        status=OrderStatus.ACCEPTED
+    ).count()
+
+    preparing_orders = orders.filter(
+        status=OrderStatus.PREPARING
+    ).count()
+
+    ready_orders = orders.filter(
+        status=OrderStatus.READY
+    ).count()
+
+    completed_orders = orders.filter(
+        status=OrderStatus.COMPLETED
+    ).count()
+
+    cancelled_orders = orders.filter(
+        status=OrderStatus.CANCELLED
+    ).count()
+
+    rejected_orders = orders.filter(
+        status=OrderStatus.REJECTED
+    ).count()
+
+    # -----------------------------
+    # Average Order Value
+    # -----------------------------
+
+    average_order_value = 0
+
+    if completed_orders > 0:
+
+        average_order_value = (
+            lifetime_revenue / completed_orders
+        )
+
+    # -----------------------------
+    # Top Selling Menu Items
+    # -----------------------------
+
+    top_items = (
+        OrderItem.objects
+        .filter(order__vendor=vendor)
+        .values(
+            "menu_item__name"
+        )
+        .annotate(
+            total_sold=Sum("quantity")
+        )
+        .order_by("-total_sold")[:5]
+    )
+
+    # -----------------------------
+    # Revenue By Day
+    # -----------------------------
+
+    revenue_chart = (
+        orders.filter(
+            status=OrderStatus.COMPLETED
+        )
+        .annotate(
+            day=TruncDate("created_at")
+        )
+        .values("day")
+        .annotate(
+            revenue=Sum("total_amount")
+        )
+        .order_by("day")
+    )
+
+    # -----------------------------
+    # Recent Orders
+    # -----------------------------
+
+    recent_orders = orders.order_by(
+        "-created_at"
+    )[:10]
+
     context = {
+
         "vendor": vendor,
+
+        "today_revenue": today_revenue,
+        "weekly_revenue": weekly_revenue,
+        "monthly_revenue": monthly_revenue,
+        "lifetime_revenue": lifetime_revenue,
+
+        "today_orders": today_orders,
+        "weekly_orders": weekly_orders,
+        "monthly_orders": monthly_orders,
+        "total_orders": total_orders,
+
+        "pending_orders": pending_orders,
+        "accepted_orders": accepted_orders,
+        "preparing_orders": preparing_orders,
+        "ready_orders": ready_orders,
+        "completed_orders": completed_orders,
+        "cancelled_orders": cancelled_orders,
+        "rejected_orders": rejected_orders,
+
+        "average_order_value": average_order_value,
+
+        "top_items": top_items,
+
+        "revenue_chart": revenue_chart,
+
+        "recent_orders": recent_orders,
+
     }
 
     return render(
         request,
-        "vendors/dashboard/analytics.html",
+        "dashboard/analytics.html",
         context,
     )
+   
+   
 
 
 @login_required
@@ -397,13 +588,42 @@ def business_hours(request):
         owner=request.user
     )
 
+    if request.method == "POST":
+
+        form = BusinessHoursForm(
+            request.POST,
+            instance=vendor
+        )
+
+        if form.is_valid():
+
+            form.save()
+
+            messages.success(
+                request,
+                "Business hours updated successfully."
+            )
+
+            return redirect(
+                "vendors:business_hours"
+            )
+
+    else:
+
+        form = BusinessHoursForm(
+            instance=vendor
+        )
+
     context = {
+
         "vendor": vendor,
+        "form": form,
+
     }
 
     return render(
         request,
-        "vendors/dashboard/business_hours.html",
+        "dashboard/business_hours.html",
         context,
     )
 
