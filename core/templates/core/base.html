@@ -152,21 +152,86 @@
                 mobileMenu.classList.toggle('hidden');
             });
         }
+
         const sidebarToggle = document.getElementById('vendor-sidebar-toggle');
         const sidebarWrapper = document.getElementById('vendor-sidebar-wrapper');
         const sidebarClose = document.getElementById('vendor-sidebar-close');
 
+        function openSidebarMobile() {
+            if (!sidebarWrapper) return;
+            if (window.innerWidth >= 1024) return; // only mobile
+
+            // Prepare overlay positioning
+            sidebarWrapper.classList.remove('hidden');
+            sidebarWrapper.style.position = 'fixed';
+            sidebarWrapper.style.left = '1rem';
+            sidebarWrapper.style.right = '1rem';
+            sidebarWrapper.style.top = '4.5rem';
+            sidebarWrapper.style.zIndex = '60';
+            sidebarWrapper.style.transform = 'translateX(-110%)';
+            sidebarWrapper.style.transition = 'transform .28s ease';
+
+            // Force reflow then slide in
+            void sidebarWrapper.offsetWidth;
+            sidebarWrapper.style.transform = 'translateX(0)';
+        }
+
+        function closeSidebarMobile() {
+            if (!sidebarWrapper) return;
+            if (window.innerWidth >= 1024) return;
+
+            sidebarWrapper.style.transform = 'translateX(-110%)';
+            const handler = function () {
+                sidebarWrapper.classList.add('hidden');
+                // cleanup inline styles
+                sidebarWrapper.style.position = '';
+                sidebarWrapper.style.left = '';
+                sidebarWrapper.style.right = '';
+                sidebarWrapper.style.top = '';
+                sidebarWrapper.style.zIndex = '';
+                sidebarWrapper.style.transform = '';
+                sidebarWrapper.style.transition = '';
+                sidebarWrapper.removeEventListener('transitionend', handler);
+            };
+            sidebarWrapper.addEventListener('transitionend', handler);
+        }
+
         if (sidebarToggle && sidebarWrapper) {
             sidebarToggle.addEventListener('click', () => {
-                sidebarWrapper.classList.toggle('hidden');
+                if (sidebarWrapper.classList.contains('hidden')) {
+                    openSidebarMobile();
+                } else {
+                    closeSidebarMobile();
+                }
             });
         }
 
         if (sidebarClose && sidebarWrapper) {
             sidebarClose.addEventListener('click', () => {
-                sidebarWrapper.classList.add('hidden');
+                closeSidebarMobile();
             });
         }
+
+        // Keep desktop layout unaffected when resizing
+        window.addEventListener('resize', () => {
+            if (!sidebarWrapper) return;
+            if (window.innerWidth >= 1024) {
+                // ensure sidebar is visible and reset any mobile inline styles
+                sidebarWrapper.classList.remove('hidden');
+                sidebarWrapper.style.position = '';
+                sidebarWrapper.style.left = '';
+                sidebarWrapper.style.right = '';
+                sidebarWrapper.style.top = '';
+                sidebarWrapper.style.zIndex = '';
+                sidebarWrapper.style.transform = '';
+                sidebarWrapper.style.transition = '';
+            } else {
+                // hide it on small screens by default
+                if (!sidebarWrapper.classList.contains('hidden')) {
+                    sidebarWrapper.classList.add('hidden');
+                }
+            }
+        });
     });
 </script>
 
