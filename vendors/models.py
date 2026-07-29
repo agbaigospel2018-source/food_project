@@ -195,3 +195,32 @@ class Vendor(models.Model):
             self.is_open and
             self.opening_time <= now <= self.closing_time
         )
+        
+    @property
+    def is_currently_open(self):
+
+        if not self.is_open:
+            return False
+
+        now = datetime.now().time()
+
+        if self.opening_time < self.closing_time:
+
+            return (
+                self.opening_time <= now <= self.closing_time
+            )
+
+        return (
+            now >= self.opening_time
+            or
+            now <= self.closing_time
+        )
+
+
+    @property
+    def operating_hours(self):
+
+        return (
+            f"{self.opening_time.strftime('%I:%M %p')} - "
+            f"{self.closing_time.strftime('%I:%M %p')}"
+        )
