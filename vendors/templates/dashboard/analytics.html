@@ -843,6 +843,148 @@ Analytics | Belleful Express
 
 </div>
 
+<!-- ====================================== -->
+<!-- Business Performance Insights -->
+<!-- ====================================== -->
+
+<div class="bg-white rounded-3xl shadow p-6 md:p-8 mt-8">
+
+    <div class="mb-8">
+
+        <h2 class="text-2xl font-bold">
+
+            Business Performance
+
+        </h2>
+
+        <p class="text-gray-500 mt-1">
+
+            Key performance indicators for your restaurant.
+
+        </p>
+
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+
+        <!-- Completion Rate -->
+
+        <div class="rounded-2xl border border-green-200 bg-green-50 p-6">
+
+            <div class="text-green-600 text-sm font-semibold uppercase">
+
+                Completion Rate
+
+            </div>
+
+            <div class="mt-3 text-4xl font-bold text-green-700">
+
+                {{ completion_rate }}%
+
+            </div>
+
+            <p class="mt-3 text-sm text-gray-600">
+
+                Orders successfully completed.
+
+            </p>
+
+        </div>
+
+        <!-- Cancellation Rate -->
+
+        <div class="rounded-2xl border border-red-200 bg-red-50 p-6">
+
+            <div class="text-red-600 text-sm font-semibold uppercase">
+
+                Cancellation Rate
+
+            </div>
+
+            <div class="mt-3 text-4xl font-bold text-red-700">
+
+                {{ cancellation_rate }}%
+
+            </div>
+
+            <p class="mt-3 text-sm text-gray-600">
+
+                Orders cancelled before completion.
+
+            </p>
+
+        </div>
+
+        <!-- Peak Hour -->
+
+        <div class="rounded-2xl border border-blue-200 bg-blue-50 p-6">
+
+            <div class="text-blue-600 text-sm font-semibold uppercase">
+
+                Peak Ordering Hour
+
+            </div>
+
+            <div class="mt-3 text-4xl font-bold text-blue-700">
+
+                {% if peak_hour %}
+
+                    {{ peak_hour.hour }}:00
+
+                {% else %}
+
+                    --
+
+                {% endif %}
+
+            </div>
+
+            <p class="mt-3 text-sm text-gray-600">
+
+                Busiest ordering period.
+
+            </p>
+
+        </div>
+
+        <!-- Weekly Growth -->
+
+        <div class="rounded-2xl border border-orange-200 bg-orange-50 p-6">
+
+            <div class="text-orange-600 text-sm font-semibold uppercase">
+
+                Weekly Growth
+
+            </div>
+
+            <div class="mt-3 text-4xl font-bold
+                {% if revenue_growth >= 0 %}
+                    text-green-600
+                {% else %}
+                    text-red-600
+                {% endif %}
+            ">
+
+                {% if revenue_growth >= 0 %}
+                    +{{ revenue_growth }}%
+                {% else %}
+                    {{ revenue_growth }}%
+                {% endif %}
+
+            </div>
+
+            <p class="mt-3 text-sm text-gray-600">
+
+                Compared to last week.
+
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
