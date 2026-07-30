@@ -1,7 +1,5 @@
 from django.contrib import admin
-from .models import Category, MenuItem, MenuItemOption, MenuItemOptionGroup, MenuItemReview
-
-# Register your models here.
+from .models import Category, MenuItem, MenuItemOption, MenuItemOptionGroup, MenuItemReview, Mood, IngredientCategory, Ingredient, CustomBowl
 
 class MenuItemOptionInline(admin.TabularInline):
     model = MenuItemOption
@@ -45,4 +43,26 @@ class MenuItemReviewAdmin(admin.ModelAdmin):
     search_fields = ("item__name", "student__username", "comment")
 
 
+@admin.register(Mood)
+class MoodAdmin(admin.ModelAdmin):
+    list_display = ("name", "slug")
+    prepopulated_fields = {"slug": ("name",)}
 
+
+@admin.register(IngredientCategory)
+class IngredientCategoryAdmin(admin.ModelAdmin):
+    list_display = ("name", "max_selectable_items", "display_order")
+    ordering = ("display_order",)
+
+
+@admin.register(Ingredient)
+class IngredientAdmin(admin.ModelAdmin):
+    list_display = ("name", "category", "price", "calories", "protein", "carbs", "fats")
+    list_filter = ("category",)
+    search_fields = ("name",)
+
+
+@admin.register(CustomBowl)
+class CustomBowlAdmin(admin.ModelAdmin):
+    list_display = ("id", "user", "base_menu_item")
+    search_fields = ("user__username", "base_menu_item__name")
