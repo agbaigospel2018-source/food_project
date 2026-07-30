@@ -61,27 +61,16 @@ class Vendor(models.Model):
     @property
     def is_currently_open(self):
         """
-        Returns True if the vendor is marked open and
-        the current time falls within operating hours.
+        Check if the restaurant is currently accepting orders.
+        This is directly controlled by the manual toggle.
         """
-
-        if not self.is_open:
-            return False
-
-        now = datetime.now().time()
-
-        # Handles overnight businesses
-        if self.opening_time <= self.closing_time:
-            return self.opening_time <= now <= self.closing_time
-
-        return now >= self.opening_time or now <= self.closing_time
+        return self.is_open
 
     @property
     def status(self):
         """
         Human-readable status.
         """
-
         return "Open Now" if self.is_currently_open else "Closed"
 
     @property
@@ -191,48 +180,4 @@ class Vendor(models.Model):
         # pyrefly: ignore [missing-attribute]
         return self.orders.filter(status="completed").count()
     
-    @property
-    def operating_hours(self):
-        # pyrefly: ignore [missing-attribute]
-        return f"{self.opening_time.strftime('%I:%M %p')} - {self.closing_time.strftime('%I:%M %p')}"
 
-    @property
-    def is_currently_open(self):
-        from django.utils import timezone
-
-        now = timezone.localtime().time()
-
-        return (
-            self.is_open and
-            self.opening_time <= now <= self.closing_time
-        )
-        
-    @property
-    def is_currently_open(self):
-
-        if not self.is_open:
-            return False
-
-        now = datetime.now().time()
-
-        if self.opening_time < self.closing_time:
-
-            return (
-                self.opening_time <= now <= self.closing_time
-            )
-
-        return (
-            now >= self.opening_time
-            or
-            now <= self.closing_time
-        )
-
-
-    @property
-    def operating_hours(self):
-
-        return (
-            # pyrefly: ignore [missing-attribute]
-            f"{self.opening_time.strftime('%I:%M %p')} - "
-            f"{self.closing_time.strftime('%I:%M %p')}"
-        )

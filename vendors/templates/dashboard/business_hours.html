@@ -70,10 +70,6 @@ Business Hours | Belleful Express
 
                 </div>
 
-                <!-- Messages -->
-
-                {% if messages %}
-
                 <!-- ========================= -->
                 <!-- Status Cards -->
                 <!-- ========================= -->
@@ -88,7 +84,7 @@ Business Hours | Belleful Express
 
                         </p>
 
-                        {% if vendor.is_open %}
+                        {% if vendor.is_currently_open %}
 
                             <h3 class="text-2xl font-bold text-green-600 mt-3">
 
@@ -381,5 +377,4 @@ Business Hours | Belleful Express
     </div>
 
 </div>
-{% endif %}
 {% endblock %}

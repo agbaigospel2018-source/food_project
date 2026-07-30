@@ -62,7 +62,7 @@ def vendor_list(request):
 
     # Filter
     status = request.GET.get("status")
-
+    
     if status == "open":
         vendors = vendors.filter(is_open=True)
 
@@ -939,7 +939,7 @@ def toggle_vendor_status(request):
         )
 
     return redirect(
-        "vendors:vendor_profile"
+        request.META.get("HTTP_REFERER", "vendors:vendor_profile")
     )
 
 

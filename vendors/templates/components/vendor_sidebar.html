@@ -217,7 +217,7 @@
             href="{% url 'vendors:toggle_vendor_status' %}"
             class="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-semibold transition">
 
-            {% if vendor.is_currently_open %}
+            {% if vendor.is_open %}
 
                 <i data-lucide="x-circle" class="w-5 h-5 inline text-red-500 mr-1"></i> Close Restaurant
 
