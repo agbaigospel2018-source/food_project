@@ -508,6 +508,252 @@
         border: 2px dashed #d1d5db;
 
     }
+
+    /* ===================================
+        ACCEPTED ORDERS
+=================================== */
+
+    .accepted-card {
+
+        border-left: 5px solid #3b82f6;
+
+    }
+
+    .status.accepted {
+
+        background: #dbeafe;
+
+        color: #2563eb;
+
+    }
+
+    .accepted-timer {
+
+        display: flex;
+
+        align-items: center;
+
+        gap: 10px;
+
+        margin: 20px 0;
+
+        padding: 12px 16px;
+
+        border-radius: 12px;
+
+        background: #eff6ff;
+
+        color: #2563eb;
+
+        font-size: .9rem;
+
+        font-weight: 600;
+
+    }
+
+    .prepare-btn {
+
+        width: 100%;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        gap: 10px;
+
+        border: none;
+
+        border-radius: 12px;
+
+        padding: 14px;
+
+        background: #2563eb;
+
+        color: white;
+
+        font-weight: 600;
+
+        cursor: pointer;
+
+        transition: .3s;
+
+    }
+
+    .prepare-btn:hover {
+
+        background: #1d4ed8;
+
+        transform: translateY(-2px);
+
+    }
+
+    /* ===================================
+        PREPARING ORDERS
+=================================== */
+
+    .preparing-card {
+
+        border-left: 5px solid #7c3aed;
+
+    }
+
+    .status.preparing {
+
+        background: #ede9fe;
+
+        color: #7c3aed;
+
+    }
+
+    .preparing-banner {
+
+        display: flex;
+
+        justify-content: space-between;
+
+        align-items: center;
+
+        margin: 20px 0;
+
+        padding: 14px 16px;
+
+        border-radius: 12px;
+
+        background: #f5f3ff;
+
+        color: #6d28d9;
+
+        font-size: .9rem;
+
+        font-weight: 600;
+
+    }
+
+    .preparing-banner .timer {
+
+        font-size: .85rem;
+
+        color: #7c3aed;
+
+    }
+
+    .progress-wrapper {
+
+        margin-bottom: 22px;
+
+    }
+
+    .progress-header {
+
+        display: flex;
+
+        justify-content: space-between;
+
+        margin-bottom: 8px;
+
+        font-size: .85rem;
+
+        color: #64748b;
+
+    }
+
+    .progress-track {
+
+        width: 100%;
+
+        height: 10px;
+
+        background: #e5e7eb;
+
+        border-radius: 999px;
+
+        overflow: hidden;
+
+    }
+
+    .progress-bar {
+
+        width: 75%;
+
+        height: 100%;
+
+        border-radius: 999px;
+
+        background: linear-gradient(90deg,
+                #8b5cf6,
+                #7c3aed);
+
+    }
+
+    .ready-btn {
+
+        width: 100%;
+
+        border: none;
+
+        border-radius: 12px;
+
+        padding: 14px;
+
+        display: flex;
+
+        justify-content: center;
+
+        align-items: center;
+
+        gap: 10px;
+
+        cursor: pointer;
+
+        background: #16a34a;
+
+        color: white;
+
+        font-weight: 600;
+
+        transition: .3s;
+
+    }
+
+    .ready-btn:hover {
+        background: #15803d;
+        transform: translateY(-2px);
+    }
+
+    /* ===================================
+        MOBILE RESPONSIVENESS
+    =================================== */
+    @media (max-width: 768px) {
+        .filter-container {
+            flex-direction: column;
+            align-items: stretch;
+            padding: 16px;
+        }
+        
+        .filter-search {
+            min-width: 100%;
+        }
+        
+        .filter-actions {
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        .filter-actions select {
+            flex: 1;
+        }
+        
+        .orders-grid {
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        .stat-card {
+            padding: 16px;
+        }
+    }
 </style>
 
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -720,6 +966,7 @@
 =========================================== -->
 
     <div class="filter-container">
+        {% csrf_token %}
 
         <div class="filter-search">
 
@@ -736,7 +983,7 @@
             <select id="statusFilter">
 
                 <option value="all">All Status</option>
-                <option value="pending">Pending</option>
+                <option value="received">Pending</option>
                 <option value="accepted">Accepted</option>
                 <option value="preparing">Preparing</option>
                 <option value="ready">Ready</option>
@@ -814,7 +1061,7 @@
 
             {% for order in pending_list %}
 
-            <div class="order-card" data-status="pending" data-order="{{ order.id }}">
+            <div class="order-card" data-status="received" data-order="{{ order.id }}">
 
                 <!-- Card Header -->
 
@@ -822,7 +1069,11 @@
 
                     <div>
 
-                        <h3>#{{ order.id }}</h3>
+                        <h3>
+                            {% for item in order.items.all %}
+                                {{ item.quantity }}x {{ item.menu_item.name }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </h3>
 
                         <small>{{ order.created_at|timesince }} ago</small>
 
@@ -934,6 +1185,423 @@
 
     </section>
 
+    <!-- ==========================================
+            ACCEPTED ORDERS
+========================================== -->
+
+    <section class="order-section">
+
+        <div class="section-header" id="acceptedToggle">
+
+            <div class="section-title">
+
+                <div class="section-icon bg-blue-100 text-blue-600">
+
+                    <i data-lucide="badge-check"></i>
+
+                </div>
+
+                <div>
+
+                    <h2 class="text-xl font-semibold">
+                        Accepted Orders
+                    </h2>
+
+                    <span>
+                        {{ accepted_orders }} waiting to be prepared
+                    </span>
+
+                </div>
+
+            </div>
+
+            <button class="collapse-btn">
+
+                <i data-lucide="chevron-down"></i>
+
+            </button>
+
+        </div>
+
+        <div class="orders-grid" id="acceptedContainer">
+
+            {% for order in accepted_list %}
+
+            <div class="order-card accepted-card" data-status="accepted" data-order="{{ order.id }}">
+
+                <!-- Header -->
+
+                <div class="order-top">
+
+                    <div>
+
+                        <h3 class="font-semibold text-lg">
+                            {% for item in order.items.all %}
+                                {{ item.quantity }}x {{ item.menu_item.name }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </h3>
+
+                        <small class="text-gray-500">
+
+                            {{ order.created_at|timesince }} ago
+
+                        </small>
+
+                    </div>
+
+                    <span class="status accepted">
+
+                        Accepted
+
+                    </span>
+
+                </div>
+
+                <!-- Customer -->
+
+                <div class="customer-row">
+
+                    <i data-lucide="user"></i>
+
+                    <div>
+
+                        <strong>
+
+                            {{ order.student.get_full_name|default:order.student.username }}
+
+                        </strong>
+
+                        <small class="block text-gray-500">
+
+                            Customer
+
+                        </small>
+
+                    </div>
+
+                </div>
+
+                <!-- Pickup -->
+
+                <div class="customer-row">
+
+                    <i data-lucide="clock-3"></i>
+
+                    <div>
+
+                        <strong>
+
+                            {{ order.pickup_time|time:"g:i A" }}
+
+                        </strong>
+
+                        <small class="block text-gray-500">
+
+                            Pickup Time
+
+                        </small>
+
+                    </div>
+
+                </div>
+
+                <!-- Amount -->
+
+                <div class="customer-row">
+
+                    <i data-lucide="wallet"></i>
+
+                    <div>
+
+                        <strong>
+
+                            ₦{{ order.total_amount }}
+
+                        </strong>
+
+                        <small class="block text-gray-500">
+
+                            Total Amount
+
+                        </small>
+
+                    </div>
+
+                </div>
+
+                <!-- Items -->
+
+                <div class="customer-row">
+
+                    <i data-lucide="shopping-bag"></i>
+
+                    <div>
+
+                        <strong>
+
+                            {{ order.items.count }}
+
+                        </strong>
+
+                        <small class="block text-gray-500">
+
+                            Item{{ order.items.count|pluralize }}
+
+                        </small>
+
+                    </div>
+
+                </div>
+
+                <!-- Timer -->
+
+                <div class="accepted-timer">
+
+                    <i data-lucide="timer-reset"></i>
+
+                    <span>
+
+                        Waiting to start preparation
+
+                    </span>
+
+                </div>
+
+                <!-- Action -->
+
+                <div class="order-actions">
+
+                    <button class="prepare-btn" data-order="{{ order.id }}">
+
+                        <i data-lucide="chef-hat"></i>
+
+                        Start Preparing
+
+                    </button>
+
+                </div>
+
+            </div>
+
+            {% empty %}
+
+            <div class="empty-orders">
+
+                <i data-lucide="chef-hat"></i>
+
+                <h3>No Accepted Orders</h3>
+
+                <p>
+                    Orders that you accept will appear here.
+                </p>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+    <!-- ==========================================
+            PREPARING ORDERS
+========================================== -->
+
+    <section class="order-section">
+
+        <div class="section-header" id="preparingToggle">
+
+            <div class="section-title">
+
+                <div class="section-icon bg-violet-100 text-violet-600">
+
+                    <i data-lucide="chef-hat"></i>
+
+                </div>
+
+                <div>
+
+                    <h2>Preparing Orders</h2>
+
+                    <span>{{ preparing_orders }} currently being prepared</span>
+
+                </div>
+
+            </div>
+
+            <button class="collapse-btn">
+
+                <i data-lucide="chevron-down"></i>
+
+            </button>
+
+        </div>
+
+        <div class="orders-grid" id="preparingContainer">
+
+            {% for order in preparing_list %}
+
+            <div class="order-card preparing-card" data-status="preparing" data-order="{{ order.id }}">
+
+                <div class="order-top">
+
+                    <div>
+
+                        <h3>
+                            {% for item in order.items.all %}
+                                {{ item.quantity }}x {{ item.menu_item.name }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </h3>
+
+                        <small>{{ order.created_at|timesince }} ago</small>
+
+                    </div>
+
+                    <span class="status preparing">
+
+                        Preparing
+
+                    </span>
+
+                </div>
+
+                <div class="customer-row">
+
+                    <i data-lucide="user"></i>
+
+                    <span>
+
+                        {{ order.student.get_full_name|default:order.student.username }}
+
+                    </span>
+
+                </div>
+
+                <div class="customer-row">
+
+                    <i data-lucide="clock-3"></i>
+
+                    <span>
+
+                        Pickup: {{ order.pickup_time|time:"g:i A" }}
+
+                    </span>
+
+                </div>
+
+                <div class="customer-row">
+
+                    <i data-lucide="wallet"></i>
+
+                    <span>
+
+                        ₦{{ order.total_amount }}
+
+                    </span>
+
+                </div>
+
+                <div class="customer-row">
+
+                    <i data-lucide="shopping-bag"></i>
+
+                    <span>
+
+                        {{ order.items.count }}
+                        item{{ order.items.count|pluralize }}
+
+                    </span>
+
+                </div>
+
+                {% if order.notes %}
+
+                <div class="customer-row">
+
+                    <i data-lucide="sticky-note"></i>
+
+                    <span>
+
+                        {{ order.notes }}
+
+                    </span>
+
+                </div>
+
+                {% endif %}
+
+                <div class="preparing-banner">
+
+                    <span>
+
+                        <i data-lucide="timer"></i>
+
+                        In Kitchen
+
+                    </span>
+
+                    <span class="timer">
+
+                        {{ order.updated_at|timesince }}
+
+                    </span>
+
+                </div>
+
+                <div class="progress-wrapper">
+
+                    <div class="progress-header">
+
+                        <span>Preparation Progress</span>
+
+                        <span>75%</span>
+
+                    </div>
+
+                    <div class="progress-track">
+
+                        <div class="progress-bar"></div>
+
+                    </div>
+
+                </div>
+
+                <div class="order-actions">
+
+                    <button class="ready-btn" data-order="{{ order.id }}">
+
+                        <i data-lucide="package-check"></i>
+
+                        Mark Ready
+
+                    </button>
+
+                </div>
+
+            </div>
+
+            {% empty %}
+
+            <div class="empty-orders">
+
+                <i data-lucide="chef-hat"></i>
+
+                <h3>No Orders Being Prepared</h3>
+
+                <p>
+
+                    Orders currently being cooked will appear here.
+
+                </p>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
 </div>
 
 <script>
@@ -1025,25 +1693,51 @@ COLLAPSE SECTION
         });
 
     /* ===============================
+        AJAX STATUS UPDATE
+    ================================ */
+
+    function updateOrderStatus(orderId, newStatus, cardElement) {
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        fetch(`/orders/vendor/${orderId}/status/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ status: newStatus })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Reload page to reflect new state cleanly
+                    location.reload();
+                } else {
+                    alert(data.error || "Failed to update order status.");
+                    cardElement.style.opacity = '1';
+                }
+            })
+            .catch(error => {
+                console.error("Error updating order status:", error);
+                alert("An error occurred. Please try again.");
+                cardElement.style.opacity = '1';
+            });
+    }
+
+    /* ===============================
         ACCEPT BUTTON
     ================================ */
 
     document
         .querySelectorAll(".accept-btn")
         .forEach(button => {
-
             button.addEventListener("click", function () {
-
                 const card = this.closest(".order-card");
-
                 card.style.opacity = ".5";
-
-                console.log("Accept Order", this.dataset.order);
-
-                // AJAX comes later
-
+                const orderId = this.dataset.order;
+                updateOrderStatus(orderId, "accepted", card);
             });
-
         });
 
     /* ===============================
@@ -1053,6 +1747,54 @@ COLLAPSE SECTION
     document
         .querySelectorAll(".reject-btn")
         .forEach(button => {
+            button.addEventListener("click", function () {
+                const card = this.closest(".order-card");
+                card.style.opacity = ".5";
+                const orderId = this.dataset.order;
+                updateOrderStatus(orderId, "rejected", card);
+            });
+        });
+
+    /* ===============================
+        PREPARE BUTTON
+    ================================ */
+
+    document
+        .querySelectorAll(".prepare-btn")
+        .forEach(button => {
+            button.addEventListener("click", function () {
+                const card = this.closest(".order-card");
+                card.style.opacity = ".5";
+                const orderId = this.dataset.order;
+                updateOrderStatus(orderId, "preparing", card);
+            });
+        });
+
+    /* ===============================
+PREPARING COLLAPSE
+================================ */
+
+    document
+        .getElementById("preparingToggle")
+        .addEventListener("click", function () {
+
+            const body = document.getElementById("preparingContainer");
+
+            body.style.display =
+                body.style.display === "none"
+                    ? "grid"
+                    : "none";
+
+        });
+
+
+    /* ===============================
+        READY BUTTON
+    ================================ */
+
+    document
+        .querySelectorAll(".ready-btn")
+        .forEach(button => {
 
             button.addEventListener("click", function () {
 
@@ -1060,9 +1802,9 @@ COLLAPSE SECTION
 
                 card.style.opacity = ".5";
 
-                console.log("Reject Order", this.dataset.order);
+                const orderId = this.dataset.order;
 
-                // AJAX comes later
+                updateOrderStatus(orderId, "ready", card);
 
             });
 

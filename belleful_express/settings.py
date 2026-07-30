@@ -29,6 +29,10 @@ DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://belleful-express.up.railway.app',
+]
+
 
 # Application definition
 
@@ -62,7 +66,6 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    "django_browser_reload.middleware.BrowserReloadMiddleware",
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -163,3 +166,7 @@ EMAIL_HOST_USER = "agbaigospel2018@gmail.com"
 EMAIL_HOST_PASSWORD = "vhfq pgzb mspk bjpk"
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+# Add development-only middleware
+if DEBUG:
+    MIDDLEWARE.append("django_browser_reload.middleware.BrowserReloadMiddleware")

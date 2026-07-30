@@ -7,6 +7,7 @@ from cart.services import clear_cart
 
 from .models import Order, OrderItem
 from datetime import datetime, timedelta
+from notifications.models import Notification, NotificationType
 
 
 def validate_cart(cart, pickup_time):
@@ -146,6 +147,15 @@ def create_order_from_cart(student, pickup_time):
 
     # Empty the cart
     clear_cart(student)
+
+    # Create notification for the vendor
+    Notification.objects.create(
+        recipient=vendor.owner,
+        notification_type=NotificationType.NEW_ORDER,
+        title="New Order Received",
+        message=f"You have received a new order (#{order.short_id()}) from {student.get_full_name() or student.username}.",
+        order=order
+    )
 
     return order
 
