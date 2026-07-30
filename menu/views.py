@@ -7,10 +7,10 @@ from django.utils.html import escape
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_POST
-from django.views.generic import CreateView, DeleteView, ListView, UpdateView
+from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 
-from .forms import CategoryForm, MenuItemForm, ReviewForm
-from .models import Category, MenuItem, MenuItemReview
+from .forms import CategoryForm, IngredientCategoryForm, IngredientForm, MenuItemForm, ReviewForm
+from .models import Category, Ingredient, IngredientCategory, MenuItem, MenuItemReview
 from .utils import get_managed_vendor_or_403, get_vendor_model
 # pyrefly: ignore [missing-import]
 from rest_framework import viewsets
@@ -276,8 +276,112 @@ class VendorCategoryCreateView(VendorMenuMixin, CreateView):
         # pyrefly: ignore [missing-attribute]
         return reverse("menu:vendor_items", kwargs={"vendor_pk": self.vendor.pk})
 
-def crave_bowl_view(request):
-    return render(request, "menu/crave_bowl.html")
+# ─── Vendor Crave Bowl Management ───
+
+class VendorCraveBowlManageView(VendorMenuMixin, ListView):
+    template_name = "menu/management/crave_bowl_manage.html"
+    context_object_name = "categories"
+
+    def get_queryset(self):
+        return IngredientCategory.objects.filter(vendor=self.vendor).prefetch_related("ingredients")
+
+
+class VendorIngredientCategoryCreateView(VendorMenuMixin, CreateView):
+    model = IngredientCategory
+    form_class = IngredientCategoryForm
+    template_name = "menu/management/ingredient_category_form.html"
+
+    def form_valid(self, form):
+        form.instance.vendor = self.vendor
+        messages.success(self.request, "Category created.")
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("menu:vendor_crave_bowl", kwargs={"vendor_pk": self.vendor.pk})
+
+
+class VendorIngredientCategoryUpdateView(VendorMenuMixin, UpdateView):
+    model = IngredientCategory
+    form_class = IngredientCategoryForm
+    template_name = "menu/management/ingredient_category_form.html"
+
+    def get_queryset(self):
+        return IngredientCategory.objects.filter(vendor=self.vendor)
+
+    def form_valid(self, form):
+        messages.success(self.request, "Category updated.")
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("menu:vendor_crave_bowl", kwargs={"vendor_pk": self.vendor.pk})
+
+
+class VendorIngredientCategoryDeleteView(VendorMenuMixin, DeleteView):
+    model = IngredientCategory
+    template_name = "menu/management/ingredient_category_confirm_delete.html"
+
+    def get_queryset(self):
+        return IngredientCategory.objects.filter(vendor=self.vendor)
+
+    def get_success_url(self):
+        messages.success(self.request, "Category deleted.")
+        return reverse("menu:vendor_crave_bowl", kwargs={"vendor_pk": self.vendor.pk})
+
+
+class VendorIngredientCreateView(VendorMenuMixin, CreateView):
+    model = Ingredient
+    form_class = IngredientForm
+    template_name = "menu/management/ingredient_form.html"
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["vendor"] = self.vendor
+        return kwargs
+
+    def form_valid(self, form):
+        messages.success(self.request, "Ingredient added.")
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("menu:vendor_crave_bowl", kwargs={"vendor_pk": self.vendor.pk})
+
+
+class VendorIngredientUpdateView(VendorMenuMixin, UpdateView):
+    model = Ingredient
+    form_class = IngredientForm
+    template_name = "menu/management/ingredient_form.html"
+
+    def get_queryset(self):
+        return Ingredient.objects.filter(category__vendor=self.vendor)
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["vendor"] = self.vendor
+        return kwargs
+
+    def form_valid(self, form):
+        messages.success(self.request, "Ingredient updated.")
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("menu:vendor_crave_bowl", kwargs={"vendor_pk": self.vendor.pk})
+
+
+class VendorIngredientDeleteView(VendorMenuMixin, DeleteView):
+    model = Ingredient
+    template_name = "menu/management/ingredient_confirm_delete.html"
+
+    def get_queryset(self):
+        return Ingredient.objects.filter(category__vendor=self.vendor)
+
+    def get_success_url(self):
+        messages.success(self.request, "Ingredient deleted.")
+        return reverse("menu:vendor_crave_bowl", kwargs={"vendor_pk": self.vendor.pk})
+
+
+def crave_bowl_view(request, vendor_pk):
+    vendor = get_object_or_404(get_vendor_model(), pk=vendor_pk)
+    return render(request, "menu/crave_bowl.html", {"vendor": vendor})
 
 class MoodViewSet(viewsets.ReadOnlyModelViewSet):
     from .models import Mood
@@ -341,9 +445,15 @@ from rest_framework import status
 
 class IngredientCategoryListAPIView(ListAPIView):
     from .models import IngredientCategory
-    # pyrefly: ignore [missing-attribute]
-    queryset = IngredientCategory.objects.all()
     serializer_class = IngredientCategorySerializer
+
+    def get_queryset(self):
+        from .models import IngredientCategory
+        queryset = IngredientCategory.objects.all()
+        vendor_id = self.request.query_params.get("vendor")
+        if vendor_id:
+            queryset = queryset.filter(vendor_id=vendor_id)
+        return queryset
 
 class AddCustomBowlToCartAPIView(APIView):
     def post(self, request, *args, **kwargs):

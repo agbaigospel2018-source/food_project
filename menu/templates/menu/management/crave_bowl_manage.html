@@ -1,0 +1,307 @@
+{% extends "core/base.html" %}
+{% load menu_extras %}
+
+{% block content %}
+<style>
+  :root {
+    --menu-primary: #EA5B0C;
+    --menu-primary-dark: #C94A09;
+    --menu-primary-light: #FDEBDD;
+    --menu-dark: #0F172A;
+    --menu-bg: #F8FAFC;
+    --menu-card: #FFFFFF;
+    --menu-border: #E5E7EB;
+    --menu-text: #0F172A;
+    --menu-muted: #64748B;
+    --menu-success: #16A34A;
+    --menu-success-bg: #E8F8EE;
+    --menu-danger: #DC2626;
+    --menu-danger-bg: #FDEDED;
+    --menu-radius: 12px;
+    --menu-shadow: 0 1px 3px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.06);
+  }
+
+  .cb-manage {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 3.5rem;
+    color: var(--menu-text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+
+  .cb-manage-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .cb-manage-header h1 {
+    font-size: 1.9rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--menu-dark);
+  }
+  .cb-manage-header .actions {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.6rem 1.25rem;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    text-decoration: none;
+    gap: 0.35rem;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .btn-primary { background: var(--menu-primary); color: #fff; }
+  .btn-primary:hover { background: var(--menu-primary-dark); transform: translateY(-1px); }
+  .btn-outline { background: transparent; border-color: var(--menu-border); color: var(--menu-text); }
+  .btn-outline:hover { border-color: var(--menu-primary); color: var(--menu-primary); }
+  .btn-danger-outline { background: transparent; border-color: var(--menu-danger); color: var(--menu-danger); }
+  .btn-danger-outline:hover { background: var(--menu-danger); color: #fff; }
+  .btn-sm { padding: 0.35rem 0.85rem; font-size: 0.8rem; }
+
+  .cb-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--menu-primary);
+    text-decoration: none;
+    padding: 0.45rem 1rem;
+    border: 1px solid rgba(234, 91, 12, 0.22);
+    border-radius: 999px;
+    background: #fff;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .cb-back-link:hover {
+    border-color: var(--menu-primary);
+    background: var(--menu-primary-light);
+  }
+
+  /* Category Section */
+  .cb-cat-section {
+    background: var(--menu-card);
+    border: 1px solid var(--menu-border);
+    border-radius: var(--menu-radius);
+    box-shadow: var(--menu-shadow);
+    margin-bottom: 1.25rem;
+    overflow: hidden;
+  }
+  .cb-cat-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    background: var(--menu-bg);
+    border-bottom: 1px solid var(--menu-border);
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+  .cb-cat-header h2 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--menu-dark);
+  }
+  .cb-cat-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+  .cb-cat-badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.2rem 0.65rem;
+    background: var(--menu-primary-light);
+    color: var(--menu-primary);
+    border-radius: 999px;
+  }
+  .cb-cat-actions {
+    display: flex;
+    gap: 0.4rem;
+  }
+
+  /* Ingredient Table */
+  .cb-ing-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .cb-ing-table thead th {
+    text-align: left;
+    padding: 0.7rem 1rem;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--menu-muted);
+    font-weight: 600;
+    border-bottom: 1px solid var(--menu-border);
+  }
+  .cb-ing-table tbody tr {
+    border-bottom: 1px solid var(--menu-border);
+    transition: background 0.15s;
+  }
+  .cb-ing-table tbody tr:last-child { border-bottom: none; }
+  .cb-ing-table tbody tr:hover { background: var(--menu-bg); }
+  .cb-ing-table tbody td {
+    padding: 0.75rem 1rem;
+    font-size: 0.88rem;
+    vertical-align: middle;
+  }
+  .cb-ing-table .ing-name { font-weight: 600; color: var(--menu-dark); }
+  .cb-ing-table .ing-price { font-weight: 700; color: var(--menu-primary); }
+  .cb-ing-table .ing-macros {
+    display: flex;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+  }
+  .cb-ing-table .ing-macros span {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.12rem 0.4rem;
+    background: var(--menu-bg);
+    border: 1px solid var(--menu-border);
+    border-radius: 5px;
+    color: var(--menu-muted);
+  }
+  .cb-ing-table .ing-actions {
+    display: flex;
+    gap: 0.4rem;
+    justify-content: flex-end;
+  }
+
+  /* Empty State */
+  .cb-empty {
+    text-align: center;
+    padding: 2.5rem 1rem;
+    color: var(--menu-muted);
+  }
+  .cb-empty-icon { font-size: 2.5rem; margin-bottom: 0.75rem; opacity: 0.4; }
+  .cb-empty p { font-size: 0.9rem; font-weight: 500; margin: 0 0 1rem; }
+
+  .cb-ing-empty {
+    padding: 1.5rem;
+    text-align: center;
+    color: var(--menu-muted);
+    font-size: 0.85rem;
+  }
+
+  @media (max-width: 640px) {
+    .cb-manage { padding: 1rem 0.75rem 2.5rem; }
+    .cb-manage-header h1 { font-size: 1.4rem; }
+    .cb-ing-table thead { display: none; }
+    .cb-ing-table tbody td { display: block; padding: 0.4rem 1rem; }
+    .cb-ing-table tbody td::before {
+      content: attr(data-label);
+      display: block;
+      font-size: 0.68rem;
+      color: var(--menu-muted);
+      text-transform: uppercase;
+      margin-bottom: 0.1rem;
+    }
+    .cb-ing-table tbody tr { padding: 0.5rem 0; }
+  }
+</style>
+
+<section class="cb-manage">
+  <div class="cb-manage-header">
+    <div>
+      <h1>🍜 Manage Crave Bowl</h1>
+      <p style="margin: 0.3rem 0 0; color: var(--menu-muted); font-size: 0.9rem;">
+        Configure the custom bowl builder for <strong>{{ vendor.business_name }}</strong>
+      </p>
+    </div>
+    <div class="actions">
+      <a href="{% url 'menu:vendor_items' vendor.pk %}" class="cb-back-link">
+        ← Back to Menu
+      </a>
+      <a href="{% url 'menu:vendor_ingredient_category_create' vendor.pk %}" class="btn btn-primary">
+        + Add Category
+      </a>
+      <a href="{% url 'menu:vendor_ingredient_create' vendor.pk %}" class="btn btn-outline">
+        + Add Ingredient
+      </a>
+    </div>
+  </div>
+
+  {% if categories %}
+    {% for cat in categories %}
+    <div class="cb-cat-section">
+      <div class="cb-cat-header">
+        <div style="display: flex; align-items: center; gap: 0.6rem;">
+          <h2>{{ cat.name }}</h2>
+          <div class="cb-cat-meta">
+            <span class="cb-cat-badge">Max {{ cat.max_selectable_items }} selection{{ cat.max_selectable_items|pluralize }}</span>
+            <span class="cb-cat-badge" style="background: var(--menu-bg); color: var(--menu-muted);">Order: {{ cat.display_order }}</span>
+          </div>
+        </div>
+        <div class="cb-cat-actions">
+          <a href="{% url 'menu:vendor_ingredient_category_update' vendor.pk cat.pk %}" class="btn btn-sm btn-outline">Edit</a>
+          <a href="{% url 'menu:vendor_ingredient_category_delete' vendor.pk cat.pk %}" class="btn btn-sm btn-danger-outline">Delete</a>
+        </div>
+      </div>
+
+      {% if cat.ingredients.all %}
+      <table class="cb-ing-table">
+        <thead>
+          <tr>
+            <th>Ingredient</th>
+            <th>Price</th>
+            <th>Macros</th>
+            <th style="text-align: right;">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for ing in cat.ingredients.all %}
+          <tr>
+            <td data-label="Ingredient" class="ing-name">{{ ing.name }}</td>
+            <td data-label="Price" class="ing-price">₦{{ ing.price }}</td>
+            <td data-label="Macros">
+              <div class="ing-macros">
+                <span>{{ ing.calories }} cal</span>
+                <span>{{ ing.protein }}g P</span>
+                <span>{{ ing.carbs }}g C</span>
+                <span>{{ ing.fats }}g F</span>
+              </div>
+            </td>
+            <td data-label="Actions">
+              <div class="ing-actions">
+                <a href="{% url 'menu:vendor_ingredient_update' vendor.pk ing.pk %}" class="btn btn-sm btn-outline">Edit</a>
+                <a href="{% url 'menu:vendor_ingredient_delete' vendor.pk ing.pk %}" class="btn btn-sm btn-danger-outline">Delete</a>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="cb-ing-empty">
+        No ingredients in this category yet.
+        <a href="{% url 'menu:vendor_ingredient_create' vendor.pk %}" style="color: var(--menu-primary); font-weight: 600; text-decoration: none;">Add one →</a>
+      </div>
+      {% endif %}
+    </div>
+    {% endfor %}
+  {% else %}
+    <div class="cb-empty">
+      <div class="cb-empty-icon">📦</div>
+      <p>You haven't set up any Crave Bowl categories yet.</p>
+      <a href="{% url 'menu:vendor_ingredient_category_create' vendor.pk %}" class="btn btn-primary">
+        + Create Your First Category
+      </a>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

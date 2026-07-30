@@ -45,6 +45,6 @@ class CustomBowlSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomBowl
         fields = [
-            'id', 'user', 'base_menu_item', 'selected_ingredients', 
+            'id', 'user', 'vendor', 'base_menu_item', 'selected_ingredients', 
             'total_price', 'total_calories', 'total_protein', 'total_carbs', 'total_fats'
         ]

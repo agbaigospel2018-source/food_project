@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Category, MenuItem, MenuItemOptionGroup, MenuItemReview
+from .models import Category, Ingredient, IngredientCategory, MenuItem, MenuItemOptionGroup, MenuItemReview
 
 
 class CategoryForm(forms.ModelForm):
@@ -59,3 +59,36 @@ class ReviewForm(forms.ModelForm):
         widgets = {
             "rating": forms.NumberInput(attrs={"min": 1, "max": 5}),
         }
+
+
+class IngredientCategoryForm(forms.ModelForm):
+    class Meta:
+        model = IngredientCategory
+        fields = ["name", "max_selectable_items", "display_order"]
+        widgets = {
+            "name": forms.TextInput(attrs={"placeholder": "e.g. Bases, Proteins, Toppings"}),
+            "max_selectable_items": forms.NumberInput(attrs={"min": 1}),
+            "display_order": forms.NumberInput(attrs={"min": 0}),
+        }
+
+
+class IngredientForm(forms.ModelForm):
+    class Meta:
+        model = Ingredient
+        fields = ["name", "category", "price", "image_url", "calories", "protein", "carbs", "fats"]
+        widgets = {
+            "name": forms.TextInput(attrs={"placeholder": "e.g. Jollof Rice"}),
+            "price": forms.NumberInput(attrs={"step": "0.01", "min": "0"}),
+            "image_url": forms.URLInput(attrs={"placeholder": "https://example.com/image.jpg"}),
+            "calories": forms.NumberInput(attrs={"min": 0}),
+            "protein": forms.NumberInput(attrs={"step": "0.1", "min": "0"}),
+            "carbs": forms.NumberInput(attrs={"step": "0.1", "min": "0"}),
+            "fats": forms.NumberInput(attrs={"step": "0.1", "min": "0"}),
+        }
+
+    def __init__(self, *args, vendor=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if vendor is not None:
+            # Only show categories belonging to this vendor
+            self.fields["category"].queryset = IngredientCategory.objects.filter(vendor=vendor)
+            self.fields["category"].empty_label = "Choose a category"

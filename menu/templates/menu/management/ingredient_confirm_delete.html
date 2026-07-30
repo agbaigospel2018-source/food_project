@@ -1,0 +1,91 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+<style>
+  :root {
+    --menu-primary: #EA5B0C;
+    --menu-primary-dark: #C94A09;
+    --menu-dark: #0F172A;
+    --menu-bg: #F8FAFC;
+    --menu-card: #FFFFFF;
+    --menu-border: #E5E7EB;
+    --menu-text: #0F172A;
+    --menu-muted: #64748B;
+    --menu-danger: #DC2626;
+    --menu-danger-bg: #FDEDED;
+    --menu-radius: 12px;
+    --menu-shadow: 0 1px 3px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.06);
+  }
+
+  .confirm-page {
+    max-width: 520px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 3.5rem;
+    color: var(--menu-text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  .confirm-card {
+    background: var(--menu-card);
+    border: 1px solid var(--menu-border);
+    border-radius: var(--menu-radius);
+    box-shadow: var(--menu-shadow);
+    padding: 2rem;
+    text-align: center;
+  }
+  .confirm-card .icon { font-size: 2.5rem; margin-bottom: 1rem; }
+  .confirm-card h1 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem;
+    color: var(--menu-dark);
+  }
+  .confirm-card p {
+    color: var(--menu-muted);
+    font-size: 0.9rem;
+    margin: 0 0 1.5rem;
+  }
+  .confirm-card .item-name {
+    font-weight: 700;
+    color: var(--menu-danger);
+  }
+  .confirm-actions {
+    display: flex;
+    gap: 0.6rem;
+    justify-content: center;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.6rem 1.25rem;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .btn-danger { background: var(--menu-danger); color: #fff; }
+  .btn-danger:hover { background: #B91C1C; }
+  .btn-outline { background: transparent; border-color: var(--menu-border); color: var(--menu-text); }
+  .btn-outline:hover { border-color: var(--menu-primary); color: var(--menu-primary); }
+</style>
+
+<section class="confirm-page">
+  <div class="confirm-card">
+    <div class="icon">⚠️</div>
+    <h1>Delete Ingredient?</h1>
+    <p>
+      Are you sure you want to delete <span class="item-name">"{{ object.name }}"</span>?
+      This action cannot be undone.
+    </p>
+    <form method="post">
+      {% csrf_token %}
+      <div class="confirm-actions">
+        <button type="submit" class="btn btn-danger">Yes, Delete</button>
+        <a href="{% url 'menu:vendor_crave_bowl' vendor.pk %}" class="btn btn-outline">Cancel</a>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}

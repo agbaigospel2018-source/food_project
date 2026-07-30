@@ -1,0 +1,172 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+<style>
+  :root {
+    --menu-primary: #EA5B0C;
+    --menu-primary-dark: #C94A09;
+    --menu-primary-light: #FDEBDD;
+    --menu-dark: #0F172A;
+    --menu-bg: #F8FAFC;
+    --menu-card: #FFFFFF;
+    --menu-border: #E5E7EB;
+    --menu-text: #0F172A;
+    --menu-muted: #64748B;
+    --menu-radius: 12px;
+    --menu-shadow: 0 1px 3px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.06);
+  }
+
+  .form-page {
+    max-width: 620px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 3.5rem;
+    color: var(--menu-text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  .form-page h1 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin: 0 0 1.5rem;
+    color: var(--menu-dark);
+  }
+
+  .form-card {
+    background: var(--menu-card);
+    border: 1px solid var(--menu-border);
+    border-radius: var(--menu-radius);
+    box-shadow: var(--menu-shadow);
+    padding: 1.5rem;
+  }
+
+  .form-card label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--menu-dark);
+    margin-bottom: 0.35rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .form-card input,
+  .form-card select,
+  .form-card textarea {
+    width: 100%;
+    padding: 0.65rem 0.85rem;
+    border: 1px solid var(--menu-border);
+    border-radius: 10px;
+    font-size: 0.9rem;
+    color: var(--menu-text);
+    background: #fff;
+    margin-bottom: 1rem;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+  }
+  .form-card input:focus,
+  .form-card select:focus,
+  .form-card textarea:focus {
+    outline: none;
+    border-color: var(--menu-primary);
+    box-shadow: 0 0 0 3px rgba(234, 91, 12, 0.1);
+  }
+
+  .form-card .errorlist {
+    list-style: none;
+    padding: 0;
+    margin: -0.75rem 0 0.75rem;
+  }
+  .form-card .errorlist li {
+    font-size: 0.8rem;
+    color: #DC2626;
+    font-weight: 500;
+  }
+
+  .form-help {
+    font-size: 0.78rem;
+    color: var(--menu-muted);
+    margin: -0.75rem 0 1rem;
+  }
+
+  .form-section-title {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--menu-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 1.25rem 0 0.75rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--menu-border);
+  }
+
+  .macros-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 1rem;
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 0.6rem;
+    margin-top: 0.5rem;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.6rem 1.25rem;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .btn-primary { background: var(--menu-primary); color: #fff; }
+  .btn-primary:hover { background: var(--menu-primary-dark); transform: translateY(-1px); }
+  .btn-outline { background: transparent; border-color: var(--menu-border); color: var(--menu-text); }
+  .btn-outline:hover { border-color: var(--menu-primary); color: var(--menu-primary); }
+</style>
+
+<section class="form-page">
+  <h1>{% if form.instance.pk %}Edit Ingredient{% else %}Add Ingredient{% endif %}</h1>
+
+  <div class="form-card">
+    <form method="post">
+      {% csrf_token %}
+
+      {# Core fields #}
+      {% for field in form %}
+        {% if field.name == "calories" %}
+          <div class="form-section-title">Nutritional Information</div>
+          <div class="macros-grid">
+        {% endif %}
+
+        <div>
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% if field.help_text %}
+            <p class="form-help">{{ field.help_text }}</p>
+          {% endif %}
+          {% if field.errors %}
+            <ul class="errorlist">
+              {% for error in field.errors %}<li>{{ error }}</li>{% endfor %}
+            </ul>
+          {% endif %}
+        </div>
+
+        {% if field.name == "fats" %}
+          </div>{# close macros-grid #}
+        {% endif %}
+      {% endfor %}
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">
+          {% if form.instance.pk %}Save Changes{% else %}Add Ingredient{% endif %}
+        </button>
+        <a href="{% url 'menu:vendor_crave_bowl' vendor.pk %}" class="btn btn-outline">Cancel</a>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}

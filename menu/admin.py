@@ -51,13 +51,15 @@ class MenuItemReviewAdmin(admin.ModelAdmin):
 
 @admin.register(Mood)
 class MoodAdmin(admin.ModelAdmin):
-    list_display = ("name", "slug")
+    list_display = ("name", "vendor", "slug")
+    list_filter = ("vendor",)
     prepopulated_fields = {"slug": ("name",)}
 
 
 @admin.register(IngredientCategory)
 class IngredientCategoryAdmin(admin.ModelAdmin):
-    list_display = ("name", "max_selectable_items", "display_order")
+    list_display = ("name", "vendor", "max_selectable_items", "display_order")
+    list_filter = ("vendor",)
     ordering = ("display_order",)
 
 
@@ -70,5 +72,6 @@ class IngredientAdmin(admin.ModelAdmin):
 
 @admin.register(CustomBowl)
 class CustomBowlAdmin(admin.ModelAdmin):
-    list_display = ("id", "user", "base_menu_item")
+    list_display = ("id", "user", "vendor", "base_menu_item")
+    list_filter = ("vendor",)
     search_fields = ("user__username", "base_menu_item__name")

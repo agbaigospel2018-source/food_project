@@ -213,6 +213,7 @@ class MenuItemReview(models.Model):
 
 class Mood(models.Model):
     """Handles menu filtration contexts (e.g., 'Post-Workout Fuel', 'Late Night Comfort')"""
+    vendor = models.ForeignKey(vendor_model_label(), on_delete=models.CASCADE, related_name='moods', null=True, blank=True)
     name = models.CharField(max_length=100)
     slug = models.SlugField(unique=True)
     icon = models.ImageField(upload_to='mood_icons/', blank=True, null=True)
@@ -224,6 +225,7 @@ class Mood(models.Model):
 
 class IngredientCategory(models.Model):
     """Defines structural steps for the custom builder (e.g., Base, Protein, Veggies)"""
+    vendor = models.ForeignKey(vendor_model_label(), on_delete=models.CASCADE, related_name='ingredient_categories', null=True, blank=True)
     name = models.CharField(max_length=100)
     max_selectable_items = models.PositiveIntegerField(default=1)
     display_order = models.PositiveIntegerField(default=0)
@@ -263,6 +265,7 @@ class Ingredient(models.Model):
 
 class CustomBowl(models.Model):
     """Stores the specific customized matrix built interactively by a user"""
+    vendor = models.ForeignKey(vendor_model_label(), on_delete=models.CASCADE, related_name='custom_bowls', null=True, blank=True)
     user = models.ForeignKey(
         User, 
         on_delete=models.CASCADE, 

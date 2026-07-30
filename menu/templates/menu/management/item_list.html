@@ -108,6 +108,7 @@
     <header>
         <h1>Manage {{ vendor.business_name }} menu</h1>
         <div class="actions">
+            <a href="{% url 'menu:vendor_crave_bowl' vendor.pk %}" class="btn btn-outline">🍜 Manage Crave Bowl</a>
             <a href="{% url 'menu:vendor_item_create' vendor.pk %}" class="btn btn-primary">Add item</a>
         </div>
     </header>
