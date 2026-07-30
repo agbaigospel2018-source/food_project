@@ -20,7 +20,6 @@ MarkupSafe==3.0.3
 mdurl==0.1.2
 packaging==26.2
 pillow==12.3.0
-psycopg2==2.9.12
 psycopg2-binary==2.9.12
 Pygments==2.20.0
 pytailwindcss==0.3.1
