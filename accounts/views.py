@@ -133,11 +133,13 @@ def profile_view(request):
 
     total_orders = Order.objects.filter(student=request.user).count()
     total_reviews = MenuItemReview.objects.filter(student=request.user, is_approved=True).count()
+    recent_orders = Order.objects.filter(student=request.user).order_by('-created_at')[:5]
 
     context = {
         'user': request.user,
         'total_orders': total_orders,
         'total_reviews': total_reviews,
+        'recent_orders': recent_orders,
     }
 
     return render(
