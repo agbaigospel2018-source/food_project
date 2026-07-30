@@ -941,11 +941,12 @@ def delete_vendor(request):
 
     if request.method == "POST":
 
-        vendor.delete()
+        user = request.user
+        user.delete()
 
         messages.success(
             request,
-            "Vendor profile deleted successfully."
+            "Vendor profile and account deleted successfully."
         )
 
         return redirect(
