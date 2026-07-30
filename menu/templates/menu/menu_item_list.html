@@ -285,12 +285,45 @@
 
     .search-container {
       flex-basis: 100%;
+      min-width: 0;
     }
 
     .menu-filter-bar select,
     .menu-filter-bar label,
     .menu-filter-bar button {
       width: auto;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .menu-page {
+      padding: 1rem 0.75rem 2.5rem;
+    }
+    .menu-page h1 {
+      font-size: 1.5rem;
+    }
+    .menu-filter-bar {
+      flex-direction: column;
+      border-radius: 16px;
+      gap: 0.5rem;
+    }
+    .menu-filter-bar > * {
+      width: 100% !important;
+      border-radius: 12px !important;
+      height: 44px;
+    }
+    .menu-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+    }
+    .search-container {
+      min-width: 0;
+      width: 100%;
+    }
+    .menu-filter-bar input[type="search"] {
+      min-width: 0;
+      width: 100%;
+      border-radius: 12px;
     }
   }
 
