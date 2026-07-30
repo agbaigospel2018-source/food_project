@@ -1,0 +1,907 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Crave Bowl Builder — Belleful Express{% endblock %}
+
+{% block content %}
+<style>
+  :root {
+    --menu-primary: #EA5B0C;
+    --menu-primary-dark: #C94A09;
+    --menu-primary-light: #FDEBDD;
+    --menu-dark: #0F172A;
+    --menu-bg: #F8FAFC;
+    --menu-card: #FFFFFF;
+    --menu-border: #EDEDED;
+    --menu-text: #0F172A;
+    --menu-muted: #64748B;
+    --menu-success: #16A34A;
+    --menu-success-bg: #E8F8EE;
+    --menu-danger: #DC2626;
+    --menu-danger-bg: #FDEDED;
+    --menu-radius: 18px;
+    --menu-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+    --menu-shadow-hover: 0 16px 38px rgba(15, 23, 42, 0.12);
+  }
+
+  /* ─── Page Layout (mirrors .menu-page) ─── */
+  .cb-page {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 3.5rem;
+    color: var(--menu-text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+
+  /* ─── Header (mirrors menu-page header) ─── */
+  .cb-header {
+    margin-bottom: 1.4rem;
+    padding: 1.15rem 1.2rem;
+    border-radius: 22px;
+    background: #ffffff;
+    border: 1px solid rgba(234, 91, 12, 0.12);
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+  }
+  .cb-header h1 {
+    font-size: 2.05rem;
+    font-weight: 800;
+    margin: 0 0 0.3rem;
+    color: var(--menu-dark);
+    letter-spacing: -0.02em;
+  }
+  .cb-header p {
+    margin: 0;
+    color: var(--menu-muted);
+    font-size: 0.95rem;
+  }
+  .cb-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .cb-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--menu-primary);
+    text-decoration: none;
+    padding: 0.45rem 1rem;
+    border: 1px solid rgba(234, 91, 12, 0.22);
+    border-radius: 999px;
+    background: #fff;
+    transition: border-color 0.2s, background 0.2s, transform 0.2s;
+  }
+  .cb-back-link:hover {
+    border-color: var(--menu-primary);
+    background: var(--menu-primary-light);
+    transform: translateY(-1px);
+  }
+
+  /* ─── Step Navigation ─── */
+  .cb-steps {
+    display: flex;
+    gap: 0.45rem;
+    margin-bottom: 1.25rem;
+    overflow-x: auto;
+    padding: 0.7rem;
+    background: transparent;
+    border: 1px solid rgba(246, 245, 245, 0.08);
+    border-radius: 999px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .cb-steps::-webkit-scrollbar { height: 3px; }
+  .cb-steps::-webkit-scrollbar-thumb { background: var(--menu-primary); border-radius: 10px; }
+
+  .cb-step-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0 0.8rem;
+    height: 42px;
+    border-radius: 999px;
+    border: 1px solid rgba(234, 91, 12, 0.16);
+    background: #ffffff;
+    color: var(--menu-muted);
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.03);
+    transition: border-color 0.2s, background 0.2s, color 0.2s, transform 0.2s;
+  }
+  .cb-step-btn:hover {
+    border-color: var(--menu-primary);
+    transform: translateY(-1px);
+  }
+  .cb-step-btn.active {
+    background: var(--menu-primary);
+    border-color: var(--menu-primary);
+    color: #fff;
+    box-shadow: 0 6px 14px rgba(234, 91, 12, 0.2);
+  }
+  .cb-step-btn .step-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    font-size: 0.72rem;
+    font-weight: 700;
+    background: var(--menu-border);
+    color: var(--menu-muted);
+    transition: all 0.2s;
+  }
+  .cb-step-btn.active .step-count {
+    background: rgba(255,255,255,0.25);
+    color: #fff;
+  }
+
+  /* ─── Content Grid ─── */
+  .cb-grid {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 1.5rem;
+    align-items: start;
+  }
+  @media (max-width: 960px) {
+    .cb-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ─── Category Section ─── */
+  .cb-category { display: none; }
+  .cb-category.active {
+    display: block;
+    animation: cbFadeIn 0.3s ease-out;
+  }
+  @keyframes cbFadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .cb-category-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+  .cb-category-header h2 {
+    font-size: 1.2rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin: 0;
+    color: var(--menu-dark);
+  }
+  .cb-category-header .cb-limit {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--menu-primary);
+    padding: 0.25rem 0.75rem;
+    background: var(--menu-primary-light);
+    border-radius: 999px;
+  }
+
+  /* ─── Ingredient Cards (mirrors .menu-card) ─── */
+  .cb-ingredients-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+  .cb-ingredient-card {
+    position: relative;
+    background: #ffffff;
+    border: 1px solid rgba(234, 91, 12, 0.08);
+    border-radius: var(--menu-radius);
+    box-shadow: var(--menu-shadow);
+    padding: 1.1rem;
+    cursor: pointer;
+    overflow: hidden;
+    transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s;
+  }
+  .cb-ingredient-card:hover {
+    box-shadow: var(--menu-shadow-hover);
+    transform: translateY(-3px);
+    border-color: rgba(234, 91, 12, 0.16);
+  }
+  .cb-ingredient-card.selected {
+    border-color: var(--menu-primary);
+    background: var(--menu-primary-light);
+  }
+  .cb-ingredient-card.disabled {
+    opacity: 0.4;
+    pointer-events: none;
+    transform: none;
+  }
+
+  .cb-card-check {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid var(--menu-border);
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+  .cb-ingredient-card.selected .cb-card-check {
+    background: var(--menu-primary);
+    border-color: var(--menu-primary);
+  }
+  .cb-card-check svg {
+    width: 13px;
+    height: 13px;
+    stroke: #fff;
+    stroke-width: 3;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+  .cb-ingredient-card.selected .cb-card-check svg {
+    opacity: 1;
+  }
+
+  .cb-card-img {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    background: var(--menu-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.75rem;
+    font-size: 1.6rem;
+    overflow: hidden;
+    border: 1px solid rgba(234, 91, 12, 0.08);
+  }
+  .cb-card-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .cb-card-name {
+    font-weight: 700;
+    font-size: 0.92rem;
+    margin-bottom: 0.2rem;
+    color: var(--menu-dark);
+  }
+  .cb-card-price {
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--menu-primary);
+  }
+  .cb-card-macros {
+    display: flex;
+    gap: 0.4rem;
+    margin-top: 0.55rem;
+    flex-wrap: wrap;
+  }
+  .cb-card-macros span {
+    font-size: 0.68rem;
+    font-weight: 600;
+    padding: 0.15rem 0.45rem;
+    background: var(--menu-bg);
+    border-radius: 6px;
+    color: var(--menu-muted);
+    border: 1px solid var(--menu-border);
+  }
+
+  /* ─── Sidebar Summary ─── */
+  .cb-summary {
+    position: sticky;
+    top: 8rem;
+    background: #ffffff;
+    border: 1px solid rgba(234, 91, 12, 0.12);
+    border-radius: 22px;
+    padding: 1.5rem;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+  }
+  .cb-summary-title {
+    font-size: 1.05rem;
+    font-weight: 800;
+    margin: 0 0 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--menu-dark);
+  }
+
+  /* Macros Grid */
+  .cb-macros-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem;
+    margin-bottom: 1.25rem;
+  }
+  .cb-macro-card {
+    background: var(--menu-bg);
+    border: 1px solid var(--menu-border);
+    border-radius: 14px;
+    padding: 0.85rem;
+    text-align: center;
+  }
+  .cb-macro-card:first-child {
+    grid-column: 1 / -1;
+    background: var(--menu-primary-light);
+    border-color: rgba(234, 91, 12, 0.12);
+  }
+  .cb-macro-value {
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: var(--menu-dark);
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .cb-macro-card:first-child .cb-macro-value {
+    font-size: 1.7rem;
+    color: var(--menu-primary);
+  }
+  .cb-macro-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--menu-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-top: 0.25rem;
+  }
+
+  /* Selected ingredients list */
+  .cb-selected-list { margin-bottom: 1.25rem; }
+  .cb-selected-list-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--menu-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.6rem;
+  }
+  .cb-selected-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--menu-border);
+    animation: cbSlideIn 0.2s ease-out;
+  }
+  @keyframes cbSlideIn {
+    from { opacity: 0; transform: translateX(-6px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  .cb-selected-item:last-child { border: none; }
+  .cb-selected-item-name {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--menu-dark);
+  }
+  .cb-selected-item-price {
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: var(--menu-primary);
+  }
+  .cb-selected-item-remove {
+    cursor: pointer;
+    color: #CBD5E1;
+    transition: color 0.2s;
+    margin-left: 0.4rem;
+    display: flex;
+  }
+  .cb-selected-item-remove:hover { color: var(--menu-danger); }
+
+  /* Price Total */
+  .cb-price-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.85rem 0;
+    border-top: 1px solid var(--menu-border);
+    margin-bottom: 0.85rem;
+  }
+  .cb-price-label {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--menu-dark);
+  }
+  .cb-price-total {
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: var(--menu-primary);
+    letter-spacing: -0.02em;
+  }
+
+  /* Add to Cart Button (mirrors .menu-card form button) */
+  .cb-add-btn {
+    width: 100%;
+    padding: 0.7rem 0.8rem;
+    border: none;
+    border-radius: 999px;
+    background: var(--menu-primary);
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    box-shadow: 0 8px 16px rgba(234, 91, 12, 0.16);
+    transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+  }
+  .cb-add-btn:hover {
+    background: var(--menu-primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 10px 18px rgba(234, 91, 12, 0.22);
+  }
+  .cb-add-btn:active { transform: translateY(0); }
+  .cb-add-btn:disabled {
+    background: #E5E7EB;
+    color: #9CA3AF;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+  }
+
+  /* ─── Empty state ─── */
+  .cb-empty {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: var(--menu-muted);
+  }
+  .cb-empty-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.75rem;
+    opacity: 0.4;
+  }
+  .cb-empty p {
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin: 0;
+  }
+
+  /* Loading skeleton */
+  .cb-skeleton {
+    background: var(--menu-bg);
+    border: 1px solid var(--menu-border);
+    border-radius: var(--menu-radius);
+    height: 150px;
+    animation: cbShimmer 1.5s infinite;
+    background-size: 200% 100%;
+    background-image: linear-gradient(90deg, var(--menu-bg) 25%, var(--menu-border) 50%, var(--menu-bg) 75%);
+  }
+  @keyframes cbShimmer {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  /* ─── Success Toast ─── */
+  .cb-toast {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(120px);
+    padding: 0.85rem 1.5rem;
+    background: var(--menu-success);
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.9rem;
+    border-radius: 999px;
+    box-shadow: 0 8px 24px rgba(22, 163, 74, 0.3);
+    z-index: 100;
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .cb-toast.show {
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* Responsive */
+  @media (max-width: 480px) {
+    .cb-page { padding: 1rem 0.75rem 2.5rem; }
+    .cb-header h1 { font-size: 1.5rem; }
+    .cb-ingredients-grid { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+    .cb-summary { position: static; }
+    .cb-steps {
+      flex-direction: row;
+      border-radius: 16px;
+      gap: 0.5rem;
+    }
+  }
+</style>
+
+<section class="cb-page">
+  <!-- Header -->
+  <div class="cb-header">
+    <div class="cb-header-row">
+      <div>
+        <h1>🍜 Crave Bowl Builder</h1>
+        <p>Choose your base, stack your proteins, load up on toppings — watch your macros update live.</p>
+      </div>
+      <a href="{% url 'menu:item_list' %}" class="cb-back-link">
+        <span class="material-symbols-outlined" style="font-size:1rem;">arrow_back</span>
+        Back to Menu
+      </a>
+    </div>
+  </div>
+
+  <!-- Step Navigation -->
+  <div class="cb-steps" id="cb-steps"></div>
+
+  <!-- Main Grid -->
+  <div class="cb-grid">
+    <!-- Left: Ingredient Picker -->
+    <div id="cb-categories-container">
+      <div class="cb-ingredients-grid" id="cb-loading">
+        <div class="cb-skeleton"></div>
+        <div class="cb-skeleton"></div>
+        <div class="cb-skeleton"></div>
+        <div class="cb-skeleton"></div>
+      </div>
+    </div>
+
+    <!-- Right: Live Summary -->
+    <div class="cb-summary">
+      <div class="cb-summary-title">
+        <span class="material-symbols-outlined" style="color: var(--menu-primary); font-size:1.2rem;">monitoring</span>
+        Live Nutrition
+      </div>
+
+      <div class="cb-macros-grid">
+        <div class="cb-macro-card">
+          <div class="cb-macro-value" id="cb-total-calories">0</div>
+          <div class="cb-macro-label">Calories</div>
+        </div>
+        <div class="cb-macro-card">
+          <div class="cb-macro-value" id="cb-total-protein">0g</div>
+          <div class="cb-macro-label">Protein</div>
+        </div>
+        <div class="cb-macro-card">
+          <div class="cb-macro-value" id="cb-total-carbs">0g</div>
+          <div class="cb-macro-label">Carbs</div>
+        </div>
+        <div class="cb-macro-card">
+          <div class="cb-macro-value" id="cb-total-fats">0g</div>
+          <div class="cb-macro-label">Fats</div>
+        </div>
+      </div>
+
+      <div class="cb-selected-list">
+        <div class="cb-selected-list-title">Your Selections</div>
+        <div id="cb-selected-items">
+          <div class="cb-empty">
+            <div class="cb-empty-icon">🥗</div>
+            <p>Pick some ingredients to get started!</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="cb-price-row">
+        <span class="cb-price-label">Total</span>
+        <span class="cb-price-total" id="cb-total-price">₦0.00</span>
+      </div>
+
+      <button class="cb-add-btn" id="cb-add-to-cart" disabled>
+        <span class="material-symbols-outlined" style="font-size:1.1rem;">shopping_cart</span>
+        Add to Cart
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- Success Toast -->
+<div class="cb-toast" id="cb-toast">
+  <span class="material-symbols-outlined" style="font-size:1.1rem;">check_circle</span>
+  Bowl added to cart!
+</div>
+
+<script>
+(function() {
+  // ─── State ───
+  const state = {
+    categories: [],
+    selected: {},
+    activeCategory: null,
+  };
+
+  // ─── DOM refs ───
+  const stepsEl       = document.getElementById('cb-steps');
+  const containerEl   = document.getElementById('cb-categories-container');
+  const loadingEl     = document.getElementById('cb-loading');
+  const selectedEl    = document.getElementById('cb-selected-items');
+  const caloriesEl    = document.getElementById('cb-total-calories');
+  const proteinEl     = document.getElementById('cb-total-protein');
+  const carbsEl       = document.getElementById('cb-total-carbs');
+  const fatsEl        = document.getElementById('cb-total-fats');
+  const priceEl       = document.getElementById('cb-total-price');
+  const addBtn        = document.getElementById('cb-add-to-cart');
+  const toastEl       = document.getElementById('cb-toast');
+
+  // ─── Fetch categories ───
+  async function fetchCategories() {
+    try {
+      const res = await fetch('/menu/ingredients/');
+      if (!res.ok) throw new Error('Failed to fetch ingredients');
+      const data = await res.json();
+      state.categories = data;
+      state.categories.forEach(cat => { state.selected[cat.id] = []; });
+      loadingEl.style.display = 'none';
+      renderSteps();
+      if (state.categories.length > 0) {
+        setActiveCategory(state.categories[0].id);
+      }
+    } catch (err) {
+      loadingEl.innerHTML = `
+        <div class="cb-empty" style="grid-column:1/-1;">
+          <div class="cb-empty-icon">⚠️</div>
+          <p>Could not load ingredients. Please try refreshing the page.</p>
+        </div>`;
+      console.error(err);
+    }
+  }
+
+  // ─── Render step tabs ───
+  function renderSteps() {
+    stepsEl.innerHTML = '';
+    state.categories.forEach((cat, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'cb-step-btn';
+      btn.dataset.catId = cat.id;
+      btn.innerHTML = `<span class="step-count">${i + 1}</span> ${cat.name}`;
+      btn.addEventListener('click', () => setActiveCategory(cat.id));
+      stepsEl.appendChild(btn);
+    });
+  }
+
+  // ─── Set active category ───
+  function setActiveCategory(catId) {
+    state.activeCategory = catId;
+    stepsEl.querySelectorAll('.cb-step-btn').forEach(btn => {
+      btn.classList.toggle('active', parseInt(btn.dataset.catId) === catId);
+    });
+    containerEl.querySelectorAll('.cb-category').forEach(sec => {
+      sec.classList.toggle('active', parseInt(sec.dataset.catId) === catId);
+    });
+    if (!containerEl.querySelector(`.cb-category[data-cat-id="${catId}"]`)) {
+      renderCategory(state.categories.find(c => c.id === catId));
+    }
+  }
+
+  // ─── Render category section ───
+  function renderCategory(cat) {
+    const section = document.createElement('div');
+    section.className = 'cb-category active';
+    section.dataset.catId = cat.id;
+    section.innerHTML = `
+      <div class="cb-category-header">
+        <h2>${cat.name}</h2>
+        <span class="cb-limit">Select up to ${cat.max_selectable_items}</span>
+      </div>
+      <div class="cb-ingredients-grid" id="cb-cat-grid-${cat.id}"></div>
+    `;
+    containerEl.appendChild(section);
+    const grid = section.querySelector(`#cb-cat-grid-${cat.id}`);
+
+    if (!cat.ingredients || cat.ingredients.length === 0) {
+      grid.innerHTML = `
+        <div class="cb-empty" style="grid-column:1/-1;">
+          <div class="cb-empty-icon">📦</div>
+          <p>No ingredients available in this category yet.</p>
+        </div>`;
+      return;
+    }
+
+    cat.ingredients.forEach(ing => {
+      const card = document.createElement('div');
+      card.className = 'cb-ingredient-card';
+      card.dataset.ingId = ing.id;
+      card.innerHTML = `
+        <div class="cb-card-check">
+          <svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </div>
+        <div class="cb-card-img">
+          ${ing.image_url ? `<img src="${ing.image_url}" alt="${ing.name}">` : '🥘'}
+        </div>
+        <div class="cb-card-name">${ing.name}</div>
+        <div class="cb-card-price">₦${parseFloat(ing.price).toFixed(2)}</div>
+        <div class="cb-card-macros">
+          <span>${ing.calories} cal</span>
+          <span>${parseFloat(ing.protein).toFixed(1)}g P</span>
+          <span>${parseFloat(ing.carbs).toFixed(1)}g C</span>
+          <span>${parseFloat(ing.fats).toFixed(1)}g F</span>
+        </div>
+      `;
+      card.addEventListener('click', () => toggleIngredient(cat, ing, card));
+      grid.appendChild(card);
+    });
+  }
+
+  // ─── Toggle ingredient selection ───
+  function toggleIngredient(cat, ing, card) {
+    const sel = state.selected[cat.id];
+    const idx = sel.findIndex(s => s.id === ing.id);
+    if (idx > -1) {
+      sel.splice(idx, 1);
+      card.classList.remove('selected');
+    } else {
+      if (sel.length >= cat.max_selectable_items) return;
+      sel.push(ing);
+      card.classList.add('selected');
+    }
+    updateCardDisabledState(cat);
+    updateSummary();
+  }
+
+  function updateCardDisabledState(cat) {
+    const sel = state.selected[cat.id];
+    const grid = containerEl.querySelector(`#cb-cat-grid-${cat.id}`);
+    if (!grid) return;
+    grid.querySelectorAll('.cb-ingredient-card').forEach(c => {
+      const isSelected = c.classList.contains('selected');
+      c.classList.toggle('disabled', sel.length >= cat.max_selectable_items && !isSelected);
+    });
+  }
+
+  // ─── Update the summary sidebar ───
+  function updateSummary() {
+    let totalCal = 0, totalP = 0, totalC = 0, totalF = 0, totalPrice = 0;
+    const allSelected = [];
+
+    Object.values(state.selected).forEach(arr => {
+      arr.forEach(ing => {
+        totalCal   += ing.calories || 0;
+        totalP     += parseFloat(ing.protein) || 0;
+        totalC     += parseFloat(ing.carbs) || 0;
+        totalF     += parseFloat(ing.fats) || 0;
+        totalPrice += parseFloat(ing.price) || 0;
+        allSelected.push(ing);
+      });
+    });
+
+    caloriesEl.textContent = totalCal;
+    proteinEl.textContent  = totalP.toFixed(1) + 'g';
+    carbsEl.textContent    = totalC.toFixed(1) + 'g';
+    fatsEl.textContent     = totalF.toFixed(1) + 'g';
+    priceEl.textContent    = '₦' + totalPrice.toFixed(2);
+
+    if (allSelected.length === 0) {
+      selectedEl.innerHTML = `
+        <div class="cb-empty">
+          <div class="cb-empty-icon">🥗</div>
+          <p>Pick some ingredients to get started!</p>
+        </div>`;
+      addBtn.disabled = true;
+    } else {
+      addBtn.disabled = false;
+      selectedEl.innerHTML = '';
+      allSelected.forEach(ing => {
+        const row = document.createElement('div');
+        row.className = 'cb-selected-item';
+        row.innerHTML = `
+          <span class="cb-selected-item-name">${ing.name}</span>
+          <span style="display:flex;align-items:center;">
+            <span class="cb-selected-item-price">₦${parseFloat(ing.price).toFixed(2)}</span>
+            <span class="cb-selected-item-remove" data-ing-id="${ing.id}" title="Remove">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </span>
+          </span>
+        `;
+        row.querySelector('.cb-selected-item-remove').addEventListener('click', (e) => {
+          e.stopPropagation();
+          removeIngredientById(ing.id);
+        });
+        selectedEl.appendChild(row);
+      });
+    }
+
+    // Update step badges
+    stepsEl.querySelectorAll('.cb-step-btn').forEach(btn => {
+      const catId = parseInt(btn.dataset.catId);
+      const count = (state.selected[catId] || []).length;
+      const badge = btn.querySelector('.step-count');
+      badge.textContent = count || (state.categories.findIndex(c => c.id === catId) + 1);
+      if (count > 0) {
+        badge.style.background = 'var(--menu-primary)';
+        badge.style.color = '#fff';
+      } else if (!btn.classList.contains('active')) {
+        badge.style.background = '';
+        badge.style.color = '';
+      }
+    });
+  }
+
+  function removeIngredientById(ingId) {
+    for (const catId of Object.keys(state.selected)) {
+      const arr = state.selected[catId];
+      const idx = arr.findIndex(i => i.id === ingId);
+      if (idx > -1) {
+        arr.splice(idx, 1);
+        const card = containerEl.querySelector(`.cb-ingredient-card[data-ing-id="${ingId}"]`);
+        if (card) card.classList.remove('selected');
+        const cat = state.categories.find(c => c.id === parseInt(catId));
+        if (cat) updateCardDisabledState(cat);
+        break;
+      }
+    }
+    updateSummary();
+  }
+
+  // ─── Add to Cart ───
+  addBtn.addEventListener('click', async () => {
+    const ingredientIds = [];
+    Object.values(state.selected).forEach(arr => {
+      arr.forEach(ing => ingredientIds.push(ing.id));
+    });
+    if (ingredientIds.length === 0) return;
+
+    addBtn.disabled = true;
+    addBtn.innerHTML = `
+      <span class="material-symbols-outlined" style="font-size:1.1rem;">progress_activity</span>
+      Adding...
+    `;
+
+    try {
+      const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || getCookie('csrftoken');
+      const res = await fetch('/menu/cart/add-custom/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken,
+        },
+        body: JSON.stringify({ selected_ingredients: ingredientIds }),
+      });
+
+      if (res.ok) {
+        showToast();
+        Object.keys(state.selected).forEach(k => state.selected[k] = []);
+        containerEl.querySelectorAll('.cb-ingredient-card.selected').forEach(c => c.classList.remove('selected'));
+        containerEl.querySelectorAll('.cb-ingredient-card.disabled').forEach(c => c.classList.remove('disabled'));
+        updateSummary();
+      } else {
+        const err = await res.json().catch(() => ({}));
+        alert(err.error || 'Something went wrong. Please try again.');
+      }
+    } catch (e) {
+      console.error(e);
+      alert('Network error. Please check your connection.');
+    } finally {
+      addBtn.disabled = false;
+      addBtn.innerHTML = `
+        <span class="material-symbols-outlined" style="font-size:1.1rem;">shopping_cart</span>
+        Add to Cart
+      `;
+    }
+  });
+
+  function showToast() {
+    toastEl.classList.add('show');
+    setTimeout(() => toastEl.classList.remove('show'), 3000);
+  }
+
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+
+  // ─── Init ───
+  fetchCategories();
+})();
+</script>
+
+{% endblock %}

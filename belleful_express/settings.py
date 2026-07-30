@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'notifications',
     'core',
     'cart',
+    'rest_framework',
 ]
 
 TAILWIND_APP_NAME = "theme"

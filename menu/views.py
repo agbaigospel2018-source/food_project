@@ -12,6 +12,8 @@ from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 from .forms import CategoryForm, MenuItemForm, ReviewForm
 from .models import Category, MenuItem, MenuItemReview
 from .utils import get_managed_vendor_or_403, get_vendor_model
+from rest_framework import viewsets
+from .serializers import MoodSerializer, IngredientCategorySerializer, IngredientSerializer, MenuItemSerializer, CustomBowlSerializer
 
 
 class MenuItemListView(ListView):
@@ -262,3 +264,81 @@ class VendorCategoryCreateView(VendorMenuMixin, CreateView):
 
     def get_success_url(self):
         return reverse("menu:vendor_items", kwargs={"vendor_pk": self.vendor.pk})
+
+def crave_bowl_view(request):
+    return render(request, "menu/crave_bowl.html")
+
+class MoodViewSet(viewsets.ReadOnlyModelViewSet):
+    from .models import Mood
+    queryset = Mood.objects.all()
+    serializer_class = MoodSerializer
+
+class IngredientCategoryViewSet(viewsets.ReadOnlyModelViewSet):
+    from .models import IngredientCategory
+    queryset = IngredientCategory.objects.all()
+    serializer_class = IngredientCategorySerializer
+
+class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
+    from .models import Ingredient
+    queryset = Ingredient.objects.all()
+    serializer_class = IngredientSerializer
+
+class MenuItemViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = MenuItemSerializer
+
+    def get_queryset(self):
+        queryset = (
+            MenuItem.objects.public()
+            .select_related("vendor", "category")
+            .prefetch_related("moods", "base_ingredients")
+        )
+        vendor_pk = self.request.query_params.get("vendor")
+        if vendor_pk:
+            queryset = queryset.filter(vendor_id=vendor_pk)
+            
+        category = self.request.query_params.get("category")
+        if category:
+            queryset = queryset.filter(category__slug=category)
+            
+        return queryset
+
+class CustomBowlViewSet(viewsets.ModelViewSet):
+    from .models import CustomBowl
+    serializer_class = CustomBowlSerializer
+
+    def get_queryset(self):
+        if self.request.user.is_authenticated:
+            return CustomBowl.objects.filter(user=self.request.user)
+        return CustomBowl.objects.none()
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+from rest_framework.generics import ListAPIView
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+
+class IngredientCategoryListAPIView(ListAPIView):
+    from .models import IngredientCategory
+    queryset = IngredientCategory.objects.all()
+    serializer_class = IngredientCategorySerializer
+
+class AddCustomBowlToCartAPIView(APIView):
+    def post(self, request, *args, **kwargs):
+        # Create CustomBowl
+        serializer = CustomBowlSerializer(data=request.data)
+        if serializer.is_valid():
+            if not request.user.is_authenticated:
+                return Response({"error": "Authentication required"}, status=status.HTTP_401_UNAUTHORIZED)
+            bowl = serializer.save(user=request.user)
+            
+            # Assuming cart app has a way to add CustomBowl
+            # You might need to adjust this depending on the cart app's models
+            from cart.models import Cart
+            cart, _ = Cart.objects.get_or_create(student=request.user)
+            # if CartItem doesn't natively support CustomBowl, this might need more logic
+            # Just returning the created bowl for now
+            return Response(CustomBowlSerializer(bowl).data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+

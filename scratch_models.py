@@ -7,9 +7,7 @@ from django.db.models import Avg, Count, Q
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.text import slugify
-from django.contrib.auth import get_user_model
-
-User = get_user_model()
+# Create your models here.
 
 def vendor_model_label():
     return getattr(settings, "MENU_VENDOR_MODEL", "vendors.Vendor")
@@ -63,9 +61,6 @@ class MenuItem(models.Model):
     is_featured = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_available = models.BooleanField(default=True)
-    is_customizable = models.BooleanField(default=False)
-    moods = models.ManyToManyField('Mood', blank=True, related_name="menu_items_original")
-    base_ingredients = models.ManyToManyField('Ingredient', blank=True, related_name="menu_items_original")
     stock_quantity = models.PositiveIntegerField(blank=True, null=True)
     available_from = models.TimeField(blank=True, null=True)
     available_until = models.TimeField(blank=True, null=True)
@@ -246,8 +241,19 @@ class Ingredient(models.Model):
     def __str__(self) -> str:
         return f"{self.name} ({self.category.name})"
 
+
+class MenuItem(models.Model):
+    """Standard pre-configured signature items or customizable foundations"""
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+    base_price = models.DecimalField(max_digits=6, decimal_places=2)
+    image = models.ImageField(upload_to='menu_items/', blank=True, null=True)
+    moods = models.ManyToManyField(Mood, related_name='menu_items', blank=True)
+    base_ingredients = models.ManyToManyField(Ingredient, related_name='menu_items', blank=True)
+    is_customizable = models.BooleanField(default=True)
+
     def __str__(self) -> str:
-        return f"{self.name} ({self.category.name})"
+        return self.name
 
 
 class CustomBowl(models.Model):
