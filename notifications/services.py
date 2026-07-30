@@ -6,6 +6,7 @@ def _get_prefs(user):
     Safely return the user's NotificationPreference,
     creating a default one if it doesn't exist yet.
     """
+    # pyrefly: ignore [missing-attribute]
     prefs, _ = NotificationPreference.objects.get_or_create(user=user)
     return prefs
 
@@ -42,6 +43,7 @@ def notify_user(recipient, notification_type, title, message, order=None):
     if not type_to_pref.get(notification_type, True):
         return None
 
+    # pyrefly: ignore [missing-attribute]
     return Notification.objects.create(
         recipient=recipient,
         notification_type=notification_type,

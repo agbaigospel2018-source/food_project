@@ -11,6 +11,7 @@ def get_or_create_cart(student):
     Get the student's active cart or create one.
     """
     
+    # pyrefly: ignore [missing-attribute]
     cart, created = Cart.objects.get_or_create(
         student=student,
     )
@@ -24,6 +25,7 @@ def get_cart(student):
     """
     
     return (
+        # pyrefly: ignore [missing-attribute]
         Cart.objects
         .prefetch_related('items__menu_item')
         .get(student=student)
@@ -48,6 +50,7 @@ def add_to_cart(student, menu_item, quantity=1):
             "Please clear your cart before ordering from a different vendor."
         )
 
+    # pyrefly: ignore [missing-attribute]
     cart_item, created = CartItem.objects.get_or_create(
         cart=cart,
         menu_item=menu_item,
@@ -70,6 +73,7 @@ def remove_from_cart(student, menu_item):
     
     cart = get_or_create_cart(student)
     
+    # pyrefly: ignore [missing-attribute]
     CartItem.objects.filter(
         cart=cart,
         menu_item=menu_item,

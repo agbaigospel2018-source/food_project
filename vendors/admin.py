@@ -7,6 +7,7 @@ from .models import Vendor
 @admin.register(Vendor)
 class VendorAdmin(admin.ModelAdmin):
 
+    # pyrefly: ignore [bad-override-mutable-attribute]
     list_display = (
         "logo_preview",
         "business_name",

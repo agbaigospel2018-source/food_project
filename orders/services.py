@@ -100,6 +100,7 @@ def create_order_from_cart(student, pickup_time):
     """
 
     cart = (
+        # pyrefly: ignore [missing-attribute]
         Cart.objects
         .select_for_update()
         .prefetch_related(
@@ -116,6 +117,7 @@ def create_order_from_cart(student, pickup_time):
     vendor = first_item.menu_item.vendor
 
     # Create the order
+    # pyrefly: ignore [missing-attribute]
     order = Order.objects.create(
         student=student,
         vendor=vendor,
@@ -139,6 +141,7 @@ def create_order_from_cart(student, pickup_time):
         )
 
     # Bulk insert (faster than creating one by one)
+    # pyrefly: ignore [missing-attribute]
     OrderItem.objects.bulk_create(order_items)
 
     # Copy the cart total
@@ -149,6 +152,7 @@ def create_order_from_cart(student, pickup_time):
     clear_cart(student)
 
     # Create notification for the vendor
+    # pyrefly: ignore [missing-attribute]
     Notification.objects.create(
         recipient=vendor.owner,
         notification_type=NotificationType.NEW_ORDER,

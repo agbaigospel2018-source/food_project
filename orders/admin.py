@@ -9,6 +9,7 @@ class OrderItemInline(admin.TabularInline):
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     
+    # pyrefly: ignore [bad-override-mutable-attribute]
     list_display = (
         'short_id',
         'student',
@@ -34,6 +35,7 @@ class OrderAdmin(admin.ModelAdmin):
         '-created_at',
     )
     
+    # pyrefly: ignore [bad-override-mutable-attribute]
     inlines = [
         OrderItemInline,
     ]
@@ -41,6 +43,7 @@ class OrderAdmin(admin.ModelAdmin):
 @admin.register(OrderItem)
 class OrderItemAdmin(admin.ModelAdmin):
     
+    # pyrefly: ignore [bad-override-mutable-attribute]
     list_display = (
         'order',
         'menu_item',

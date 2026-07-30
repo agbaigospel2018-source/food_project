@@ -12,6 +12,7 @@ from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 from .forms import CategoryForm, MenuItemForm, ReviewForm
 from .models import Category, MenuItem, MenuItemReview
 from .utils import get_managed_vendor_or_403, get_vendor_model
+# pyrefly: ignore [missing-import]
 from rest_framework import viewsets
 from .serializers import MoodSerializer, IngredientCategorySerializer, IngredientSerializer, MenuItemSerializer, CustomBowlSerializer
 
@@ -42,6 +43,7 @@ class MenuItemListView(ListView):
         query = self.request.GET.get("q")
         if query:
             queryset = queryset.filter(
+                # pyrefly: ignore [unsupported-operation]
                 Q(name__icontains=query)
                 | Q(description__icontains=query)
                 | Q(vendor__business_name__icontains=query)
@@ -60,6 +62,7 @@ class MenuItemListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["vendor"] = self.vendor
+        # pyrefly: ignore [missing-attribute]
         context["categories"] = Category.objects.filter(is_active=True)
         return context
 
@@ -74,6 +77,7 @@ def item_detail(request, vendor_pk, slug):
     )
     review = None
     if request.user.is_authenticated:
+        # pyrefly: ignore [missing-attribute]
         review = MenuItemReview.objects.filter(item=item, student=request.user).first()
 
     return render(
@@ -91,6 +95,7 @@ def item_detail(request, vendor_pk, slug):
 @require_POST
 def upsert_review(request, item_pk):
     item = get_object_or_404(MenuItem.objects.public(), pk=item_pk)
+    # pyrefly: ignore [missing-attribute]
     review = MenuItemReview.objects.filter(item=item, student=request.user).first()
     form = ReviewForm(request.POST, instance=review)
     if form.is_valid():
@@ -134,6 +139,7 @@ def search_suggestions(request):
             MenuItem.objects.public()
             .select_related("vendor")
             .filter(
+                # pyrefly: ignore [unsupported-operation]
                 Q(name__icontains=query) | Q(description__icontains=query) | Q(vendor__business_name__icontains=query)
             )[:8]
         )
@@ -174,6 +180,7 @@ class VendorMenuMixin(LoginRequiredMixin):
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
+        # pyrefly: ignore [missing-attribute]
         context = super().get_context_data(**kwargs)
         context["vendor"] = self.vendor
         return context
@@ -204,6 +211,7 @@ class VendorMenuItemCreateView(VendorMenuMixin, CreateView):
         return super().form_valid(form)
 
     def get_success_url(self):
+        # pyrefly: ignore [missing-attribute]
         return reverse("menu:vendor_items", kwargs={"vendor_pk": self.vendor.pk})
 
 
@@ -225,6 +233,7 @@ class VendorMenuItemUpdateView(VendorMenuMixin, UpdateView):
         return super().form_valid(form)
 
     def get_success_url(self):
+        # pyrefly: ignore [missing-attribute]
         return reverse("menu:vendor_items", kwargs={"vendor_pk": self.vendor.pk})
 
 
@@ -237,6 +246,7 @@ class VendorMenuItemDeleteView(VendorMenuMixin, DeleteView):
 
     def get_success_url(self):
         messages.success(self.request, "Menu item deleted.")
+        # pyrefly: ignore [missing-attribute]
         return reverse("menu:vendor_items", kwargs={"vendor_pk": self.vendor.pk})
 
 
@@ -263,6 +273,7 @@ class VendorCategoryCreateView(VendorMenuMixin, CreateView):
         return super().form_valid(form)
 
     def get_success_url(self):
+        # pyrefly: ignore [missing-attribute]
         return reverse("menu:vendor_items", kwargs={"vendor_pk": self.vendor.pk})
 
 def crave_bowl_view(request):
@@ -270,16 +281,19 @@ def crave_bowl_view(request):
 
 class MoodViewSet(viewsets.ReadOnlyModelViewSet):
     from .models import Mood
+    # pyrefly: ignore [missing-attribute]
     queryset = Mood.objects.all()
     serializer_class = MoodSerializer
 
 class IngredientCategoryViewSet(viewsets.ReadOnlyModelViewSet):
     from .models import IngredientCategory
+    # pyrefly: ignore [missing-attribute]
     queryset = IngredientCategory.objects.all()
     serializer_class = IngredientCategorySerializer
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     from .models import Ingredient
+    # pyrefly: ignore [missing-attribute]
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
 
@@ -308,19 +322,26 @@ class CustomBowlViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         if self.request.user.is_authenticated:
+            # pyrefly: ignore [unknown-name]
             return CustomBowl.objects.filter(user=self.request.user)
+        # pyrefly: ignore [unknown-name]
         return CustomBowl.objects.none()
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
+# pyrefly: ignore [missing-import]
 from rest_framework.generics import ListAPIView
+# pyrefly: ignore [missing-import]
 from rest_framework.views import APIView
+# pyrefly: ignore [missing-import]
 from rest_framework.response import Response
+# pyrefly: ignore [missing-import]
 from rest_framework import status
 
 class IngredientCategoryListAPIView(ListAPIView):
     from .models import IngredientCategory
+    # pyrefly: ignore [missing-attribute]
     queryset = IngredientCategory.objects.all()
     serializer_class = IngredientCategorySerializer
 
@@ -336,6 +357,7 @@ class AddCustomBowlToCartAPIView(APIView):
             # Assuming cart app has a way to add CustomBowl
             # You might need to adjust this depending on the cart app's models
             from cart.models import Cart
+            # pyrefly: ignore [missing-attribute]
             cart, _ = Cart.objects.get_or_create(student=request.user)
             # if CartItem doesn't natively support CustomBowl, this might need more logic
             # Just returning the created bowl for now

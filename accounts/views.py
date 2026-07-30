@@ -71,7 +71,9 @@ def login_view(request):
 
             user = form.get_user()
 
+            # pyrefly: ignore [missing-attribute]
             if user.role == 'vendor' and not hasattr(user, 'vendor_profile'):
+                # pyrefly: ignore [missing-attribute]
                 request.session['pending_vendor_user_id'] = user.id
                 messages.info(
                     request,
@@ -86,6 +88,7 @@ def login_view(request):
                 'Logged in successfully.'
             )
 
+            # pyrefly: ignore [missing-attribute]
             if user.role == 'vendor':
                 return redirect('vendors:vendor_dashboard')
             return redirect('home')
@@ -131,8 +134,11 @@ def profile_view(request):
             return redirect('vendors:vendor_profile')
         return redirect('vendors:create_vendor')
 
+    # pyrefly: ignore [missing-attribute]
     total_orders = Order.objects.filter(student=request.user).count()
+    # pyrefly: ignore [missing-attribute]
     total_reviews = MenuItemReview.objects.filter(student=request.user, is_approved=True).count()
+    # pyrefly: ignore [missing-attribute]
     recent_orders = Order.objects.filter(student=request.user).order_by('-created_at')[:5]
 
     context = {

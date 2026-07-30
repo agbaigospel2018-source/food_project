@@ -24,12 +24,14 @@ class Cart(models.Model):
         ordering = ['-updated_at']
         
     def __str__(self):
+        # pyrefly: ignore [missing-attribute]
         return f'{self.student.username}\'s Cart'
     
     @property
     def total_amount(self):
         return sum(
             item.line_total
+            # pyrefly: ignore [missing-attribute]
             for item in self.items.select_related('menu_item')
         )
         
@@ -37,6 +39,7 @@ class Cart(models.Model):
     def total_items(self):
         return sum(
             item.quantity
+            # pyrefly: ignore [missing-attribute]
             for item in self.items.all()
         )
     
@@ -76,4 +79,5 @@ class CartItem(models.Model):
 
     @property
     def line_total(self):
+        # pyrefly: ignore [unsupported-operation]
         return self.menu_item.current_price * self.quantity

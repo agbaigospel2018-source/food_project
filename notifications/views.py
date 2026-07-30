@@ -13,6 +13,7 @@ def notifications_page(request):
 @login_required
 def notification_list(request):
     """Return all notifications for the logged-in user."""
+    # pyrefly: ignore [missing-attribute]
     notifications = Notification.objects.filter(
         recipient=request.user
     ).values(
@@ -21,6 +22,7 @@ def notification_list(request):
     )
     return JsonResponse({
         'notifications': list(notifications),
+        # pyrefly: ignore [missing-attribute]
         'unread_count': Notification.objects.filter(
             recipient=request.user, is_read=False
         ).count(),
@@ -42,6 +44,7 @@ def mark_as_read(request, notification_id):
 @require_POST
 def mark_all_as_read(request):
     """Mark all notifications as read for the logged-in user."""
+    # pyrefly: ignore [missing-attribute]
     updated = Notification.objects.filter(
         recipient=request.user,
         is_read=False
@@ -65,6 +68,7 @@ def delete_notification(request, notification_id):
     
 def delete_all_notifications(request):
     """Delete all notifications for the logged-in user."""
+    # pyrefly: ignore [missing-attribute]
     deleted = Notification.objects.filter(
         recipient=request.user,
     ).delete()

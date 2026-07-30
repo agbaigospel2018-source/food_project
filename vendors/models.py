@@ -54,6 +54,7 @@ class Vendor(models.Model):
         verbose_name = "Vendor"
         verbose_name_plural = "Vendors"
 
+    # pyrefly: ignore [bad-override]
     def __str__(self):
         return self.business_name
 
@@ -92,6 +93,7 @@ class Vendor(models.Model):
         """
 
         return (
+            # pyrefly: ignore [missing-attribute]
             f"{self.opening_time.strftime('%I:%M %p')} - "
             f"{self.closing_time.strftime('%I:%M %p')}"
         )
@@ -105,6 +107,7 @@ class Vendor(models.Model):
         Mama Kitchen -> MK
         """
 
+        # pyrefly: ignore [missing-attribute]
         words = self.business_name.split()
 
         if len(words) == 1:
@@ -122,6 +125,7 @@ class Vendor(models.Model):
         """
 
         if self.logo:
+            # pyrefly: ignore [missing-attribute]
             return self.logo.url
 
         return self.initials
@@ -152,9 +156,11 @@ class Vendor(models.Model):
         Short description for cards.
         """
 
+        # pyrefly: ignore [bad-argument-type]
         if len(self.description) <= 120:
             return self.description
 
+        # pyrefly: ignore [bad-index]
         return self.description[:120] + "..."
 
     @property
@@ -167,22 +173,27 @@ class Vendor(models.Model):
     
     @property
     def menu_count(self):
+        # pyrefly: ignore [missing-attribute]
         return self.menu_items.filter(is_available=True).count()
 
     @property
     def total_orders(self):
+        # pyrefly: ignore [missing-attribute]
         return self.orders.count()
 
     @property
     def pending_orders(self):
+        # pyrefly: ignore [missing-attribute]
         return self.orders.filter(status="received").count()
 
     @property
     def completed_orders(self):
+        # pyrefly: ignore [missing-attribute]
         return self.orders.filter(status="completed").count()
     
     @property
     def operating_hours(self):
+        # pyrefly: ignore [missing-attribute]
         return f"{self.opening_time.strftime('%I:%M %p')} - {self.closing_time.strftime('%I:%M %p')}"
 
     @property
@@ -221,6 +232,7 @@ class Vendor(models.Model):
     def operating_hours(self):
 
         return (
+            # pyrefly: ignore [missing-attribute]
             f"{self.opening_time.strftime('%I:%M %p')} - "
             f"{self.closing_time.strftime('%I:%M %p')}"
         )

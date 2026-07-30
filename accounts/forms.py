@@ -8,6 +8,7 @@ User = get_user_model()
 
 class RegisterForm(UserCreationForm):
 
+    # pyrefly: ignore [bad-override]
     class Meta:
         model = User
         fields = (

@@ -16,6 +16,7 @@ class CartItemInline(admin.TabularInline):
 @admin.register(Cart)
 class CartAdmin(admin.ModelAdmin):
 
+    # pyrefly: ignore [bad-override-mutable-attribute]
     list_display = (
         "short_id",
         "student",
@@ -39,6 +40,7 @@ class CartAdmin(admin.ModelAdmin):
         "-updated_at",
     )
 
+    # pyrefly: ignore [bad-override-mutable-attribute]
     inlines = [CartItemInline]
 
     @admin.display(description="Cart ID")
@@ -57,6 +59,7 @@ class CartAdmin(admin.ModelAdmin):
 @admin.register(CartItem)
 class CartItemAdmin(admin.ModelAdmin):
 
+    # pyrefly: ignore [bad-override-mutable-attribute]
     list_display = (
         "cart",
         'vendor',

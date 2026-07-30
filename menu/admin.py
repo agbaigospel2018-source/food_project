@@ -16,6 +16,7 @@ class MenuItemOptionGroupInline(admin.StackedInline):
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
+    # pyrefly: ignore [bad-override-mutable-attribute]
     list_display = ("name", "is_active", "sort_order")
     list_filter = ("is_active",)
     search_fields = ("name",)
@@ -24,22 +25,27 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(MenuItem)
 class MenuItemAdmin(admin.ModelAdmin):
+    # pyrefly: ignore [bad-override-mutable-attribute]
     list_display = ("name", "vendor", "category", "current_price", "is_active", "is_available", "stock_quantity", "average_rating")
     list_filter = ("is_active", "is_available", "is_featured", "is_vegetarian", "is_vegan", "is_halal", "vendor", "category")
     search_fields = ("name", "description", "vendor__business_name")
     prepopulated_fields = {"slug": ("name",)}
     readonly_fields = ("average_rating", "review_count")
+    # pyrefly: ignore [bad-override-mutable-attribute]
     inlines = [MenuItemOptionGroupInline]
 
 
 @admin.register(MenuItemOptionGroup)
 class MenuItemOptionGroupAdmin(admin.ModelAdmin):
+    # pyrefly: ignore [bad-override-mutable-attribute]
     list_display = ("name", "item", "choice_type", "is_required", "min_choices", "max_choices")
+    # pyrefly: ignore [bad-override-mutable-attribute]
     inlines = [MenuItemOptionInline]
 
 
 @admin.register(MenuItemReview)
 class MenuItemReviewAdmin(admin.ModelAdmin):
+    # pyrefly: ignore [bad-override-mutable-attribute]
     list_display = ("item", "student", "rating", "is_approved", "created_at")
     list_filter = ("rating", "is_approved", "created_at")
     search_fields = ("item__name", "student__username", "comment")

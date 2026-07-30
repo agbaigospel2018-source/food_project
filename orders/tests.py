@@ -22,6 +22,7 @@ class OrderDetailAccessTests(TestCase):
             email="vendorowner@example.com",
             password="password123",
         )
+        # pyrefly: ignore [missing-attribute]
         self.vendor = Vendor.objects.create(
             owner=self.vendor_owner,
             business_name="Bella Bistro",
@@ -37,6 +38,7 @@ class OrderDetailAccessTests(TestCase):
             slug="burger",
             base_price="10.00",
         )
+        # pyrefly: ignore [missing-attribute]
         self.order = Order.objects.create(
             student=self.student,
             vendor=self.vendor,
@@ -48,4 +50,5 @@ class OrderDetailAccessTests(TestCase):
         self.client.force_login(self.vendor_owner)
         response = self.client.get(reverse("orders:order_detail", kwargs={"order_id": self.order.id}))
 
+        # pyrefly: ignore [missing-attribute]
         self.assertEqual(response.status_code, 200)

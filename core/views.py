@@ -21,6 +21,7 @@ def contact(request):
         message_text = request.POST.get("message")
 
         # Save to database
+        # pyrefly: ignore [missing-attribute]
         ContactMessage.objects.create(
             name=name,
             email=email,

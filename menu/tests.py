@@ -17,6 +17,7 @@ class SearchSuggestionsViewTests(TestCase):
             email="owner@example.com",
             password="password123",
         )
+        # pyrefly: ignore [missing-attribute]
         self.vendor = Vendor.objects.create(
             owner=self.user,
             business_name="Bella Bistro",
@@ -26,6 +27,7 @@ class SearchSuggestionsViewTests(TestCase):
             opening_time=time(9, 0),
             closing_time=time(21, 0),
         )
+        # pyrefly: ignore [missing-attribute]
         self.category = Category.objects.create(
             name="Pizza",
             slug="pizza",
@@ -40,14 +42,18 @@ class SearchSuggestionsViewTests(TestCase):
 
     def test_suggestions_include_matching_items_and_vendors(self):
         item_response = self.client.get(reverse("menu:search_suggestions"), {"q": "pizza"})
+        # pyrefly: ignore [missing-attribute]
         self.assertEqual(item_response.status_code, 200)
+        # pyrefly: ignore [missing-attribute]
         item_payload = item_response.json()
         self.assertIn("suggestions", item_payload)
         item_labels = [suggestion["label"] for suggestion in item_payload["suggestions"]]
         self.assertIn("Chicken Pizza", item_labels)
 
         vendor_response = self.client.get(reverse("menu:search_suggestions"), {"q": "bella"})
+        # pyrefly: ignore [missing-attribute]
         self.assertEqual(vendor_response.status_code, 200)
+        # pyrefly: ignore [missing-attribute]
         vendor_payload = vendor_response.json()
         vendor_labels = [suggestion["label"] for suggestion in vendor_payload["suggestions"]]
         self.assertIn("Bella Bistro", vendor_labels)
@@ -65,6 +71,7 @@ class CategorySharingTests(TestCase):
             email="owner2@example.com",
             password="password123",
         )
+        # pyrefly: ignore [missing-attribute]
         vendor_one = Vendor.objects.create(
             owner=owner_one,
             business_name="Bella Bistro",
@@ -74,6 +81,7 @@ class CategorySharingTests(TestCase):
             opening_time=time(9, 0),
             closing_time=time(21, 0),
         )
+        # pyrefly: ignore [missing-attribute]
         vendor_two = Vendor.objects.create(
             owner=owner_two,
             business_name="Sunset Grill",
@@ -84,6 +92,7 @@ class CategorySharingTests(TestCase):
             closing_time=time(22, 0),
         )
 
+        # pyrefly: ignore [missing-attribute]
         category = Category.objects.create(name="Desserts", slug="desserts")
 
         item = MenuItem.objects.create(

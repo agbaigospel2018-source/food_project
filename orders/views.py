@@ -52,8 +52,11 @@ def checkout_view(request):
                 )
 
             try:
+                # pyrefly: ignore [missing-argument]
                 order = create_order_from_cart(
+                    # pyrefly: ignore [unexpected-keyword]
                     student=request.user,
+                    # pyrefly: ignore [unexpected-keyword]
                     pickup_time=pickup_time,
                 )
 
@@ -68,6 +71,7 @@ def checkout_view(request):
 
                 return redirect(
                     "orders:order_success",
+                    # pyrefly: ignore [missing-attribute]
                     order_id=order.id,
                 )
 
@@ -111,6 +115,7 @@ def order_history_view(request):
     """
 
     orders = (
+        # pyrefly: ignore [missing-attribute]
         Order.objects
         .filter(student=request.user)
         .exclude(status__in=[OrderStatus.COMPLETED, OrderStatus.CANCELLED, OrderStatus.REJECTED])
@@ -137,6 +142,7 @@ def order_detail_view(request, order_id):
     """
 
     order = get_object_or_404(
+        # pyrefly: ignore [missing-attribute]
         Order.objects.select_related("vendor", "student")
         .prefetch_related("items__menu_item"),
         id=order_id,
@@ -177,6 +183,7 @@ def cancel_order_view(request, order_id):
             order_id=order.id,
         )
 
+    # pyrefly: ignore [missing-attribute]
     order.status = Order.CANCELLED
     order.save(update_fields=["status"])
 
@@ -204,6 +211,7 @@ def vendor_orders_view(request):
     today = timezone.localdate()
 
     orders = (
+        # pyrefly: ignore [missing-attribute]
         Order.objects
         .filter(vendor=vendor)
         .select_related("student")
@@ -343,6 +351,7 @@ def update_order_status_view(request, order_id):
         message = f"Your order #{order.short_id()} status changed to {order.get_status_display()}."
         
     # Create notification for the student
+    # pyrefly: ignore [missing-attribute]
     Notification.objects.create(
         recipient=order.student,
         notification_type=notif_type,
