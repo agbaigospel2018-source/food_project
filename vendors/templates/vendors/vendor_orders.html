@@ -731,11 +731,11 @@
             align-items: stretch;
             padding: 16px;
         }
-        
+
         .filter-search {
             min-width: 100%;
         }
-        
+
         .filter-actions {
             width: 100%;
             justify-content: space-between;
@@ -744,7 +744,7 @@
         .filter-actions select {
             flex: 1;
         }
-        
+
         .orders-grid {
             grid-template-columns: 1fr;
             gap: 16px;
@@ -753,6 +753,288 @@
         .stat-card {
             padding: 16px;
         }
+    }
+
+    /* ===================================
+        READY FOR PICKUP
+=================================== */
+
+    .ready-card {
+
+        border-left: 5px solid #16a34a;
+
+    }
+
+    .status.ready {
+
+        background: #dcfce7;
+
+        color: #15803d;
+
+    }
+
+    .ready-banner {
+
+        display: flex;
+
+        justify-content: space-between;
+
+        align-items: center;
+
+        padding: 14px 16px;
+
+        margin: 20px 0;
+
+        border-radius: 12px;
+
+        background: #f0fdf4;
+
+        color: #15803d;
+
+        font-weight: 600;
+
+    }
+
+    .ready-banner i {
+
+        width: 18px;
+
+        height: 18px;
+
+    }
+
+    .notify-badge {
+
+        display: inline-flex;
+
+        align-items: center;
+
+        gap: 8px;
+
+        margin-bottom: 18px;
+
+        padding: 10px 14px;
+
+        border-radius: 999px;
+
+        background: #ecfdf5;
+
+        color: #047857;
+
+        font-size: .85rem;
+
+        font-weight: 600;
+
+    }
+
+    .complete-btn {
+
+        width: 100%;
+
+        display: flex;
+
+        justify-content: center;
+
+        align-items: center;
+
+        gap: 10px;
+
+        border: none;
+
+        border-radius: 12px;
+
+        padding: 14px;
+
+        background: #16a34a;
+
+        color: #fff;
+
+        font-weight: 600;
+
+        cursor: pointer;
+
+        transition: .3s;
+
+    }
+
+    .complete-btn:hover {
+
+        background: #15803d;
+
+        transform: translateY(-2px);
+
+    }
+
+    .ready-pulse {
+
+        animation: readyPulse 2s infinite;
+
+    }
+
+    @keyframes readyPulse {
+
+        0% {
+
+            box-shadow: 0 0 0 0 rgba(34, 197, 94, .45);
+
+        }
+
+        70% {
+
+            box-shadow: 0 0 0 12px rgba(34, 197, 94, 0);
+
+        }
+
+        100% {
+
+            box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+
+        }
+
+    }
+
+    /* ===================================
+        COMPLETED ORDERS
+=================================== */
+
+    .completed-card {
+
+        border-left: 5px solid #0f766e;
+
+        background: #f8fffc;
+
+    }
+
+    .status.completed {
+
+        background: #d1fae5;
+
+        color: #047857;
+
+    }
+
+    .completed-banner {
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        padding: 12px 16px;
+
+        margin: 18px 0;
+
+        border-radius: 12px;
+
+        background: #ecfdf5;
+
+        color: #047857;
+
+        font-weight: 600;
+
+    }
+
+    .completed-meta {
+
+        display: grid;
+
+        grid-template-columns: repeat(2, 1fr);
+
+        gap: 12px;
+
+        margin: 18px 0;
+
+    }
+
+    .meta-box {
+
+        background: #f8fafc;
+
+        border-radius: 12px;
+
+        padding: 12px;
+
+        text-align: center;
+
+    }
+
+    .meta-box small {
+
+        display: block;
+
+        color: #64748b;
+
+        margin-bottom: 6px;
+
+    }
+
+    .meta-box strong {
+
+        font-size: 1rem;
+
+    }
+
+    .history-actions {
+
+        display: flex;
+
+        gap: 12px;
+
+        margin-top: 20px;
+
+    }
+
+    .details-btn {
+
+        flex: 1;
+
+        background: #2563eb;
+
+        color: #fff;
+
+        border: none;
+
+        border-radius: 12px;
+
+        padding: 12px;
+
+        cursor: pointer;
+
+        transition: .3s;
+
+    }
+
+    .details-btn:hover {
+
+        background: #1d4ed8;
+
+    }
+
+    .receipt-btn {
+
+        flex: 1;
+
+        background: #0f766e;
+
+        color: white;
+
+        border: none;
+
+        border-radius: 12px;
+
+        padding: 12px;
+
+        cursor: pointer;
+
+        transition: .3s;
+
+    }
+
+    .receipt-btn:hover {
+
+        background: #115e59;
+
     }
 </style>
 
@@ -1071,7 +1353,7 @@
 
                         <h3>
                             {% for item in order.items.all %}
-                                {{ item.quantity }}x {{ item.menu_item.name }}{% if not forloop.last %}, {% endif %}
+                            {{ item.quantity }}x {{ item.menu_item.name }}{% if not forloop.last %}, {% endif %}
                             {% endfor %}
                         </h3>
 
@@ -1237,7 +1519,7 @@
 
                         <h3 class="font-semibold text-lg">
                             {% for item in order.items.all %}
-                                {{ item.quantity }}x {{ item.menu_item.name }}{% if not forloop.last %}, {% endif %}
+                            {{ item.quantity }}x {{ item.menu_item.name }}{% if not forloop.last %}, {% endif %}
                             {% endfor %}
                         </h3>
 
@@ -1449,7 +1731,7 @@
 
                         <h3>
                             {% for item in order.items.all %}
-                                {{ item.quantity }}x {{ item.menu_item.name }}{% if not forloop.last %}, {% endif %}
+                            {{ item.quantity }}x {{ item.menu_item.name }}{% if not forloop.last %}, {% endif %}
                             {% endfor %}
                         </h3>
 
@@ -1602,9 +1884,461 @@
 
     </section>
 
+    <!-- ==========================================
+            READY FOR PICKUP
+========================================== -->
+
+    <section class="order-section">
+
+        <div class="section-header" id="readyToggle">
+
+            <div class="section-title">
+
+                <div class="section-icon bg-green-100 text-green-600 ready-pulse">
+
+                    <i data-lucide="package-check"></i>
+
+                </div>
+
+                <div>
+
+                    <h2>Ready For Pickup</h2>
+
+                    <span>{{ ready_orders }} awaiting collection</span>
+
+                </div>
+
+            </div>
+
+            <button class="collapse-btn">
+
+                <i data-lucide="chevron-down"></i>
+
+            </button>
+
+        </div>
+
+        <div class="orders-grid" id="readyContainer">
+
+            {% for order in ready_list %}
+
+            <div class="order-card ready-card" data-status="ready" data-order="{{ order.id }}">
+
+                <div class="order-top">
+
+                    <div>
+
+                        <h3>#{{ order.id }}</h3>
+
+                        <small>{{ order.created_at|timesince }} ago</small>
+
+                    </div>
+
+                    <span class="status ready">
+
+                        Ready
+
+                    </span>
+
+                </div>
+
+                <div class="customer-row">
+
+                    <i data-lucide="user"></i>
+
+                    <span>
+
+                        {{ order.student.get_full_name|default:order.student.username }}
+
+                    </span>
+
+                </div>
+
+                <div class="customer-row">
+
+                    <i data-lucide="phone"></i>
+
+                    <span>
+
+                        {{ order.student.phone_number|default:"No phone number" }}
+
+                    </span>
+
+                </div>
+
+                <div class="customer-row">
+
+                    <i data-lucide="clock-3"></i>
+
+                    <span>
+
+                        Pickup Time:
+                        {{ order.pickup_time|time:"g:i A" }}
+
+                    </span>
+
+                </div>
+
+                <div class="customer-row">
+
+                    <i data-lucide="wallet"></i>
+
+                    <span>
+
+                        ₦{{ order.total_amount }}
+
+                    </span>
+
+                </div>
+
+                <div class="customer-row">
+
+                    <i data-lucide="shopping-bag"></i>
+
+                    <span>
+
+                        {{ order.items.count }}
+                        item{{ order.items.count|pluralize }}
+
+                    </span>
+
+                </div>
+
+                <div class="notify-badge">
+
+                    <i data-lucide="bell-ring"></i>
+
+                    Customer has been notified
+
+                </div>
+
+                <div class="ready-banner">
+
+                    <span>
+
+                        <i data-lucide="package-check"></i>
+
+                        Ready For Pickup
+
+                    </span>
+
+                    <span>
+
+                        {{ order.updated_at|timesince }}
+
+                    </span>
+
+                </div>
+
+                <div class="order-actions">
+
+                    <button class="complete-btn" data-order="{{ order.id }}">
+
+                        <i data-lucide="check-check"></i>
+
+                        Complete Pickup
+
+                    </button>
+
+                </div>
+
+            </div>
+
+            {% empty %}
+
+            <div class="empty-orders">
+
+                <i data-lucide="package-check"></i>
+
+                <h3>No Ready Orders</h3>
+
+                <p>
+
+                    Orders that are ready for collection will appear here.
+
+                </p>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+    <!-- ==========================================
+            COMPLETED ORDERS
+========================================== -->
+
+    <section class="order-section">
+
+        <div class="section-header" id="completedToggle">
+
+            <div class="section-title">
+
+                <div class="section-icon bg-emerald-100 text-emerald-700">
+
+                    <i data-lucide="badge-check"></i>
+
+                </div>
+
+                <div>
+
+                    <h2>Completed Orders</h2>
+
+                    <span>{{ completed_orders }} successfully delivered</span>
+
+                </div>
+
+            </div>
+
+            <button class="collapse-btn">
+
+                <i data-lucide="chevron-down"></i>
+
+            </button>
+
+        </div>
+
+        <div class="orders-grid" id="completedContainer">
+
+            {% for order in completed_list %}
+
+            <div class="order-card completed-card"
+                data-order-id="{{ order.id }}"
+                data-customer="{{ order.student.get_full_name|default:order.student.username }}"
+                data-total="{{ order.total_amount }}"
+                data-date="{{ order.updated_at|date:'M d, Y' }}"
+                data-time="{{ order.updated_at|date:'g:i A' }}"
+                data-vendor="{{ order.vendor.business_name }}"
+                data-items-json="{% for item in order.items.all %}{{ item.quantity }}x {{ item.menu_item.name }} (₦{{ item.price }}){% if not forloop.last %}||{% endif %}{% endfor %}">
+
+                <div class="order-top">
+
+                    <div>
+
+                        <h3>#{{ order.id|truncatechars:8 }}</h3>
+
+                        <small>
+
+                            {{ order.updated_at|date:"M d, Y • g:i A" }}
+
+                        </small>
+
+                    </div>
+
+                    <span class="status completed">
+
+                        Completed
+
+                    </span>
+
+                </div>
+
+                <div class="customer-row">
+
+                    <i data-lucide="user"></i>
+
+                    <span>
+
+                        {{ order.student.get_full_name|default:order.student.username }}
+
+                    </span>
+
+                </div>
+
+                <div class="completed-banner">
+
+                    <span>
+
+                        <i data-lucide="circle-check-big"></i>
+
+                        Order Successfully Picked Up
+
+                    </span>
+
+                </div>
+
+                <div class="completed-meta">
+
+                    <div class="meta-box">
+
+                        <small>Total</small>
+
+                        <strong>
+
+                            ₦{{ order.total_amount }}
+
+                        </strong>
+
+                    </div>
+
+                    <div class="meta-box">
+
+                        <small>Items</small>
+
+                        <strong>
+
+                            {{ order.items.count }}
+
+                        </strong>
+
+                    </div>
+
+                </div>
+
+                <div class="history-actions">
+
+                    <a href="{% url 'orders:order_detail' order_id=order.id %}" class="details-btn" style="text-decoration:none;display:flex;align-items:center;justify-content:center;gap:8px;">
+
+                        <i data-lucide="eye"></i>
+
+                        View Details
+
+                    </a>
+
+                    <button class="receipt-btn" data-order-card="{{ order.id }}">
+
+                        <i data-lucide="receipt"></i>
+
+                        Receipt
+
+                    </button>
+
+                </div>
+
+            </div>
+
+            {% empty %}
+
+            <div class="empty-orders">
+
+                <i data-lucide="circle-check-big"></i>
+
+                <h3>No Completed Orders</h3>
+
+                <p>
+
+                    Completed pickups will appear here.
+
+                </p>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+</div>
+
+<!-- ============================================
+     RECEIPT MODAL
+============================================= -->
+<div id="receiptModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);align-items:center;justify-content:center;">
+    <div id="receiptModalBox" style="background:#fff;border-radius:20px;box-shadow:0 25px 60px rgba(0,0,0,0.25);max-width:460px;width:calc(100% - 32px);max-height:90vh;overflow-y:auto;position:relative;">
+
+        <!-- Modal Header -->
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 24px;border-bottom:1px solid #f1f5f9;">
+            <div style="display:flex;align-items:center;gap:10px;">
+                <div style="width:38px;height:38px;border-radius:50%;background:#f0fdf4;display:flex;align-items:center;justify-content:center;">
+                    <i data-lucide="receipt" style="width:18px;height:18px;color:#16a34a;"></i>
+                </div>
+                <div>
+                    <h3 style="margin:0;font-size:1rem;font-weight:700;color:#0f172a;">Order Receipt</h3>
+                    <p id="receiptOrderId" style="margin:0;font-size:.8rem;color:#64748b;"></p>
+                </div>
+            </div>
+            <button onclick="closeReceiptModal()" style="background:none;border:none;cursor:pointer;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#64748b;transition:.2s;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='none'">
+                <i data-lucide="x" style="width:18px;height:18px;"></i>
+            </button>
+        </div>
+
+        <!-- Receipt Body -->
+        <div style="padding:24px;" id="receiptPrintArea">
+
+            <!-- Vendor + Status -->
+            <div style="text-align:center;margin-bottom:20px;">
+                <div style="display:inline-flex;align-items:center;gap:6px;background:#dcfce7;color:#15803d;font-size:.78rem;font-weight:700;letter-spacing:.05em;padding:5px 14px;border-radius:999px;margin-bottom:10px;">
+                    <i data-lucide="circle-check" style="width:13px;height:13px;"></i> COMPLETED
+                </div>
+                <h4 id="receiptVendor" style="margin:0 0 4px;font-size:1.1rem;font-weight:800;color:#0f172a;"></h4>
+                <p id="receiptDateTime" style="margin:0;font-size:.85rem;color:#64748b;"></p>
+            </div>
+
+            <!-- Divider -->
+            <div style="border-top:2px dashed #e2e8f0;margin:16px 0;"></div>
+
+            <!-- Customer -->
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;padding:12px;background:#f8fafc;border-radius:12px;">
+                <div style="width:36px;height:36px;border-radius:50%;background:#e0f2fe;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <i data-lucide="user" style="width:16px;height:16px;color:#0284c7;"></i>
+                </div>
+                <div>
+                    <p style="margin:0;font-size:.75rem;color:#64748b;font-weight:500;">Customer</p>
+                    <p id="receiptCustomer" style="margin:0;font-size:.95rem;font-weight:700;color:#0f172a;"></p>
+                </div>
+            </div>
+
+            <!-- Items -->
+            <h5 style="margin:0 0 10px;font-size:.8rem;font-weight:700;color:#64748b;letter-spacing:.07em;text-transform:uppercase;">Items Ordered</h5>
+            <div id="receiptItemsList" style="margin-bottom:16px;"></div>
+
+            <!-- Divider -->
+            <div style="border-top:2px dashed #e2e8f0;margin:16px 0;"></div>
+
+            <!-- Total -->
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:#f0fdf4;border-radius:12px;border:1px solid #bbf7d0;">
+                <span style="font-weight:700;color:#0f172a;font-size:1rem;">Total Paid</span>
+                <span id="receiptTotal" style="font-weight:900;color:#16a34a;font-size:1.2rem;"></span>
+            </div>
+
+            <!-- Thank you note -->
+            <p style="text-align:center;margin:20px 0 0;font-size:.82rem;color:#94a3b8;">Thank you for ordering via <strong style="color:#ea580c;">Belleful Express</strong> 🍽️</p>
+        </div>
+
+        <!-- Modal Footer -->
+        <div style="padding:16px 24px;border-top:1px solid #f1f5f9;display:flex;gap:10px;">
+            <button onclick="closeReceiptModal()" style="flex:1;padding:12px;border:1px solid #e2e8f0;background:#fff;border-radius:12px;font-weight:600;color:#64748b;cursor:pointer;transition:.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='#fff'">
+                Close
+            </button>
+            <button onclick="printReceipt()" style="flex:1;padding:12px;border:none;background:#16a34a;color:#fff;border-radius:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:.2s;" onmouseover="this.style.background='#15803d'" onmouseout="this.style.background='#16a34a'">
+                <i data-lucide="printer" style="width:16px;height:16px;"></i> Print Receipt
+            </button>
+        </div>
+    </div>
 </div>
 
 <script>
+
+    /* ===============================
+        RECEIPT MODAL HELPERS (global scope)
+    ================================ */
+
+    function closeReceiptModal() {
+        document.getElementById("receiptModal").style.display = "none";
+    }
+
+    function printReceipt() {
+        const printArea = document.getElementById("receiptPrintArea").innerHTML;
+        const win = window.open("", "_blank", "width=480,height=700");
+        win.document.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Order Receipt - Belleful Express</title>
+                <style>
+                    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; padding: 24px; color: #0f172a; max-width: 420px; margin: 0 auto; }
+                    * { box-sizing: border-box; }
+                </style>
+            </head>
+            <body>` + printArea + `</body>
+            </html>
+        `);
+        win.document.close();
+        win.focus();
+        setTimeout(function() { win.print(); win.close(); }, 400);
+    }
 
     document.addEventListener("DOMContentLoaded", function () {
 
@@ -1771,6 +2505,23 @@ COLLAPSE SECTION
         });
 
     /* ===============================
+ACCEPTED COLLAPSE
+================================ */
+
+    document
+        .getElementById("acceptedToggle")
+        .addEventListener("click", function () {
+
+            const body = document.getElementById("acceptedContainer");
+
+            body.style.display =
+                body.style.display === "none"
+                    ? "grid"
+                    : "none";
+
+        });
+
+    /* ===============================
 PREPARING COLLAPSE
 ================================ */
 
@@ -1809,6 +2560,125 @@ PREPARING COLLAPSE
             });
 
         });
+
+    /* ===============================
+READY COLLAPSE
+================================ */
+
+    document
+        .getElementById("readyToggle")
+        .addEventListener("click", function () {
+
+            const body = document.getElementById("readyContainer");
+
+            body.style.display =
+                body.style.display === "none"
+                    ? "grid"
+                    : "none";
+
+        });
+
+
+    /* ===============================
+        COMPLETE PICKUP
+    ================================ */
+
+    document
+        .querySelectorAll(".complete-btn")
+        .forEach(button => {
+
+            button.addEventListener("click", function () {
+
+                const card = this.closest(".order-card");
+
+                card.style.opacity = ".5";
+
+                const orderId = this.dataset.order;
+
+                updateOrderStatus(orderId, "completed", card);
+
+            });
+
+        });
+
+    /* ===============================
+COMPLETED COLLAPSE
+================================ */
+
+    document
+        .getElementById("completedToggle")
+        .addEventListener("click", function () {
+
+            const body = document.getElementById("completedContainer");
+
+            body.style.display =
+                body.style.display === "none"
+                    ? "grid" : "none";
+
+        });
+
+
+    /* ===============================
+        RECEIPT MODAL
+    ================================ */
+
+    document.querySelectorAll(".receipt-btn").forEach(function (btn) {
+
+        btn.addEventListener("click", function () {
+
+            // Find the parent card which holds all the data attributes
+            const card = document.querySelector(
+                '.order-card[data-order-id="' + this.dataset.orderCard + '"]'
+            );
+
+            if (!card) return;
+
+            const orderId   = card.dataset.orderId   || "";
+            const customer  = card.dataset.customer  || "";
+            const total     = card.dataset.total     || "";
+            const date      = card.dataset.date      || "";
+            const time      = card.dataset.time      || "";
+            const vendor    = card.dataset.vendor    || "";
+            const itemsRaw  = card.dataset.itemsJson || "";
+
+            // Populate modal fields
+            document.getElementById("receiptOrderId").textContent = "#" + orderId.substring(0, 8).toUpperCase();
+            document.getElementById("receiptVendor").textContent  = vendor;
+            document.getElementById("receiptDateTime").textContent = date + " at " + time;
+            document.getElementById("receiptCustomer").textContent = customer;
+            document.getElementById("receiptTotal").textContent   = "\u20A6" + parseFloat(total).toLocaleString();
+
+            // Build items list
+            const itemsList = document.getElementById("receiptItemsList");
+            itemsList.innerHTML = "";
+
+            if (itemsRaw) {
+                const items = itemsRaw.split("||");
+                items.forEach(function (item) {
+                    const row = document.createElement("div");
+                    row.style.cssText = "display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-radius:8px;margin-bottom:6px;background:#f8fafc;font-size:.88rem;color:#374151;font-weight:500;";
+                    row.textContent = item.trim();
+                    itemsList.appendChild(row);
+                });
+            } else {
+                itemsList.innerHTML = "<p style='color:#94a3b8;font-size:.85rem;'>No item details available.</p>";
+            }
+
+            // Show modal
+            const modal = document.getElementById("receiptModal");
+            modal.style.display = "flex";
+
+            // Re-render lucide icons inside the modal
+            if (typeof lucide !== "undefined") lucide.createIcons();
+
+        });
+
+    });
+
+    /* Close modal on backdrop click */
+    document.getElementById("receiptModal").addEventListener("click", function (e) {
+        if (e.target === this) closeReceiptModal();
+    });
 
 </script>
 
