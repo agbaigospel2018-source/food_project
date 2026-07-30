@@ -12,7 +12,7 @@ from vendors.models import Vendor
 
 from .forms import OrderForm
 from .models import Order, OrderStatus
-from .services import create_order_from_cart
+from .services import create_order_from_cart, update_order_status_and_notify
 from django.db.models import Count, Q, Sum
 from decimal import Decimal
 from notifications.models import Notification, NotificationType
@@ -52,8 +52,11 @@ def checkout_view(request):
                 )
 
             try:
+                # pyrefly: ignore [missing-argument]
                 order = create_order_from_cart(
+                    # pyrefly: ignore [unexpected-keyword]
                     student=request.user,
+                    # pyrefly: ignore [unexpected-keyword]
                     pickup_time=pickup_time,
                 )
 
@@ -68,6 +71,7 @@ def checkout_view(request):
 
                 return redirect(
                     "orders:order_success",
+                    # pyrefly: ignore [missing-attribute]
                     order_id=order.id,
                 )
 
@@ -111,6 +115,7 @@ def order_history_view(request):
     """
 
     orders = (
+        # pyrefly: ignore [missing-attribute]
         Order.objects
         .filter(student=request.user)
         .exclude(status__in=[OrderStatus.COMPLETED, OrderStatus.CANCELLED, OrderStatus.REJECTED])
@@ -137,6 +142,7 @@ def order_detail_view(request, order_id):
     """
 
     order = get_object_or_404(
+        # pyrefly: ignore [missing-attribute]
         Order.objects.select_related("vendor", "student")
         .prefetch_related("items__menu_item"),
         id=order_id,
@@ -177,8 +183,7 @@ def cancel_order_view(request, order_id):
             order_id=order.id,
         )
 
-    order.status = Order.CANCELLED
-    order.save(update_fields=["status"])
+    order.cancel(reason="Cancelled by student")
 
     messages.success(
         request,
@@ -204,6 +209,7 @@ def vendor_orders_view(request):
     today = timezone.localdate()
 
     orders = (
+        # pyrefly: ignore [missing-attribute]
         Order.objects
         .filter(vendor=vendor)
         .select_related("student")
@@ -309,47 +315,7 @@ def update_order_status_view(request, order_id):
         messages.error(request, "Invalid order status.")
         return redirect("orders:vendor_orders")
 
-    # Use model methods to update status and timestamps
-    if new_status == OrderStatus.ACCEPTED:
-        order.accept()
-        notif_type = NotificationType.ORDER_ACCEPTED
-        title = "Order Accepted"
-        message = f"Your order #{order.short_id()} from {vendor.business_name} has been accepted!"
-    elif new_status == OrderStatus.PREPARING:
-        order.start_preparing()
-        notif_type = NotificationType.ORDER_PREPARING
-        title = "Order Preparing"
-        message = f"Your order #{order.short_id()} is now being prepared by {vendor.business_name}."
-    elif new_status == OrderStatus.READY:
-        order.mark_ready()
-        notif_type = NotificationType.ORDER_READY
-        title = "Order Ready"
-        message = f"Your order #{order.short_id()} from {vendor.business_name} is ready for pickup!"
-    elif new_status == OrderStatus.COMPLETED:
-        order.complete()
-        notif_type = NotificationType.ORDER_COMPLETED
-        title = "Order Completed"
-        message = f"Your order #{order.short_id()} has been completed. Enjoy your meal!"
-    elif new_status == OrderStatus.REJECTED:
-        order.reject()
-        notif_type = NotificationType.ORDER_REJECTED
-        title = "Order Rejected"
-        message = f"Unfortunately, your order #{order.short_id()} was rejected by {vendor.business_name}."
-    else:
-        order.status = new_status
-        order.save(update_fields=["status"])
-        notif_type = NotificationType.SYSTEM
-        title = "Order Status Updated"
-        message = f"Your order #{order.short_id()} status changed to {order.get_status_display()}."
-        
-    # Create notification for the student
-    Notification.objects.create(
-        recipient=order.student,
-        notification_type=notif_type,
-        title=title,
-        message=message,
-        order=order
-    )
+    update_order_status_and_notify(order, new_status, vendor)
 
     if is_ajax:
         return JsonResponse({"success": True, "message": f"Order status updated to {order.get_status_display()}."})

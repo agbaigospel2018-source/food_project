@@ -16,6 +16,7 @@ class VendorSearchSuggestionsTests(TestCase):
             email="owner2@example.com",
             password="password123",
         )
+        # pyrefly: ignore [missing-attribute]
         self.vendor = Vendor.objects.create(
             owner=self.user,
             business_name="Sunset Grill",
@@ -29,7 +30,9 @@ class VendorSearchSuggestionsTests(TestCase):
     def test_vendor_suggestions_return_matching_restaurants(self):
         response = self.client.get(reverse("vendors:vendor_search_suggestions"), {"q": "sunset"})
 
+        # pyrefly: ignore [missing-attribute]
         self.assertEqual(response.status_code, 200)
+        # pyrefly: ignore [missing-attribute]
         payload = response.json()
         self.assertIn("suggestions", payload)
         labels = [item["label"] for item in payload["suggestions"]]
@@ -44,6 +47,7 @@ class VendorDashboardOrderStatsTests(TestCase):
             password="password123",
             role="vendor",
         )
+        # pyrefly: ignore [missing-attribute]
         self.vendor = Vendor.objects.create(
             owner=self.user,
             business_name="Harbor Kitchen",
@@ -61,6 +65,7 @@ class VendorDashboardOrderStatsTests(TestCase):
         )
 
     def test_dashboard_counts_and_lists_vendor_orders(self):
+        # pyrefly: ignore [missing-attribute]
         Order.objects.create(
             student=self.student,
             vendor=self.vendor,
@@ -68,6 +73,7 @@ class VendorDashboardOrderStatsTests(TestCase):
             status=OrderStatus.RECEIVED,
             total_amount="15.00",
         )
+        # pyrefly: ignore [missing-attribute]
         Order.objects.create(
             student=self.student,
             vendor=self.vendor,
@@ -75,6 +81,7 @@ class VendorDashboardOrderStatsTests(TestCase):
             status=OrderStatus.ACCEPTED,
             total_amount="20.00",
         )
+        # pyrefly: ignore [missing-attribute]
         Order.objects.create(
             student=self.student,
             vendor=self.vendor,
@@ -86,6 +93,7 @@ class VendorDashboardOrderStatsTests(TestCase):
         self.client.force_login(self.user)
 
         dashboard_response = self.client.get(reverse("vendors:vendor_dashboard"))
+        # pyrefly: ignore [missing-attribute]
         self.assertEqual(dashboard_response.status_code, 200)
         self.assertContains(dashboard_response, "2")
         self.assertContains(dashboard_response, "1")
@@ -93,12 +101,14 @@ class VendorDashboardOrderStatsTests(TestCase):
         self.assertContains(dashboard_response, "Harbor Kitchen")
 
         orders_response = self.client.get(reverse("orders:vendor_orders"))
+        # pyrefly: ignore [missing-attribute]
         self.assertEqual(orders_response.status_code, 200)
         self.assertContains(orders_response, "Order Received")
         self.assertContains(orders_response, "Accepted")
         self.assertContains(orders_response, "Completed")
 
     def test_analytics_view_status_counts(self):
+        # pyrefly: ignore [missing-attribute]
         Order.objects.create(
             student=self.student,
             vendor=self.vendor,
@@ -106,6 +116,7 @@ class VendorDashboardOrderStatsTests(TestCase):
             status=OrderStatus.RECEIVED,
             total_amount="15.00",
         )
+        # pyrefly: ignore [missing-attribute]
         Order.objects.create(
             student=self.student,
             vendor=self.vendor,
@@ -113,6 +124,7 @@ class VendorDashboardOrderStatsTests(TestCase):
             status=OrderStatus.ACCEPTED,
             total_amount="20.00",
         )
+        # pyrefly: ignore [missing-attribute]
         Order.objects.create(
             student=self.student,
             vendor=self.vendor,
@@ -124,12 +136,20 @@ class VendorDashboardOrderStatsTests(TestCase):
         self.client.force_login(self.user)
 
         analytics_response = self.client.get(reverse("vendors:analytics"))
+        # pyrefly: ignore [missing-attribute]
         self.assertEqual(analytics_response.status_code, 200)
+        # pyrefly: ignore [missing-attribute]
         self.assertEqual(analytics_response.context["pending_orders"], 1)
+        # pyrefly: ignore [missing-attribute]
         self.assertEqual(analytics_response.context["accepted_orders"], 1)
+        # pyrefly: ignore [missing-attribute]
         self.assertEqual(analytics_response.context["preparing_orders"], 0)
+        # pyrefly: ignore [missing-attribute]
         self.assertEqual(analytics_response.context["ready_orders"], 0)
+        # pyrefly: ignore [missing-attribute]
         self.assertEqual(analytics_response.context["completed_orders"], 1)
+        # pyrefly: ignore [missing-attribute]
         self.assertEqual(analytics_response.context["cancelled_orders"], 0)
+        # pyrefly: ignore [missing-attribute]
         self.assertEqual(analytics_response.context["rejected_orders"], 0)
         self.assertContains(analytics_response, "Harbor Kitchen")

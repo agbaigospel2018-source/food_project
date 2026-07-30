@@ -18,4 +18,5 @@ User = get_user_model()
 @receiver(post_save, sender=User)
 def create_notification_preference(sender, instance, created, **kwargs):
     if created:
+        # pyrefly: ignore [missing-attribute]
         NotificationPreference.objects.get_or_create(user=instance)

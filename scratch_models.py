@@ -34,11 +34,13 @@ class Category(models.Model):
         ordering = ["sort_order", "name"]
         verbose_name_plural = "categories"
 
+    # pyrefly: ignore [bad-override]
     def __str__(self):
         return self.name
 
     def save(self, *args, **kwargs):
         if not self.slug:
+            # pyrefly: ignore [bad-assignment]
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
 
@@ -70,6 +72,7 @@ class MenuItem(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    # pyrefly: ignore [bad-argument-type]
     objects = ActiveMenuItemQuerySet.as_manager()
 
     class Meta:
@@ -87,6 +90,7 @@ class MenuItem(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
+            # pyrefly: ignore [bad-assignment]
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
 
@@ -95,6 +99,7 @@ class MenuItem(models.Model):
             raise ValidationError({"discount_price": "Discount price cannot be greater than base price."})
 
     def get_absolute_url(self):
+        # pyrefly: ignore [missing-attribute]
         return reverse("menu:item_detail", kwargs={"vendor_pk": self.vendor_id, "slug": self.slug})
 
     @property
@@ -131,8 +136,11 @@ class MenuItem(models.Model):
         return "Available"
 
     def refresh_rating_cache(self):
+        # pyrefly: ignore [missing-attribute]
         stats = self.reviews.filter(is_approved=True).aggregate(avg=Avg("rating"), count=Count("id"))
+        # pyrefly: ignore [bad-assignment]
         self.average_rating = stats["avg"] or Decimal("0.00")
+        # pyrefly: ignore [bad-assignment]
         self.review_count = stats["count"] or 0
         self.save(update_fields=["average_rating", "review_count", "updated_at"])
 
@@ -175,6 +183,7 @@ class MenuItemOption(models.Model):
     class Meta:
         ordering = ["sort_order", "name"]
 
+    # pyrefly: ignore [bad-override]
     def __str__(self):
         return self.name
 
@@ -204,6 +213,7 @@ class Mood(models.Model):
     icon = models.ImageField(upload_to='mood_icons/', blank=True, null=True)
 
     def __str__(self) -> str:
+        # pyrefly: ignore [bad-return]
         return self.name
 
 
@@ -218,6 +228,7 @@ class IngredientCategory(models.Model):
         verbose_name_plural = "Ingredient Categories"
 
     def __str__(self) -> str:
+        # pyrefly: ignore [bad-return]
         return self.name
 
 
@@ -253,12 +264,14 @@ class MenuItem(models.Model):
     is_customizable = models.BooleanField(default=True)
 
     def __str__(self) -> str:
+        # pyrefly: ignore [bad-return]
         return self.name
 
 
 class CustomBowl(models.Model):
     """Stores the specific customized matrix built interactively by a user"""
     user = models.ForeignKey(
+        # pyrefly: ignore [unknown-name]
         User, 
         on_delete=models.CASCADE, 
         null=True, 
@@ -284,23 +297,29 @@ class CustomBowl(models.Model):
     @property
     def total_price(self) -> Decimal:
         base = self.base_menu_item.base_price if self.base_menu_item else Decimal('0.00')
+        # pyrefly: ignore [missing-attribute]
         ingredient_total = self.selected_ingredients.aggregate(total=models.Sum('price'))['total'] or Decimal('0.00')
+        # pyrefly: ignore [unsupported-operation]
         return base + ingredient_total
 
     @property
     def total_calories(self) -> int:
+        # pyrefly: ignore [missing-attribute]
         return self.selected_ingredients.aggregate(total=models.Sum('calories'))['total'] or 0
 
     @property
     def total_protein(self) -> float:
+        # pyrefly: ignore [missing-attribute]
         return self.selected_ingredients.aggregate(total=models.Sum('protein'))['total'] or 0.0
 
     @property
     def total_carbs(self) -> float:
+        # pyrefly: ignore [missing-attribute]
         return self.selected_ingredients.aggregate(total=models.Sum('carbs'))['total'] or 0.0
 
     @property
     def total_fats(self) -> float:
+        # pyrefly: ignore [missing-attribute]
         return self.selected_ingredients.aggregate(total=models.Sum('fats'))['total'] or 0.0
 
 

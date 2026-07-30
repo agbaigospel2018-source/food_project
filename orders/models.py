@@ -150,6 +150,7 @@ class Order(models.Model):
     def short_id(self):
         return str(self.id)[:8]
 
+    # pyrefly: ignore [missing-attribute]
     short_id.short_description = "Order ID"
 
     # --------------------------------------
@@ -157,9 +158,11 @@ class Order(models.Model):
     def update_total_amount(self):
 
         total = sum(
+            # pyrefly: ignore [missing-attribute]
             item.subtotal for item in self.items.all()
         )
 
+        # pyrefly: ignore [bad-assignment]
         self.total_amount = total or Decimal("0.00")
 
         self.save(
@@ -207,52 +210,66 @@ class Order(models.Model):
 
     def accept(self):
 
+        # pyrefly: ignore [bad-assignment]
         self.status = OrderStatus.ACCEPTED
 
+        # pyrefly: ignore [bad-assignment]
         self.accepted_at = timezone.now()
 
         self.save()
 
     def start_preparing(self):
 
+        # pyrefly: ignore [bad-assignment]
         self.status = OrderStatus.PREPARING
 
+        # pyrefly: ignore [bad-assignment]
         self.preparing_at = timezone.now()
 
         self.save()
 
     def mark_ready(self):
 
+        # pyrefly: ignore [bad-assignment]
         self.status = OrderStatus.READY
 
+        # pyrefly: ignore [bad-assignment]
         self.ready_at = timezone.now()
 
         self.save()
 
     def complete(self):
 
+        # pyrefly: ignore [bad-assignment]
         self.status = OrderStatus.COMPLETED
 
+        # pyrefly: ignore [bad-assignment]
         self.completed_at = timezone.now()
 
         self.save()
 
     def cancel(self, reason=""):
 
+        # pyrefly: ignore [bad-assignment]
         self.status = OrderStatus.CANCELLED
 
+        # pyrefly: ignore [bad-assignment]
         self.cancelled_at = timezone.now()
 
+        # pyrefly: ignore [bad-assignment]
         self.cancellation_reason = reason
 
         self.save()
 
     def reject(self, reason=""):
 
+        # pyrefly: ignore [bad-assignment]
         self.status = OrderStatus.REJECTED
 
+        # pyrefly: ignore [bad-assignment]
         self.rejected_at = timezone.now()
 
+        # pyrefly: ignore [bad-assignment]
         self.cancellation_reason = reason
 
         self.save()
@@ -309,12 +326,14 @@ class OrderItem(models.Model):
         if not self.unit_price:
             self.unit_price = self.menu_item.current_price
 
+        # pyrefly: ignore [unsupported-operation]
         self.subtotal = self.quantity * self.unit_price
 
         super().save(*args, **kwargs)
 
         self.order.update_total_amount()
 
+    # pyrefly: ignore [bad-override]
     def delete(self, *args, **kwargs):
 
         order = self.order

@@ -42,8 +42,11 @@ def add_to_cart_view(request, menu_item_id):
     )
 
     try:
+        # pyrefly: ignore [missing-argument]
         add_to_cart(
+            # pyrefly: ignore [unexpected-keyword]
             student=request.user,
+            # pyrefly: ignore [unexpected-keyword]
             menu_item=menu_item,
         )
 

@@ -20,6 +20,7 @@ class CartContextProcessorTests(TestCase):
             password="testpass123",
             role="vendor",
         )
+        # pyrefly: ignore [missing-attribute]
         self.vendor = Vendor.objects.create(
             owner=self.vendor_user,
             business_name="Test Vendor",
@@ -43,11 +44,15 @@ class CartContextProcessorTests(TestCase):
             slug="fries",
             base_price="5.00",
         )
+        # pyrefly: ignore [missing-attribute]
         cart = Cart.objects.create(student=self.student_user)
+        # pyrefly: ignore [missing-attribute]
         CartItem.objects.create(cart=cart, menu_item=first_item, quantity=2)
+        # pyrefly: ignore [missing-attribute]
         CartItem.objects.create(cart=cart, menu_item=second_item, quantity=1)
 
         request = self.factory.get("/")
+        # pyrefly: ignore [missing-attribute]
         request.user = self.student_user
 
         self.assertEqual(cart_count(request)["cart_count"], 3)

@@ -41,6 +41,7 @@ class MenuItemForm(forms.ModelForm):
     def __init__(self, *args, vendor=None, **kwargs):
         super().__init__(*args, **kwargs)
         if vendor is not None:
+            # pyrefly: ignore [missing-attribute]
             self.fields["category"].queryset = Category.objects.filter(is_active=True)
             self.fields["category"].empty_label = "Choose a category"
 

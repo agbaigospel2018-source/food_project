@@ -55,10 +55,12 @@ class Notification(models.Model):
         ]
         
     def __str__(self):
+        # pyrefly: ignore [missing-attribute]
         return f'{self.title} → {self.recipient.username}'
 
     def mark_as_read(self):
         if not self.is_read:
+            # pyrefly: ignore [bad-assignment]
             self.is_read = True
             self.save(update_fields=['is_read'])
 
@@ -77,4 +79,5 @@ class NotificationPreference(models.Model):
     notify_marketing = models.BooleanField(default=False)
 
     def __str__(self):
+        # pyrefly: ignore [missing-attribute]
         return f'{self.user.username} Preferences'

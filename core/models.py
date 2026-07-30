@@ -9,5 +9,6 @@ class ContactMessage(models.Model):
     
     created_at = models.DateTimeField(auto_now_add=True)
     
+    # pyrefly: ignore [bad-override]
     def __str__(self):
         return self.name

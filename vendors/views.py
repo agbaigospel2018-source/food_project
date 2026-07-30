@@ -46,6 +46,7 @@ def vendor_list(request):
     Display all vendors.
     """
 
+    # pyrefly: ignore [missing-attribute]
     vendors = Vendor.objects.all().order_by("business_name")
 
     # Search
@@ -53,6 +54,7 @@ def vendor_list(request):
 
     if query:
         vendors = vendors.filter(
+            # pyrefly: ignore [unsupported-operation]
             Q(business_name__icontains=query) |
             Q(location__icontains=query) |
             Q(description__icontains=query)
@@ -77,7 +79,9 @@ def vendor_list(request):
     context = {
         "vendors": page_obj,
         "page_obj": page_obj,
+        # pyrefly: ignore [missing-attribute]
         "total_vendors": Vendor.objects.count(),
+        # pyrefly: ignore [missing-attribute]
         "open_vendors": Vendor.objects.filter(is_open=True).count(),
         "page_title": "Discover Amazing Restaurants",
         "page_subtitle": "Order ahead from your favorite campus restaurants.",
@@ -95,7 +99,9 @@ def vendor_search_suggestions(request):
     suggestions = []
 
     if query:
+        # pyrefly: ignore [missing-attribute]
         vendors = Vendor.objects.filter(
+            # pyrefly: ignore [unsupported-operation]
             Q(business_name__icontains=query) |
             Q(location__icontains=query) |
             Q(description__icontains=query)
@@ -161,6 +167,7 @@ def vendor_dashboard(request):
     )
 
     orders = (
+        # pyrefly: ignore [missing-attribute]
         Order.objects
         .filter(vendor=vendor)
         .select_related("student")
@@ -201,6 +208,7 @@ def vendor_profile(request):
     )
 
     orders = (
+        # pyrefly: ignore [missing-attribute]
         Order.objects
         .filter(vendor=vendor)
         .select_related("student")
@@ -393,6 +401,7 @@ def vendor_orders(request):
     today = timezone.localdate()
 
     orders = (
+        # pyrefly: ignore [missing-attribute]
         Order.objects
         .filter(vendor=vendor)
         .select_related("student")
@@ -497,6 +506,7 @@ def analytics(request):
     last_30_days = today - timedelta(days=29)
 
     orders = (
+        # pyrefly: ignore [missing-attribute]
         Order.objects
         .filter(vendor=vendor)
         .select_related("student")
@@ -658,6 +668,7 @@ def analytics(request):
 
     top_items = (
 
+        # pyrefly: ignore [missing-attribute]
         OrderItem.objects
 
         .filter(
@@ -866,6 +877,7 @@ def settings(request):
         owner=request.user
     )
 
+    # pyrefly: ignore [missing-attribute]
     prefs, _ = NotificationPreference.objects.get_or_create(
         user=request.user
     )
