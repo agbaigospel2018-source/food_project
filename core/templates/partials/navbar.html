@@ -19,6 +19,7 @@
                     <a href="{% url 'home' %}" class="{% if request.resolver_match.url_name == 'home' %}text-orange-600 font-semibold underline underline-offset-8{% else %}text-gray-600 font-semibold hover:text-orange-600 transition-colors{% endif %}">Home</a>
                     <a href="{% url 'vendors:vendor_dashboard' %}" class="{% if request.resolver_match.url_name == 'vendor_dashboard' %}text-orange-600 font-semibold underline underline-offset-8{% else %}text-gray-600 font-semibold hover:text-orange-600 transition-colors{% endif %}">Dashboard</a>
                     <a href="{% url 'menu:item_list' %}" class="{% if request.resolver_match.url_name == 'item_list' %}text-orange-600 font-semibold underline underline-offset-8{% else %}text-gray-600 font-semibold hover:text-orange-600 transition-colors{% endif %}">Menu</a>
+                    <a href="{% url 'contact' %}" class="{% if request.resolver_match.url_name == 'Contact' %}text-orange-600 font-semibold underline underline-offset-8{% else %}text-gray-600 font-semibold hover:text-orange-600 transition-colors{% endif %}">Contact</a>
                 {% else %}
                     <!-- user (student) -->
                     <a href="{% url 'home' %}" class="{% if request.resolver_match.url_name == 'home' %}text-orange-600 font-semibold underline underline-offset-8{% else %}text-gray-600 font-semibold hover:text-orange-600 transition-colors{% endif %}">Home</a>
