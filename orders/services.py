@@ -5,7 +5,7 @@ from django.utils import timezone
 from cart.models import Cart
 from cart.services import clear_cart
 
-from .models import Order, OrderItem
+from .models import Order, OrderItem, OrderStatus
 from datetime import datetime, timedelta
 from notifications.models import Notification, NotificationType
 
@@ -203,3 +203,45 @@ def generate_pickup_slots(vendor, interval=15, prep_buffer=20):
         start += timedelta(minutes=interval)
 
     return slots
+
+@transaction.atomic
+def update_order_status_and_notify(order, new_status, vendor):
+    if new_status == OrderStatus.ACCEPTED:
+        order.accept()
+        notif_type = NotificationType.ORDER_ACCEPTED
+        title = "Order Accepted"
+        message = f"Your order #{order.short_id()} from {vendor.business_name} has been accepted!"
+    elif new_status == OrderStatus.PREPARING:
+        order.start_preparing()
+        notif_type = NotificationType.ORDER_PREPARING
+        title = "Order Preparing"
+        message = f"Your order #{order.short_id()} is now being prepared by {vendor.business_name}."
+    elif new_status == OrderStatus.READY:
+        order.mark_ready()
+        notif_type = NotificationType.ORDER_READY
+        title = "Order Ready"
+        message = f"Your order #{order.short_id()} from {vendor.business_name} is ready for pickup!"
+    elif new_status == OrderStatus.COMPLETED:
+        order.complete()
+        notif_type = NotificationType.ORDER_COMPLETED
+        title = "Order Completed"
+        message = f"Your order #{order.short_id()} has been completed. Enjoy your meal!"
+    elif new_status == OrderStatus.REJECTED:
+        order.reject()
+        notif_type = NotificationType.ORDER_REJECTED
+        title = "Order Rejected"
+        message = f"Unfortunately, your order #{order.short_id()} was rejected by {vendor.business_name}."
+    else:
+        order.status = new_status
+        order.save(update_fields=["status"])
+        notif_type = NotificationType.SYSTEM
+        title = "Order Status Updated"
+        message = f"Your order #{order.short_id()} status changed to {order.get_status_display()}."
+        
+    Notification.objects.create(
+        recipient=order.student,
+        notification_type=notif_type,
+        title=title,
+        message=message,
+        order=order
+    )
