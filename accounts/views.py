@@ -10,14 +10,20 @@ from menu.models import MenuItemReview
 from .forms import RegisterForm, ProfileUpdateForm
 # Create your views here.
 
+def redirect_vendor(user, destination='vendors:vendor_dashboard'):
+    if hasattr(user, 'vendor_profile'):
+        return redirect(destination)
+    return redirect('vendors:create_vendor')
+
+def redirect_authenticated_user(user):
+    if user.role == 'vendor':
+        return redirect_vendor(user)
+    return redirect('profile')
+
 # -----------Register View
 def register_view(request):
     if request.user.is_authenticated:
-        if request.user.role == 'vendor':
-            if hasattr(request.user, 'vendor_profile'):
-                return redirect('vendors:vendor_dashboard')
-            return redirect('vendors:create_vendor')
-        return redirect('profile')
+        return redirect_authenticated_user(request.user)
     
     if request.method == 'POST':
         form = RegisterForm(request.POST)
@@ -54,11 +60,7 @@ def register_view(request):
 def login_view(request):
 
     if request.user.is_authenticated:
-        if request.user.role == 'vendor':
-            if hasattr(request.user, 'vendor_profile'):
-                return redirect('vendors:vendor_dashboard')
-            return redirect('vendors:create_vendor')
-        return redirect('profile')
+        return redirect_authenticated_user(request.user)
 
     if request.method == 'POST':
 
@@ -127,9 +129,7 @@ def logout_view(request):
 @login_required
 def profile_view(request):
     if request.user.role == 'vendor':
-        if hasattr(request.user, 'vendor_profile'):
-            return redirect('vendors:vendor_profile')
-        return redirect('vendors:create_vendor')
+        return redirect_vendor(request.user, destination='vendors:vendor_profile')
 
     total_orders = Order.objects.filter(student=request.user).count()
     total_reviews = MenuItemReview.objects.filter(student=request.user, is_approved=True).count()

@@ -277,24 +277,34 @@ class CustomBowl(models.Model):
     # Database level aggregations prevent dragging large QuerySets into memory loop structures.
     @property
     def total_price(self) -> Decimal:
+        if hasattr(self, '_total_price'):
+            return self._total_price
         base = self.base_menu_item.base_price if self.base_menu_item else Decimal('0.00')
         ingredient_total = self.selected_ingredients.aggregate(total=models.Sum('price'))['total'] or Decimal('0.00')
         return base + ingredient_total
 
     @property
     def total_calories(self) -> int:
+        if hasattr(self, '_total_calories'):
+            return self._total_calories
         return self.selected_ingredients.aggregate(total=models.Sum('calories'))['total'] or 0
 
     @property
     def total_protein(self) -> float:
+        if hasattr(self, '_total_protein'):
+            return self._total_protein
         return self.selected_ingredients.aggregate(total=models.Sum('protein'))['total'] or 0.0
 
     @property
     def total_carbs(self) -> float:
+        if hasattr(self, '_total_carbs'):
+            return self._total_carbs
         return self.selected_ingredients.aggregate(total=models.Sum('carbs'))['total'] or 0.0
 
     @property
     def total_fats(self) -> float:
+        if hasattr(self, '_total_fats'):
+            return self._total_fats
         return self.selected_ingredients.aggregate(total=models.Sum('fats'))['total'] or 0.0
 
 

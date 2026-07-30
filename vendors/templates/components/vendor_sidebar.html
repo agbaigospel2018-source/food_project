@@ -53,7 +53,7 @@
 
                 <span class="inline-flex items-center px-4 py-2 rounded-full bg-green-500 text-white text-sm font-semibold">
 
-                    🟢 Open
+                    <i data-lucide="check-circle-2" class="w-5 h-5 inline text-green-500 mr-1"></i> Open
 
                 </span>
 
@@ -61,7 +61,7 @@
 
                 <span class="inline-flex items-center px-4 py-2 rounded-full bg-red-500 text-white text-sm font-semibold">
 
-                    🔴 Closed
+                    <i data-lucide="x-circle" class="w-5 h-5 inline text-red-500 mr-1"></i> Closed
 
                 </span>
 
@@ -138,7 +138,7 @@
                     href="{% url 'orders:vendor_orders' %}"
                     class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-orange-50 hover:text-orange-600 transition">
 
-                    <span class="text-xl">📦</span>
+                    <span class="text-xl"><i data-lucide="package" class="w-5 h-5 inline text-orange-500 mr-1"></i></span>
 
                     <span class="font-medium">
 
@@ -156,7 +156,7 @@
                     href="{% url 'vendors:analytics' %}"
                     class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-orange-50 hover:text-orange-600 transition">
 
-                    <span class="text-xl">📈</span>
+                    <span class="text-xl"><i data-lucide="trending-up" class="w-5 h-5 inline text-green-500 mr-1"></i></span>
 
                     <span class="font-medium">
 
@@ -174,7 +174,7 @@
                     href="{% url 'vendors:business_hours' %}"
                     class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-orange-50 hover:text-orange-600 transition">
 
-                    <span class="text-xl">🕒</span>
+                    <span class="text-xl"><i data-lucide="clock" class="w-5 h-5 inline text-gray-500 mr-1"></i></span>
 
                     <span class="font-medium">
 
@@ -192,7 +192,7 @@
                     href="{% url 'vendors:settings' %}"
                     class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-orange-50 hover:text-orange-600 transition">
 
-                    <span class="text-xl">⚙️</span>
+                    <span class="text-xl"><i data-lucide="settings" class="w-5 h-5 inline text-gray-500 mr-1"></i></span>
 
                     <span class="font-medium">
 
@@ -219,11 +219,11 @@
 
             {% if vendor.is_currently_open %}
 
-                🔴 Close Restaurant
+                <i data-lucide="x-circle" class="w-5 h-5 inline text-red-500 mr-1"></i> Close Restaurant
 
             {% else %}
 
-                🟢 Open Restaurant
+                <i data-lucide="check-circle-2" class="w-5 h-5 inline text-green-500 mr-1"></i> Open Restaurant
 
             {% endif %}
 

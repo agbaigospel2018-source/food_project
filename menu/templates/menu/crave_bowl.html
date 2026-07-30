@@ -521,7 +521,7 @@
   <div class="cb-header">
     <div class="cb-header-row">
       <div>
-        <h1>🍜 Crave Bowl Builder</h1>
+        <h1><i data-lucide="soup" class="w-5 h-5 inline text-orange-500 mr-1"></i> Crave Bowl Builder</h1>
         <p>Choose your base, stack your proteins, load up on toppings — watch your macros update live.</p>
       </div>
       <a href="{% url 'menu:item_list' %}" class="cb-back-link">
@@ -576,7 +576,7 @@
         <div class="cb-selected-list-title">Your Selections</div>
         <div id="cb-selected-items">
           <div class="cb-empty">
-            <div class="cb-empty-icon">🥗</div>
+            <div class="cb-empty-icon"><i data-lucide="salad" class="w-5 h-5 inline text-green-500 mr-1"></i></div>
             <p>Pick some ingredients to get started!</p>
           </div>
         </div>
@@ -639,7 +639,7 @@
     } catch (err) {
       loadingEl.innerHTML = `
         <div class="cb-empty" style="grid-column:1/-1;">
-          <div class="cb-empty-icon">⚠️</div>
+          <div class="cb-empty-icon"><i data-lucide="alert-triangle" class="w-5 h-5 inline text-yellow-500 mr-1"></i></div>
           <p>Could not load ingredients. Please try refreshing the page.</p>
         </div>`;
       console.error(err);
@@ -691,7 +691,7 @@
     if (!cat.ingredients || cat.ingredients.length === 0) {
       grid.innerHTML = `
         <div class="cb-empty" style="grid-column:1/-1;">
-          <div class="cb-empty-icon">📦</div>
+          <div class="cb-empty-icon"><i data-lucide="package" class="w-5 h-5 inline text-orange-500 mr-1"></i></div>
           <p>No ingredients available in this category yet.</p>
         </div>`;
       return;
@@ -706,7 +706,7 @@
           <svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg>
         </div>
         <div class="cb-card-img">
-          ${ing.image_url ? `<img src="${ing.image_url}" alt="${ing.name}">` : '🥘'}
+          ${ing.image_url ? `<img src="${ing.image_url}" alt="${ing.name}">` : '<i data-lucide="cooking-pot" class="w-5 h-5 inline text-orange-500 mr-1"></i>'}
         </div>
         <div class="cb-card-name">${ing.name}</div>
         <div class="cb-card-price">₦${parseFloat(ing.price).toFixed(2)}</div>
@@ -773,7 +773,7 @@
     if (allSelected.length === 0) {
       selectedEl.innerHTML = `
         <div class="cb-empty">
-          <div class="cb-empty-icon">🥗</div>
+          <div class="cb-empty-icon"><i data-lucide="salad" class="w-5 h-5 inline text-green-500 mr-1"></i></div>
           <p>Pick some ingredients to get started!</p>
         </div>`;
       addBtn.disabled = true;
