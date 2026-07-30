@@ -183,9 +183,7 @@ def cancel_order_view(request, order_id):
             order_id=order.id,
         )
 
-    # pyrefly: ignore [missing-attribute]
-    order.status = Order.CANCELLED
-    order.save(update_fields=["status"])
+    order.cancel(reason="Cancelled by student")
 
     messages.success(
         request,
