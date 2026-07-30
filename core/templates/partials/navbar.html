@@ -6,69 +6,93 @@
 
 <header class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-xl shadow-sm border-b border-gray-100">
     <div class="h-20 max-w-7xl mx-auto px-4 lg:px-8 flex items-center justify-between">
-        
+
         <div class="flex items-center gap-4">
             <a href="{% url 'home' %}" class="flex items-center gap-2">
                 <span class="font-bold text-2xl text-orange-600 tracking-tight">Belleful Express</span>
             </a>
         </div>
-        
+
         <nav class="hidden lg:flex items-center gap-8">
             {% if user.is_authenticated %}
-                {% if user.role == "vendor" %}
-                    <a href="{% url 'home' %}" class="{% if request.resolver_match.url_name == 'home' %}text-orange-600 font-semibold underline underline-offset-8{% else %}text-gray-600 font-semibold hover:text-orange-600 transition-colors{% endif %}">Home</a>
-                    <a href="{% url 'vendors:vendor_dashboard' %}" class="{% if request.resolver_match.url_name == 'vendor_dashboard' %}text-orange-600 font-semibold underline underline-offset-8{% else %}text-gray-600 font-semibold hover:text-orange-600 transition-colors{% endif %}">Dashboard</a>
-                    <a href="{% url 'menu:item_list' %}" class="{% if request.resolver_match.url_name == 'item_list' %}text-orange-600 font-semibold underline underline-offset-8{% else %}text-gray-600 font-semibold hover:text-orange-600 transition-colors{% endif %}">Menu</a>
-                    <a href="{% url 'contact' %}" class="{% if request.resolver_match.url_name == 'Contact' %}text-orange-600 font-semibold underline underline-offset-8{% else %}text-gray-600 font-semibold hover:text-orange-600 transition-colors{% endif %}">Contact</a>
-                {% else %}
-                    <!-- user (student) -->
-                    <a href="{% url 'home' %}" class="{% if request.resolver_match.url_name == 'home' %}text-orange-600 font-semibold underline underline-offset-8{% else %}text-gray-600 font-semibold hover:text-orange-600 transition-colors{% endif %}">Home</a>
-                    <a href="{% url 'vendors:vendor_list' %}" class="{% if request.resolver_match.url_name == 'vendor_list' %}text-orange-600 font-semibold underline underline-offset-8{% else %}text-gray-600 font-semibold hover:text-orange-600 transition-colors{% endif %}">Restaurants</a>
-                    <a href="{% url 'menu:item_list' %}" class="{% if request.resolver_match.url_name == 'item_list' %}text-orange-600 font-semibold underline underline-offset-8{% else %}text-gray-600 font-semibold hover:text-orange-600 transition-colors{% endif %}">Menu</a>
-                {% endif %}
+            {% if user.role == "vendor" %}
+            <a href="{% url 'home' %}"
+                class="{% if request.resolver_match.url_name == 'home' %}text-orange-600 font-semibold underline underline-offset-8{% else %}text-gray-600 font-semibold hover:text-orange-600 transition-colors{% endif %}">Home</a>
+            <a href="{% url 'vendors:vendor_dashboard' %}"
+                class="{% if request.resolver_match.url_name == 'vendor_dashboard' %}text-orange-600 font-semibold underline underline-offset-8{% else %}text-gray-600 font-semibold hover:text-orange-600 transition-colors{% endif %}">Dashboard</a>
+            <a href="{% url 'menu:item_list' %}"
+                class="{% if request.resolver_match.url_name == 'item_list' %}text-orange-600 font-semibold underline underline-offset-8{% else %}text-gray-600 font-semibold hover:text-orange-600 transition-colors{% endif %}">Menu</a>
+            <a href="{% url 'contact' %}"
+                class="{% if request.resolver_match.url_name == 'Contact' %}text-orange-600 font-semibold underline underline-offset-8{% else %}text-gray-600 font-semibold hover:text-orange-600 transition-colors{% endif %}">Contact</a>
             {% else %}
-                <a href="{% url 'home' %}" class="{% if request.resolver_match.url_name == 'home' %}text-orange-600 font-semibold underline underline-offset-8{% else %}text-gray-600 font-semibold hover:text-orange-600 transition-colors{% endif %}">Home</a>
-                <a href="{% url 'login' %}" class="text-gray-600 font-semibold hover:text-orange-600 transition-colors">Restaurants</a>
-                <a href="{% url 'login' %}" class="text-gray-600 font-semibold hover:text-orange-600 transition-colors">Menu</a>
+            <!-- user (student) -->
+            <a href="{% url 'home' %}"
+                class="{% if request.resolver_match.url_name == 'home' %}text-orange-600 font-semibold underline underline-offset-8{% else %}text-gray-600 font-semibold hover:text-orange-600 transition-colors{% endif %}">Home</a>
+            <a href="{% url 'vendors:vendor_list' %}"
+                class="{% if request.resolver_match.url_name == 'vendor_list' %}text-orange-600 font-semibold underline underline-offset-8{% else %}text-gray-600 font-semibold hover:text-orange-600 transition-colors{% endif %}">Restaurants</a>
+            <a href="{% url 'menu:item_list' %}"
+                class="{% if request.resolver_match.url_name == 'item_list' %}text-orange-600 font-semibold underline underline-offset-8{% else %}text-gray-600 font-semibold hover:text-orange-600 transition-colors{% endif %}">Menu</a>
+            {% endif %}
+            {% else %}
+            <a href="{% url 'home' %}"
+                class="{% if request.resolver_match.url_name == 'home' %}text-orange-600 font-semibold underline underline-offset-8{% else %}text-gray-600 font-semibold hover:text-orange-600 transition-colors{% endif %}">Home</a>
+            <a href="{% url 'login' %}"
+                class="text-gray-600 font-semibold hover:text-orange-600 transition-colors">Restaurants</a>
+            <a href="{% url 'login' %}"
+                class="text-gray-600 font-semibold hover:text-orange-600 transition-colors">Menu</a>
             {% endif %}
         </nav>
 
-        <div class="flex items-center gap-6">
+        <div class="flex items-center gap-3 sm:gap-6">
             {% if user.is_authenticated %}
-                <div class="hidden sm:flex items-center gap-4">
+            <div class="hidden sm:flex items-center gap-4">
                 {% if user.role == "student" %}
-                    <a href="{% url 'cart:cart_detail' %}" class="relative text-gray-600 hover:text-orange-600 transition-colors">
-                        <span class="material-symbols-outlined">shopping_cart</span>
-                        {% if cart_count %}
-                            <span class="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center">{{ cart_count }}</span>
-                        {% endif %}
-                    </a>
-                    <a href="{% url 'orders:order_history' %}" class="text-gray-600 hover:text-orange-600 transition-colors">Orders</a>
+                <a href="{% url 'cart:cart_detail' %}"
+                    class="relative text-gray-600 hover:text-orange-600 transition-colors">
+                    <span class="material-symbols-outlined">shopping_cart</span>
+                    {% if cart_count %}
+                    <span
+                        class="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center">{{
+                        cart_count }}</span>
+                    {% endif %}
+                </a>
+                <a href="{% url 'orders:order_history' %}"
+                    class="text-gray-600 hover:text-orange-600 transition-colors font-medium">Orders</a>
                 {% endif %}
-                
-                <a href="{% url 'notifications:notifications_page' %}" class="relative text-gray-600 hover:text-orange-600 transition-colors">
-                    <span class="material-symbols-outlined">notifications</span>
-                    {% if unread_notification_count %}
-                        <span class="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center">{{ unread_notification_count }}</span>
-                    {% endif %}
-                </a>
-                
-                <a href="{% url 'logout' %}" class="text-gray-600 hover:text-orange-600 transition-colors">Logout</a>
-                </div>
 
-                <!-- Profile Picture -->
-                <a href="{% if user.role == 'vendor' %}{% url 'vendors:vendor_profile' %}{% else %}{% url 'profile' %}{% endif %}" class="w-10 h-10 rounded-full bg-orange-100 border-2 border-orange-600 flex items-center justify-center overflow-hidden hover:scale-105 transition-transform">
-                    {% if user.profile_picture %}
-                        <img src="{{ user.profile_picture.url }}" class="w-full h-full object-cover">
-                    {% else %}
-                        <span class="material-symbols-outlined text-orange-600">person</span>
-                    {% endif %}
-                </a>
+                <a href="{% url 'logout' %}" class="text-gray-600 hover:text-orange-600 transition-colors font-medium">Logout</a>
+            </div>
+
+            <!-- Notifications Icon (Visible on Mobile Top Nav & Desktop) -->
+            <a href="{% url 'notifications:notifications_page' %}"
+                class="relative p-1.5 rounded-full transition-colors flex items-center justify-center {% if request.resolver_match.url_name == 'notifications_page' %}text-orange-600 bg-orange-50{% else %}text-gray-600 hover:text-orange-600 hover:bg-orange-50{% endif %}"
+                title="Notifications">
+                <span class="material-symbols-outlined text-2xl">notifications</span>
+                {% if unread_notification_count %}
+                <span
+                    class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center border-2 border-white shadow-sm">
+                    {{ unread_notification_count }}
+                </span>
+                {% endif %}
+            </a>
+
+            <!-- Profile Picture -->
+            <a href="{% if user.role == 'vendor' %}{% url 'vendors:vendor_profile' %}{% else %}{% url 'profile' %}{% endif %}"
+                class="w-10 h-10 rounded-full bg-orange-100 border-2 border-orange-600 flex items-center justify-center overflow-hidden hover:scale-105 transition-transform"
+                title="Profile">
+                {% if user.profile_picture %}
+                <img src="{{ user.profile_picture.url }}" class="w-full h-full object-cover">
+                {% else %}
+                <span class="material-symbols-outlined text-orange-600">person</span>
+                {% endif %}
+            </a>
             {% else %}
-                <div class="hidden sm:flex items-center gap-4">
-                    <a href="{% url 'login' %}" class="text-gray-600 font-semibold hover:text-orange-600 transition-colors">Login</a>
-                    <a href="{% url 'register' %}" class="bg-orange-600 text-white px-6 py-2.5 rounded-full font-semibold hover:bg-orange-700 transition-all shadow-[0_4px_12px_rgba(234,88,12,0.2)]">Register</a>
-                </div>
+            <div class="hidden sm:flex items-center gap-4">
+                <a href="{% url 'login' %}"
+                    class="text-gray-600 font-semibold hover:text-orange-600 transition-colors">Login</a>
+                <a href="{% url 'register' %}"
+                    class="bg-orange-600 text-white px-6 py-2.5 rounded-full font-semibold hover:bg-orange-700 transition-all shadow-[0_4px_12px_rgba(234,88,12,0.2)]">Register</a>
+            </div>
             {% endif %}
         </div>
     </div>
@@ -80,60 +104,73 @@
 
 <nav class="fixed bottom-0 left-0 right-0 bg-white border-t shadow-[0_-4px_20px_rgba(0,0,0,0.05)] md:hidden z-50">
     <div class="flex items-center justify-around h-16">
-        
-        <a href="{% url 'home' %}" class="flex flex-col items-center justify-center gap-1 {% if request.resolver_match.url_name == 'home' %}text-orange-600{% else %}text-gray-500 hover:text-orange-600{% endif %}">
+
+        <a href="{% url 'home' %}"
+            class="flex flex-col items-center justify-center gap-1 {% if request.resolver_match.url_name == 'home' %}text-orange-600{% else %}text-gray-500 hover:text-orange-600{% endif %}">
             <span class="material-symbols-outlined">home</span>
             <span class="text-[10px] font-semibold">Home</span>
         </a>
 
         {% if user.is_authenticated %}
-            {% if user.role == "vendor" %}
-                <a href="{% url 'vendors:vendor_dashboard' %}" class="flex flex-col items-center justify-center gap-1 {% if request.resolver_match.url_name == 'vendor_dashboard' %}text-orange-600{% else %}text-gray-500 hover:text-orange-600{% endif %}">
-                    <span class="material-symbols-outlined">dashboard</span>
-                    <span class="text-[10px] font-semibold">Dashboard</span>
-                </a>
-                <a href="{% url 'menu:item_list' %}" class="flex flex-col items-center justify-center gap-1 {% if request.resolver_match.url_name == 'item_list' %}text-orange-600{% else %}text-gray-500 hover:text-orange-600{% endif %}">
-                    <span class="material-symbols-outlined">restaurant_menu</span>
-                    <span class="text-[10px] font-semibold">Menu</span>
-                </a>
-                <a href="{% url 'vendors:vendor_profile' %}" class="flex flex-col items-center justify-center gap-1 {% if request.resolver_match.url_name == 'vendor_profile' %}text-orange-600{% else %}text-gray-500 hover:text-orange-600{% endif %}">
-                    <span class="material-symbols-outlined">person</span>
-                    <span class="text-[10px] font-semibold">Profile</span>
-                </a>
-            {% else %}
-                <a href="{% url 'vendors:vendor_list' %}" class="flex flex-col items-center justify-center gap-1 {% if request.resolver_match.url_name == 'vendor_list' %}text-orange-600{% else %}text-gray-500 hover:text-orange-600{% endif %}">
-                    <span class="material-symbols-outlined">storefront</span>
-                    <span class="text-[10px] font-semibold">Restaurants</span>
-                </a>
-                <a href="{% url 'menu:item_list' %}" class="flex flex-col items-center justify-center gap-1 {% if request.resolver_match.url_name == 'item_list' %}text-orange-600{% else %}text-gray-500 hover:text-orange-600{% endif %}">
-                    <span class="material-symbols-outlined">restaurant_menu</span>
-                    <span class="text-[10px] font-semibold">Menu</span>
-                </a>
-                <a href="{% url 'cart:cart_detail' %}" class="relative flex flex-col items-center justify-center gap-1 {% if request.resolver_match.namespace == 'cart' %}text-orange-600{% else %}text-gray-500 hover:text-orange-600{% endif %}">
-                    <span class="material-symbols-outlined">shopping_cart</span>
-                    {% if cart_count %}
-                        <span class="absolute top-0 right-2 bg-red-500 text-white text-[10px] rounded-full h-4 w-4 flex items-center justify-center">{{ cart_count }}</span>
-                    {% endif %}
-                    <span class="text-[10px] font-semibold">Cart</span>
-                </a>
-                <a href="{% url 'profile' %}" class="flex flex-col items-center justify-center gap-1 {% if request.resolver_match.url_name == 'profile' %}text-orange-600{% else %}text-gray-500 hover:text-orange-600{% endif %}">
-                    <span class="material-symbols-outlined">person</span>
-                    <span class="text-[10px] font-semibold">Profile</span>
-                </a>
-            {% endif %}
+        {% if user.role == "vendor" %}
+        <a href="{% url 'vendors:vendor_dashboard' %}"
+            class="flex flex-col items-center justify-center gap-1 {% if request.resolver_match.url_name == 'vendor_dashboard' %}text-orange-600{% else %}text-gray-500 hover:text-orange-600{% endif %}">
+            <span class="material-symbols-outlined">dashboard</span>
+            <span class="text-[10px] font-semibold">Dashboard</span>
+        </a>
+        <a href="{% url 'menu:item_list' %}"
+            class="flex flex-col items-center justify-center gap-1 {% if request.resolver_match.url_name == 'item_list' %}text-orange-600{% else %}text-gray-500 hover:text-orange-600{% endif %}">
+            <span class="material-symbols-outlined">restaurant_menu</span>
+            <span class="text-[10px] font-semibold">Menu</span>
+        </a>
+        <a href="{% url 'vendors:vendor_profile' %}"
+            class="flex flex-col items-center justify-center gap-1 {% if request.resolver_match.url_name == 'vendor_profile' %}text-orange-600{% else %}text-gray-500 hover:text-orange-600{% endif %}">
+            <span class="material-symbols-outlined">person</span>
+            <span class="text-[10px] font-semibold">Profile</span>
+        </a>
         {% else %}
-            <a href="{% url 'login' %}" class="flex flex-col items-center justify-center gap-1 text-gray-500 hover:text-orange-600">
-                <span class="material-symbols-outlined">storefront</span>
-                <span class="text-[10px] font-semibold">Restaurants</span>
-            </a>
-            <a href="{% url 'login' %}" class="flex flex-col items-center justify-center gap-1 text-gray-500 hover:text-orange-600">
-                <span class="material-symbols-outlined">restaurant_menu</span>
-                <span class="text-[10px] font-semibold">Menu</span>
-            </a>
-            <a href="{% url 'login' %}" class="flex flex-col items-center justify-center gap-1 text-gray-500 hover:text-orange-600">
-                <span class="material-symbols-outlined">login</span>
-                <span class="text-[10px] font-semibold">Login</span>
-            </a>
+        <a href="{% url 'vendors:vendor_list' %}"
+            class="flex flex-col items-center justify-center gap-1 {% if request.resolver_match.url_name == 'vendor_list' %}text-orange-600{% else %}text-gray-500 hover:text-orange-600{% endif %}">
+            <span class="material-symbols-outlined">storefront</span>
+            <span class="text-[10px] font-semibold">Restaurants</span>
+        </a>
+        <a href="{% url 'menu:item_list' %}"
+            class="flex flex-col items-center justify-center gap-1 {% if request.resolver_match.url_name == 'item_list' %}text-orange-600{% else %}text-gray-500 hover:text-orange-600{% endif %}">
+            <span class="material-symbols-outlined">restaurant_menu</span>
+            <span class="text-[10px] font-semibold">Menu</span>
+        </a>
+        <a href="{% url 'cart:cart_detail' %}"
+            class="relative flex flex-col items-center justify-center gap-1 {% if request.resolver_match.namespace == 'cart' %}text-orange-600{% else %}text-gray-500 hover:text-orange-600{% endif %}">
+            <span class="material-symbols-outlined">shopping_cart</span>
+            {% if cart_count %}
+            <span
+                class="absolute top-0 right-2 bg-red-500 text-white text-[10px] rounded-full h-4 w-4 flex items-center justify-center">{{
+                cart_count }}</span>
+            {% endif %}
+            <span class="text-[10px] font-semibold">Cart</span>
+        </a>
+        <a href="{% url 'profile' %}"
+            class="flex flex-col items-center justify-center gap-1 {% if request.resolver_match.url_name == 'profile' %}text-orange-600{% else %}text-gray-500 hover:text-orange-600{% endif %}">
+            <span class="material-symbols-outlined">person</span>
+            <span class="text-[10px] font-semibold">Profile</span>
+        </a>
+        {% endif %}
+        {% else %}
+        <a href="{% url 'login' %}"
+            class="flex flex-col items-center justify-center gap-1 text-gray-500 hover:text-orange-600">
+            <span class="material-symbols-outlined">storefront</span>
+            <span class="text-[10px] font-semibold">Restaurants</span>
+        </a>
+        <a href="{% url 'login' %}"
+            class="flex flex-col items-center justify-center gap-1 text-gray-500 hover:text-orange-600">
+            <span class="material-symbols-outlined">restaurant_menu</span>
+            <span class="text-[10px] font-semibold">Menu</span>
+        </a>
+        <a href="{% url 'login' %}"
+            class="flex flex-col items-center justify-center gap-1 text-gray-500 hover:text-orange-600">
+            <span class="material-symbols-outlined">login</span>
+            <span class="text-[10px] font-semibold">Login</span>
+        </a>
         {% endif %}
     </div>
 </nav>
