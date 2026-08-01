@@ -213,21 +213,24 @@
 
     <div class="border-t px-5 py-5 bg-gray-50">
 
-        <a
-            href="{% url 'vendors:toggle_vendor_status' %}"
-            class="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-semibold transition">
+        <form action="{% url 'vendors:toggle_vendor_status' %}" method="POST" class="w-full">
+            {% csrf_token %}
+            <button
+                type="submit"
+                class="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-semibold transition">
 
-            {% if vendor.is_open %}
+                {% if vendor.is_open %}
 
-                <i data-lucide="x-circle" class="w-5 h-5 inline text-red-500 mr-1"></i> Close Restaurant
+                    <i data-lucide="x-circle" class="w-5 h-5 inline text-red-500 mr-1"></i> Close Restaurant
 
-            {% else %}
+                {% else %}
 
-                <i data-lucide="check-circle-2" class="w-5 h-5 inline text-green-500 mr-1"></i> Open Restaurant
+                    <i data-lucide="check-circle-2" class="w-5 h-5 inline text-green-500 mr-1"></i> Open Restaurant
 
-            {% endif %}
+                {% endif %}
 
-        </a>
+            </button>
+        </form>
 
         <a
             href="{% url 'vendors:delete_vendor' %}"
